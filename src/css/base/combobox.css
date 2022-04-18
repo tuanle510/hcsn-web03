@@ -1,0 +1,21 @@
+.m-combobox {
+  height: 36px;
+  width: 219px;
+  display: flex;
+  border-radius: 2.5px;
+  border: 1px solid #afafaf;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px 6px 5px;
+  background-color: #fff;
+  position: relative;
+}
+
+.m-combobox .combobox-icon {
+  margin-right: 8px;
+}
+
+.m-combobox .combobox-down {
+  position: absolute;
+  right: 12px;
+}

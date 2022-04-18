@@ -1,0 +1,133 @@
+.m-grip {
+  width: 100%;
+  height: calc(100% - 52px);
+  background-color: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+  border-radius: 3px;
+  border: 1px solid #afafaf;
+  position: relative;
+}
+
+/* table */
+.m-grip .m-table-container {
+  height: calc(100% - 40px);
+  width: 100%;
+  overflow: auto;
+}
+
+.m-grip table.m-table {
+  background-color: #fff;
+  border-radius: 3px;
+  border-collapse: collapse;
+  position: relative;
+  width: 100%;
+}
+
+.m-grip .m-table thead {
+  position: sticky;
+  top: 0;
+  right: 0;
+  width: 100%;
+}
+
+.m-grip .m-table thead tr {
+  height: 38px;
+  background-color: #f5f5f5;
+}
+
+.m-grip .m-table tbody tr {
+  height: 40px;
+  border-bottom: 1px solid rgba(175, 175, 175, 0.6);
+  overflow: auto;
+}
+
+.m-grip .m-table tbody tr:hover {
+  cursor: pointer;
+  background-color: rgba(26, 164, 200, 0.2);
+}
+
+.m-grip .m-table tbody tr td .m-function-box {
+  margin-right: 16px;
+  padding-left: 10px;
+  justify-content: space-around;
+  display: flex;
+  align-items: center;
+}
+
+/* paging */
+.m-paging {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding-right: 80px;
+  position: absolute;
+  background-color: #fff;
+  bottom: 0;
+  right: 0;
+  border-top: 1px solid rgba(175, 175, 175, 0.6);
+}
+
+.m-paging .m-paging-right,
+.m-paging .m-paging-left,
+.m-paging .m-paging-left .m-paging-list,
+.m-paging .m-paging-left .m-paging-list .m-paging-group,
+.m-paging .m-paging-left .m-paging-list .m-page-control {
+  display: flex;
+  align-items: center;
+}
+
+.m-total-number {
+  width: 150px;
+  text-align: center;
+}
+
+.m-paging .m-paging-left .m-paging-list,
+.m-paging .m-paging-left .m-paging-list .m-paging-group {
+  gap: 10px;
+}
+
+.m-dropdown {
+  width: 59px;
+  height: 25px;
+  border-radius: 2.625px;
+  border: 1px solid #afafaf;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  margin-right: 20px;
+}
+
+.m-paging .m-paging-left .m-paging-list .m-page-control {
+  height: 20px;
+  width: 20px;
+  justify-content: center;
+  border: none;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+.m-paging .m-paging-left .m-paging-list .m-paging-group .m-number {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  border: none;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+.m-paging
+  .m-paging-left
+  .m-paging-list
+  .m-paging-group
+  .m-number.m-number-selected {
+  background-color: #f5f5f5;
+}
+
+.m-paging .m-paging-left .m-paging-list .m-paging-group .m-number-more {
+  display: flex;
+  align-items: flex-end;
+  height: 13px;
+}

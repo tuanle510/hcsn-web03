@@ -1,26 +1,49 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <div class="m-layout">
+      <Navbar />
+      <div class="m-main">
+        <Header />
+        <Content @showDialog="btnAddDialog"></Content>
+      </div>
+    </div>
+    <Dialog :isShow="isShowDialog" @closeDialog="btnDialog"></Dialog>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from "./components/layout/TheHeader.vue";
+import Navbar from "./components/layout/TheNavBar.vue";
+import Content from "./components/layout/TheContent.vue";
+import Dialog from "./components/base/MISADialog.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    Header,
+    Content,
+    Navbar,
+    Dialog,
+  },
+
+  methods: {
+    btnAddDialog() {
+      this.btnDialog(true);
+    },
+
+    btnDialog(isShow) {
+      this.isShowDialog = isShow;
+    },
+  },
+
+  data() {
+    return {
+      isShowDialog: false,
+    };
+  },
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+@import url(./css/main.css);
 </style>
