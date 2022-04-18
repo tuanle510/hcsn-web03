@@ -4,41 +4,29 @@
       <Navbar />
       <div class="m-main">
         <Header />
-        <Content @showDialog="btnAddDialog"></Content>
+        <Content></Content>
       </div>
     </div>
-    <Dialog :isShow="isShowDialog" @closeDialog="btnDialog"></Dialog>
   </div>
 </template>
 
 <script>
-import Header from "./components/layout/TheHeader.vue";
-import Navbar from "./components/layout/TheNavBar.vue";
-import Content from "./components/layout/TheContent.vue";
-import Dialog from "./components/base/MISADialog.vue";
+import Header from './components/layout/TheHeader.vue';
+import Navbar from './components/layout/TheNavBar.vue';
+import Content from './components/layout/TheContent.vue';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Header,
     Content,
-    Navbar,
-    Dialog,
+  Navbar,
   },
 
-  methods: {
-    btnAddDialog() {
-      this.btnDialog(true);
-    },
-
-    btnDialog(isShow) {
-      this.isShowDialog = isShow;
-    },
-  },
+  methods: {},
 
   data() {
     return {
-      isShowDialog: false,
     };
   },
 };

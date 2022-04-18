@@ -20,28 +20,55 @@
         </div>
       </div>
     </div>
-
-    <Table></Table>
+    <Table @dblClick="onRowDblClick" @showDialogWithData="btnDialog"></Table>
+    <Dialog
+      :class="{ 'm-dialog-showed': isDialogShow }"
+      :productSelected="productSelected"
+      @closeDialog="btnDialog"
+    ></Dialog>
   </div>
 </template>
 <script>
-import Button from "../base/MISAButton.vue";
-import Searchbox from "../base/MISASearch.vue";
-import Combobox from "../base/MISACombobox.vue";
-import Table from "../base/table/MISATable.vue";
+import Button from '../base/MISAButton.vue';
+import Searchbox from '../base/MISASearch.vue';
+import Combobox from '../base/MISACombobox.vue';
+import Table from '../base/table/MISATable.vue';
+import Dialog from '../base/MISADialog.vue';
 export default {
-  name: "the-content",
+  name: 'the-content',
   components: {
     Button,
     Searchbox,
     Combobox,
     Table,
+    Dialog,
   },
 
   methods: {
     showDialog() {
-      this.$emit("showDialog");
+      this.btnDialog(true);
+      
     },
+
+    btnDialog(isShow) {
+      this.isDialogShow = isShow;
+    },
+
+    /**
+     * Gắn dữ liệu từ component Table vào để truyền vào Dialog
+     * CREATED BY: LTTUAN(18.04.2022)
+     */
+    onRowDblClick(product) {
+      this.productSelected = product;
+      // console.log(this.productSelected);
+    },
+  },
+
+  data() {
+    return {
+      productSelected: {},
+      isDialogShow: false,
+    };
   },
 };
 </script>
