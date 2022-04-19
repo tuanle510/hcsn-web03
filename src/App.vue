@@ -11,6 +11,7 @@
 </template>
 
 <script>
+
 import Header from './components/layout/TheHeader.vue';
 import Navbar from './components/layout/TheNavBar.vue';
 import Content from './components/layout/TheContent.vue';

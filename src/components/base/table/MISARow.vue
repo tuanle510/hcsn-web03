@@ -1,9 +1,9 @@
 <template>
   <tr @mouseover="this.isFunShow = true" @mouseleave="this.isFunShow = false">
     <td style="width: 50px; padding-left: 16px">
-      <Checkbox></Checkbox>
+      <MISACheckbox v-on:dblclick.stop="this.$emit(dblclick)"></MISACheckbox>
     </td>
-    <td class="text-align-center">{{ 1 }}</td>
+    <td class="text-align-center">{{ count }}</td>
     <td class="text-align-left">{{ productCode }}</td>
     <td class="text-align-left">{{ productName }}</td>
     <td class="text-align-left">{{ productType }}</td>
@@ -25,21 +25,18 @@
   </tr>
 </template>
 <script>
-import Checkbox from '../MISACheckbox.vue';
 export default {
-  name: 'table-row',
-  components: {
-    Checkbox,
-  },
+  name: "table-row",
   props: [
-    'productCode',
-    'productName',
-    'productType',
-    'productUse',
-    'productQuantity',
-    'productPrice',
-    'productAccum',
-    'productPriceless',
+    "count",
+    "productCode",
+    "productName",
+    "productType",
+    "productUse",
+    "productQuantity",
+    "productPrice",
+    "productAccum",
+    "productPriceless",
   ],
   data() {
     return {

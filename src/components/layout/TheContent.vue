@@ -2,15 +2,15 @@
   <div class="m-content">
     <div class="m-toolbar">
       <div class="m-toolbar-left">
-        <Searchbox placeholder="Tìm kiếm tài sản"></Searchbox>
-        <Combobox title="Loại tài sản"></Combobox>
-        <Combobox title="Bộ phận sử dụng"></Combobox>
+        <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
+        <MISACombobox title="Loại tài sản"></MISACombobox>
+        <MISACombobox title="Bộ phận sử dụng"></MISACombobox>
       </div>
       <div class="m-toolbar-right">
-        <Button
+        <MISAButton
           @click="showDialog"
           style="box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16)"
-          >+Thêm tài sản</Button
+          >+Thêm tài sản</MISAButton
         >
         <div class="toolbar-btn icon-box">
           <div class="excel"></div>
@@ -20,36 +20,27 @@
         </div>
       </div>
     </div>
-    <Table @dblClick="onRowDblClick" @showDialogWithData="btnDialog"></Table>
-    <Dialog
-      :class="{ 'm-dialog-showed': isDialogShow }"
+    <MISATable @dblClick="onRowDblClick" @showDialog="btnDialog"></MISATable>
+    <MISADialog
+      v-show="isDialogShow"
       :productSelected="productSelected"
       @closeDialog="btnDialog"
-    ></Dialog>
+    ></MISADialog>
   </div>
 </template>
 <script>
-import Button from '../base/MISAButton.vue';
-import Searchbox from '../base/MISASearch.vue';
-import Combobox from '../base/MISACombobox.vue';
-import Table from '../base/table/MISATable.vue';
-import Dialog from '../base/MISADialog.vue';
 export default {
-  name: 'the-content',
-  components: {
-    Button,
-    Searchbox,
-    Combobox,
-    Table,
-    Dialog,
-  },
+  name: "the-content",
 
   methods: {
+    /**
+     * Bật dialog thêm sản phẩm mới
+     * CREATED BY: LTTUAN(19.04.2022)
+     */
     showDialog() {
       this.btnDialog(true);
-      
+      this.$refs.firstInput.focus();
     },
-
     btnDialog(isShow) {
       this.isDialogShow = isShow;
     },
@@ -60,7 +51,6 @@ export default {
      */
     onRowDblClick(product) {
       this.productSelected = product;
-      // console.log(this.productSelected);
     },
   },
 

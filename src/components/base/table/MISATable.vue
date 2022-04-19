@@ -5,7 +5,7 @@
         <thead>
           <tr>
             <th style="width: 50px; padding-left: 16px">
-              <Checkbox></Checkbox>
+              <MISACheckbox></MISACheckbox>
             </th>
             <th class="text-align-center" style="max-width: 50px">STT</th>
             <th class="text-align-left" style="max-width: 80px">Mã tài sản</th>
@@ -35,16 +35,17 @@
         <tbody>
           <Row
             @dblclick="onRowDblClick(product)"
-            v-for="product in productList"
-            :key="product.productCode"
-            :productCode="product.productCode"
-            :productName="product.productName"
-            :productType="product.productType"
-            :productUse="product.productUse"
-            :productQuantity="product.productQuantity"
-            :productPrice="product.productPrice"
-            :productAccum="product.productAccum"
-            :productPriceless="product.productPriceless"
+            v-for="(product, index) in productData"
+            :count="index + 1"
+            :key="product.id"
+            :productCode="product.id"
+            :productName="product.name"
+            :productType="product.type"
+            :productUse="product.partsUse"
+            :productQuantity="product.quantity"
+            :productPrice="product.price"
+            :productAccum="product.accumulate"
+            :productPriceless="product.priceExtra"
           ></Row>
         </tbody>
       </table>
@@ -85,13 +86,29 @@
   </div>
 </template>
 <script>
-import Checkbox from '../MISACheckbox.vue';
-import Row from './MISARow.vue';
+import axios from "axios";
+import Row from "./MISARow.vue";
 export default {
-  name: 'the-table',
+  name: "the-table",
   components: {
-    Checkbox,
     Row,
+  },
+
+  /**4
+   * Lấy data từ API
+   * CREATED BTY: LTTUAN(19.04.2022)
+   */
+  async beforeMount() {
+    // Lấy data
+    var me = this;
+    await axios
+      .get("https://62591883c5f02d964a4c41d3.mockapi.io/assets")
+      .then(function (res) {
+        me.productData = res.data;
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
   },
 
   methods: {
@@ -100,299 +117,17 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     onRowDblClick(product) {
-      this.$emit('showDialogWithData', true);
-      this.$emit('dblClick', product);
+      this.$emit("showDialog", true);
+      this.$emit("dblClick", product);
     },
   },
 
   data() {
     return {
-      productList: [
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: 'FUYLKJL',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '&(*KJHO)(U',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: 'HKJBNM0',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: 'SDFG56',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: 'DFGS465',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: 'SSFDG57Y',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: 'SDFG3W234',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '45SDFGH4',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: 'SFDHJH66',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: 'ÁDFGSDF',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-        {
-          productCode: '55H7WN7',
-          productName: 'Dell Inspiron 3467',
-          productType: 'Máy vi tính xách tay',
-          productUse: 'Phòng Hành chính Kế toán',
-          productQuantity: '2',
-          productPrice: '10.000.000',
-          productAccum: '1.225.000',
-          productPriceless: '8.775.000',
-        },
-      ],
+      count: 0,
+      productData: {},
     };
   },
 };
 </script>
-<style>
-@import url(/src/css/base/table.css);
-</style>
+<style></style>

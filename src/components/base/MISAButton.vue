@@ -10,5 +10,4 @@ export default {
 };
 </script>
 <style>
-@import url(/src/css/base/button.css);
 </style>

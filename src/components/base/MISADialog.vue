@@ -1,5 +1,5 @@
 <template>
-  <div class="m-dialog" :class="{ 'm-dialog-showed': isShow }">
+  <div class="m-dialog">
     <div class="m-modal">
       <div class="m-nodal-title">Sửa tài sản</div>
       <div class="m-modal-close" @click="btnCloseDialog">
@@ -9,15 +9,21 @@
         <div class="modal-field">
           <label for="input">Mã tài sản</label>
           <input
+            ref="firstInput"
             class="m-input"
             type="text"
             placeholder="Nhập mã tài sản"
-            v-model="product.productCode"
+            v-model="product.id"
+            v-on:change="signalChange"
           />
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên tài sản</label>
-          <input class="m-input" placeholder="Nhập tên tài sản" />
+          <input
+            v-model="product.name"
+            class="m-input"
+            placeholder="Nhập tên tài sản"
+          />
         </div>
         <div class="modal-field">
           <label for="input">Mã bộ phận sử dụng</label>
@@ -72,30 +78,42 @@
         </div>
       </div>
       <div class="m-modal-footer">
-        <Button type="outline-button" @click="btnCloseDialog">Hủy</Button>
-        <Button>Lưu</Button>
+        <MISAButton type="outline-button" @click="btnCloseDialog"
+          >Hủy</MISAButton
+        >
+        <MISAButton>Lưu</MISAButton>
       </div>
     </div>
   </div>
 </template>
 <script>
-import Button from './MISAButton.vue';
-
 export default {
-  updated() {
-    //this.loadMessages(this.room_id)
-    console.log(this.product.productCode); //undefined;
-  },
-  name: 'the-dialog',
-  components: {
-    Button,
-  },
-  props: ['isShow', 'productSelected'],
+  name: "the-dialog",
+  props: ["isShow", "productSelected"],
 
   data() {
     return {
+      isFormInputChange: false,
+      changedInput: "",
       product: {},
     };
+  },
+
+  watch: {
+    /**
+     *Theo dõi sự thay đổi dữ liệu ở biến productSelected và
+     *Truyền dữ liệu vào dialog khi double Click
+     *CREATED BY: LTTUAN(18.04.2022)
+     */
+    productSelected: function (newValue) {
+      this.product = newValue;
+      console.log(newValue);
+    },
+
+    /**
+     *  validate: kiểm tra khi có sự thay đổi mà người dùng ấn tắt => hiện cảnh báo
+     * CREATED BY: LTTUAN(19.04.2022)
+     */
   },
 
   methods: {
@@ -104,23 +122,15 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     btnCloseDialog() {
-      this.$emit('closeDialog', false);
-    },
-  },
+      // kiểm tra có thay đổi trong form không
 
-  /**
-   *Theo dõi sự thay đổi dữ liệu ở biến productSelected và
-   *Truyền dữ liệu vào dialog khi double Click
-   *CREATED BY: LTTUAN(18.04.2022)
-   */
-  watch: {
-    productSelected: function (newValue) {
-      console.log(newValue);
-      this.product = newValue;
+      // Nếu có thì hiện thông báo
+
+      this.$emit("closeDialog", false);
+      //xóa dữ liệu trong input khi đóng
+      this.product = {};
     },
   },
 };
 </script>
-<style>
-@import url('../../css/base/dialog.css');
-</style>
+<style></style>
