@@ -86,15 +86,14 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import Row from "./MISARow.vue";
+import axios from 'axios';
+import Row from './MISARow.vue';
 export default {
-  name: "the-table",
+  name: 'the-table',
   components: {
     Row,
   },
-
-  /**4
+  /**
    * Lấy data từ API
    * CREATED BTY: LTTUAN(19.04.2022)
    */
@@ -102,7 +101,7 @@ export default {
     // Lấy data
     var me = this;
     await axios
-      .get("https://62591883c5f02d964a4c41d3.mockapi.io/assets")
+      .get('https://62591883c5f02d964a4c41d3.mockapi.io/assets')
       .then(function (res) {
         me.productData = res.data;
       })
@@ -117,8 +116,8 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     onRowDblClick(product) {
-      this.$emit("showDialog", true);
-      this.$emit("dblClick", product);
+      this.$emit('showDialog', true);
+      this.$emit('dblClick', product);
     },
   },
 

@@ -7,14 +7,13 @@
       </div>
       <div class="m-modal-centent">
         <div class="modal-field">
-          <label for="input">Mã tài sản</label>
+          <label for="input">{{ product.id }}</label>
           <input
             ref="firstInput"
             class="m-input"
             type="text"
             placeholder="Nhập mã tài sản"
             v-model="product.id"
-            v-on:change="signalChange"
           />
         </div>
         <div class="modal-field modal-field-long">
@@ -88,13 +87,12 @@
 </template>
 <script>
 export default {
-  name: "the-dialog",
-  props: ["isShow", "productSelected"],
+  name: 'the-dialog',
+  props: ['isShow', 'productSelected'],
 
   data() {
     return {
       isFormInputChange: false,
-      changedInput: "",
       product: {},
     };
   },
@@ -106,8 +104,9 @@ export default {
      *CREATED BY: LTTUAN(18.04.2022)
      */
     productSelected: function (newValue) {
+      // console.log(newValue);
+      // console.log(`old` + oldValue);
       this.product = newValue;
-      console.log(newValue);
     },
 
     /**
@@ -118,15 +117,27 @@ export default {
 
   methods: {
     /**
+     * focus vào ô input đầu tiên khi hiển thị fỏrm
+     *CREATED BY: LTTUAN(19.04.2022)
+     */
+    focusFirstInput() {
+      this.$nextTick(() => {
+        this.$refs.firstInput.focus();
+      });
+    },
+
+    /**
      * Đóng dialog
      * CREATED BY: LTTUAN(18.04.2022)
      */
     btnCloseDialog() {
       // kiểm tra có thay đổi trong form không
 
+      console.log(this.product.id);
+      console.log(this.product);
       // Nếu có thì hiện thông báo
 
-      this.$emit("closeDialog", false);
+      this.$emit('closeDialog', false);
       //xóa dữ liệu trong input khi đóng
       this.product = {};
     },

@@ -22,6 +22,7 @@
     </div>
     <MISATable @dblClick="onRowDblClick" @showDialog="btnDialog"></MISATable>
     <MISADialog
+      ref="dialog"
       v-show="isDialogShow"
       :productSelected="productSelected"
       @closeDialog="btnDialog"
@@ -30,7 +31,7 @@
 </template>
 <script>
 export default {
-  name: "the-content",
+  name: 'the-content',
 
   methods: {
     /**
@@ -39,7 +40,8 @@ export default {
      */
     showDialog() {
       this.btnDialog(true);
-      this.$refs.firstInput.focus();
+      //Focus vào input đầu tiên thông qua ref
+      this.$refs.dialog.focusFirstInput();
     },
     btnDialog(isShow) {
       this.isDialogShow = isShow;
@@ -51,6 +53,7 @@ export default {
      */
     onRowDblClick(product) {
       this.productSelected = product;
+      this.$refs.dialog.focusFirstInput();
     },
   },
 
@@ -58,6 +61,7 @@ export default {
     return {
       productSelected: {},
       isDialogShow: false,
+      productData: {},
     };
   },
 };
