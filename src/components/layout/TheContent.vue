@@ -3,8 +3,8 @@
     <div class="m-toolbar">
       <div class="m-toolbar-left">
         <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
-        <MISACombobox title="Loại tài sản"></MISACombobox>
-        <MISACombobox title="Bộ phận sử dụng"></MISACombobox>
+        <MISACombobox hasIcon="true" title="Loại tài sản"></MISACombobox>
+        <MISACombobox hasIcon="true" title="Bộ phận sử dụng"></MISACombobox>
       </div>
       <div class="m-toolbar-right">
         <MISAButton
@@ -106,7 +106,7 @@
           <div class="m-total-number">
             Tổng số: <strong>200</strong> bản ghi
           </div>
-          <div class="m-dropdown">
+          <div class="m-dropdown-paging-paging">
             20
             <div class="down"></div>
           </div>
@@ -146,10 +146,10 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import Row from "../base/table/MISARow.vue";
+import axios from 'axios';
+import Row from '../base/table/MISARow.vue';
 export default {
-  name: "the-content",
+  name: 'the-content',
 
   components: {
     Row,
@@ -159,7 +159,7 @@ export default {
     // Lấy data
     var me = this;
     await axios
-      .get("https://62591883c5f02d964a4c41d3.mockapi.io/assets")
+      .get('https://62591883c5f02d964a4c41d3.mockapi.io/assets')
       .then(function (res) {
         me.productData = res.data;
       })

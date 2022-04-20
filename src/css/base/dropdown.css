@@ -1,0 +1,31 @@
+.m-dropdown {
+  height: 36px;
+  width: 219px;
+  display: flex;
+  border-radius: 2.5px;
+  border: 1px solid #afafaf;
+  position: relative;
+}
+
+.m-dropdown-box {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.m-dropdown-value {
+  height: 100%;
+  width: calc(100% - 24px);
+  background-color: aqua;
+}
+
+.m-dropdown-option {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: red;
+  border-radius: 2.5px;
+  border: 1px solid #afafaf;
+  padding: 4px;
+}

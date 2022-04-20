@@ -25,9 +25,11 @@
           />
         </div>
         <div class="modal-field">
-          <label for="input">Mã bộ phận sử dụng</label>
-
-          <input class="m-input" />
+          <label for="input">Mã tài sản</label>
+          <MISACombobox
+            :hasIcon="false"
+            title="Chọm mã bộ phận sử dụng"
+          ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên bộ phận sử dụng</label>
@@ -36,8 +38,10 @@
         </div>
         <div class="modal-field">
           <label for="input">Mã loại tài sản</label>
-
-          <input class="m-input" />
+          <MISACombobox
+            :hasIcon="false"
+            title="Chọm mã loại tài sản"
+          ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên loại tài sản</label>
@@ -87,8 +91,8 @@
 </template>
 <script>
 export default {
-  name: "the-dialog",
-  props: ["isShow", "productSelected"],
+  name: 'the-dialog',
+  props: ['isShow', 'productSelected'],
 
   watch: {
     /**
@@ -131,12 +135,12 @@ export default {
     btnCloseDialog() {
       // Kiếm tra xem là thêm mới sản phẩm hay sửa sản phẩm
       // nếu là sửa sản phẩm
-      if (this.$refs.firstInput.value !== "") {
+      if (this.$refs.firstInput.value !== '') {
         this.checkForm(this.product.id);
       }
-      // Thêm mới sản phẩm
+      // nếu là thêm mới sản phẩm
       else {
-        this.checkForm("");
+        this.checkForm('');
         this.closeDialog();
       }
     },
@@ -150,7 +154,7 @@ export default {
       }
       // Nếu có thì hiện thông báo
       else {
-        alert("bạn đa thay đổi form ");
+        alert('bạn đa thay đổi form ');
       }
     },
 
@@ -158,10 +162,9 @@ export default {
      * Đóng dialog
      */
     closeDialog() {
-      this.$emit("closeDialog", false);
+      this.$emit('closeDialog', false);
       //xóa dữ liệu trong input khi đóng
       this.product = {};
-      // this.product = {};
     },
   },
 
