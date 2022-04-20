@@ -7,13 +7,13 @@
       </div>
       <div class="m-modal-centent">
         <div class="modal-field">
-          <label for="input">{{ product.id }}</label>
+          <label for="input">Mã tài sản</label>
           <input
             ref="firstInput"
             class="m-input"
             type="text"
             placeholder="Nhập mã tài sản"
-            v-model="product.id"
+            :value="product.id"
           />
         </div>
         <div class="modal-field modal-field-long">
@@ -87,15 +87,8 @@
 </template>
 <script>
 export default {
-  name: 'the-dialog',
-  props: ['isShow', 'productSelected'],
-
-  data() {
-    return {
-      isFormInputChange: false,
-      product: {},
-    };
-  },
+  name: "the-dialog",
+  props: ["isShow", "productSelected"],
 
   watch: {
     /**
@@ -104,8 +97,6 @@ export default {
      *CREATED BY: LTTUAN(18.04.2022)
      */
     productSelected: function (newValue) {
-      // console.log(newValue);
-      // console.log(`old` + oldValue);
       this.product = newValue;
     },
 
@@ -113,11 +104,18 @@ export default {
      *  validate: kiểm tra khi có sự thay đổi mà người dùng ấn tắt => hiện cảnh báo
      * CREATED BY: LTTUAN(19.04.2022)
      */
+    // product: function (newValue, oldValue) {
+    //   if (oldValue != newValue) {
+    //     console.log("true");
+    //   }
+    //   console.log(newValue);
+    //   console.log(oldValue);
+    // },
   },
 
   methods: {
     /**
-     * focus vào ô input đầu tiên khi hiển thị fỏrm
+     *focus vào ô input đầu tiên khi hiển thị fỏrm
      *CREATED BY: LTTUAN(19.04.2022)
      */
     focusFirstInput() {
@@ -131,16 +129,48 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     btnCloseDialog() {
-      // kiểm tra có thay đổi trong form không
+      // Kiếm tra xem là thêm mới sản phẩm hay sửa sản phẩm
+      // nếu là sửa sản phẩm
+      if (this.$refs.firstInput.value !== "") {
+        this.checkForm(this.product.id);
+      }
+      // Thêm mới sản phẩm
+      else {
+        this.checkForm("");
+        this.closeDialog();
+      }
+    },
 
-      console.log(this.product.id);
-      console.log(this.product);
+    /**
+     *kiểm tra có thay đổi trong form không
+     */
+    checkForm(inputValue) {
+      if (this.$refs.firstInput.value == inputValue) {
+        this.closeDialog();
+      }
       // Nếu có thì hiện thông báo
+      else {
+        alert("bạn đa thay đổi form ");
+      }
+    },
 
-      this.$emit('closeDialog', false);
+    /**
+     * Đóng dialog
+     */
+    closeDialog() {
+      this.$emit("closeDialog", false);
       //xóa dữ liệu trong input khi đóng
       this.product = {};
+      // this.product = {};
     },
+  },
+
+  data() {
+    return {
+      isFormInputChange: false,
+      product: {},
+      productChanged: {},
+    };
   },
 };
 </script>
