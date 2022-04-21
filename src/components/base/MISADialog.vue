@@ -53,11 +53,11 @@
         </div>
         <div class="modal-field">
           <label for="input">Nguyên giá <span>*</span></label>
-          <input class="m-input number-input" type="number" />
+          <input class="m-input number-input" type="number" value="0" />
         </div>
         <div class="modal-field">
           <label for="input">Số năm sử dụng <span>*</span></label>
-          <input class="m-input" />
+          <input class="m-input number-input" />
         </div>
         <div class="modal-field">
           <label for="input">Tỉ lệ hao mòn(%)</label>
@@ -65,7 +65,7 @@
         </div>
         <div class="modal-field">
           <label for="input">Giá trị hao mòm năm <span>*</span></label>
-          <input class="m-input" />
+          <input class="m-input number-input" />
         </div>
         <div class="modal-field">
           <label for="input">Năm theo dõi</label>
@@ -73,11 +73,11 @@
         </div>
         <div class="modal-field">
           <label for="input">Ngày mua <span>*</span></label>
-          <input type="date" class="m-input" />
+          <input type="date" placeholder="DD-MM-YYYY" class="m-input" />
         </div>
         <div class="modal-field">
           <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
-          <input type="date" class="m-input" />
+          <input type="date" placeholder="DD-MM-YYYY" class="m-input" />
         </div>
       </div>
       <div class="m-modal-footer">
@@ -91,8 +91,8 @@
 </template>
 <script>
 export default {
-  name: "the-dialog",
-  props: ["isShow", "productSelected"],
+  name: 'the-dialog',
+  props: ['isShow', 'productSelected'],
 
   watch: {
     /**
@@ -121,7 +121,7 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     btnCloseDialog() {
-      this.$emit("closeDialog", false);
+      this.$emit('closeDialog', false);
       //xóa dữ liệu trong input khi đóng
       this.product = {};
     },

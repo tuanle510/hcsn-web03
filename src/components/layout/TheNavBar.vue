@@ -5,58 +5,30 @@
       <div v-if="!isNavBarClose" class="navbar-header-title">MISA QLTS</div>
     </div>
 
-    <div class="m-navbar-list">
-      <div class="navbar-item navbar-selected">
+    <ul class="m-navbar-list">
+      <li
+        v-for="(navbar, index) in navBarList"
+        :key="index"
+        @click="onClickNavBar(navbar)"
+        class="navbar-item"
+        :class="{ 'navbar-selected': this.navBarSelced == navbar }"
+      >
         <div class="navbar-logo">
-          <div class="home-active"></div>
+          <div
+            v-if="this.navBarSelced == navbar"
+            :class="`${navbar.icon}-active`"
+          ></div>
+          <div v-else :class="navbar.icon"></div>
         </div>
         <div class="navbar-item-title" v-if="!isNavBarClose">
-          Tổng quan
-
-          <!-- <div class="navbar-down">
-          <div class="dropdown"></div>
-        </div> -->
+          <p>{{ navbar.title }}</p>
+          <div class="navbar-down" v-show="navbar.hasOwnProperty('childList')">
+            <div class="dropdown"></div>
+          </div>
         </div>
-      </div>
-      <div class="navbar-item">
-        <div class="navbar-logo">
-          <div class="asset"></div>
-        </div>
-        <div class="navbar-item-title" v-if="!isNavBarClose">Tài sản</div>
-      </div>
-      <div class="navbar-item">
-        <div class="navbar-logo">
-          <div class="line"></div>
-        </div>
-        <div class="navbar-item-title" v-if="!isNavBarClose">Tài sản HT-ĐB</div>
-      </div>
-      <div class="navbar-item">
-        <div class="navbar-logo">
-          <div class="tool"></div>
-        </div>
-        <div class="navbar-item-title" v-if="!isNavBarClose">
-          Công cụ dụng cụ
-        </div>
-      </div>
-      <div class="navbar-item">
-        <div class="navbar-logo">
-          <div class="category"></div>
-        </div>
-        <div class="navbar-item-title" v-if="!isNavBarClose">Danh mục</div>
-      </div>
-      <div class="navbar-item">
-        <div class="navbar-logo">
-          <div class="search"></div>
-        </div>
-        <div class="navbar-item-title" v-if="!isNavBarClose">Tra cứu</div>
-      </div>
-      <div class="navbar-item">
-        <div class="navbar-logo">
-          <div class="report"></div>
-        </div>
-        <div class="navbar-item-title" v-if="!isNavBarClose">Báo cáo</div>
-      </div>
-    </div>
+        <!-- <ul class="navbar-child"></ul> -->
+      </li>
+    </ul>
 
     <div class="close-navbar">
       <div class="close-navbar-box" @click="onClickToggleNavBar">
@@ -68,19 +40,60 @@
 </template>
 <script>
 export default {
-  name: "the-navbar",
-  props: ["navBarWidth"],
+  name: 'the-navbar',
+  props: ['navBarWidth'],
+
+  beforeMount(){
+    this.navBarSelced = this.navBarList[1]
+  },
 
   methods: {
-    onClickToggleNavBar() { 
+    onClickToggleNavBar() {
       this.isNavBarClose = !this.isNavBarClose;
-      this.$emit("onCloseNavBar", this.isNavBarClose);
+      this.$emit('onCloseNavBar', this.isNavBarClose);
+    },
+
+    onClickNavBar(navbar) {
+      this.navBarSelced = navbar;
     },
   },
   data() {
     return {
-      isNavBarClose: false,
-      isActive: true,
+      isNavbarSeleced: false, //chọn navbar
+      navBarSelced: {}, 
+      isNavBarClose: false, //đóng mở navbar
+      navBarList: [
+        {
+          title: 'Tổng quan',
+          icon: 'home',
+        },
+        {
+          title: 'Tài sản',
+          icon: 'asset',
+          childList: [{ childTitle: 'Tổng quan 1' }],
+        },
+        {
+          title: 'Tài sản HT-ĐB',
+          icon: 'line',
+          childList: [{ childTitle: 'Tổng quan 1' }],
+        },
+        {
+          title: 'Công cụ dụng cụ',
+          icon: 'tool',
+          childList: [{ childTitle: 'Tổng quan 1' }],
+        },
+        { title: 'Danh mục', icon: 'category' },
+        {
+          title: 'Tra cứu',
+          icon: 'search',
+          childList: [{ childTitle: 'Tổng quan 1' }],
+        },
+        {
+          title: 'Báo cáo',
+          icon: 'report',
+          childList: [{ childTitle: 'Tổng quan 1' }],
+        },
+      ],
     };
   },
 };

@@ -1,10 +1,12 @@
 <template>
   <div class="m-combobox">
-    <div class="combobox-contaner">
+    <div class="combobox-contaner" :class="{ 'm-combobox-focus ': isFocus }">
       <div v-show="this.iconCheck" class="combobox-icon">
         <div class="filter"></div>
       </div>
       <input
+        @focus="this.isFocus = true"
+        @blur="this.isFocus = false"
         class="combobox-text"
         :class="{ 'input-no-icon': !this.iconCheck }"
         :placeholder="title"
@@ -19,7 +21,7 @@
         v-for="(option, index) in optionList"
         :key="index"
         class="m-option-item"
-        @click="onClickDropDown(option)"
+        @click="onClickComboBox(option)"
         :class="{ 'm-item-selected': optionSeleced == option }"
       >
         <div
@@ -37,27 +39,28 @@
 export default {
   name: 'the-combobox',
 
-  data() {
-    return {
-      iconCheck: this.hasIcon,
-      isOptionShow: false,
-      optionSeleced: '',
-      optionList: ['Saab', 'Volvo', 'BMW'],
-    };
-  },
-
   props: ['title', 'hasIcon'],
 
   methods: {
     /**
      * Chọn giá trị cho dropdown
-     * 
+     *
      */
-    onClickDropDown(option) {
+    onClickComboBox(option) {
       this.optionSeleced = option;
       this.isOptionChecked = !this.isOptionChecked;
       this.isOptionShow = false;
     },
+  },
+
+  data() {
+    return {
+      isFocus: false,
+      iconCheck: this.hasIcon,
+      isOptionShow: false,
+      optionSeleced: '',
+      optionList: ['Saab', 'Volvo', 'BMW'],
+    };
   },
 };
 </script>

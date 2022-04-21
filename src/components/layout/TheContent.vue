@@ -65,37 +65,6 @@
           </thead>
 
           <tbody>
-            <!-- <tr
-              @mouseover="onMouseOver"
-              @dblclick="onRowDblClick(product)"
-              v-for="(product, index) in productData"
-              :key="index"
-            >
-              <td style="width: 50px; padding-left: 16px">
-                <MISACheckbox
-                  v-on:dblclick.stop="this.$emit(dblclick)"
-                ></MISACheckbox>
-              </td>
-              <td class="text-align-center">{{ count }}</td>
-              <td class="text-align-left">{{ product.id }}</td>
-              <td class="text-align-left">{{ product.name }}</td>
-              <td class="text-align-left">{{ product.type }}</td>
-              <td class="text-align-left">{{ product.partsUse }}</td>
-              <td class="text-align-right">{{ product.quantity }}</td>
-              <td class="text-align-right">{{ product.price }}</td>
-              <td class="text-align-right">{{ product.accumulate }}</td>
-              <td class="text-align-right">{{ product.priceExtra }}</td>
-              <td style="width: 80px">
-                <div class="m-function-box" :class="{ 'box-show': true }">
-                  <div class="icon-box" v-on:click="btnEditClick">
-                    <div class="table-icon edit"></div>
-                  </div>
-                  <div class="icon-box" v-on:click="btnPriceClick">
-                    <div class="table-icon print"></div>
-                  </div>
-                </div>
-              </td>
-            </tr> -->
             <Row
               @dblclick="onRowDblClick(product)"
               v-for="(product, index) in productData"
@@ -103,7 +72,10 @@
               :key="product.id"
               :product="product"
             ></Row>
-            <tr class="m-paging">
+          </tbody>
+
+          <tfoot>
+            <tr>
               <td colspan="6">
                 <div class="m-paging-left">
                   <div class="m-total-number">
@@ -138,7 +110,7 @@
               <td class="text-align-right">229.2284.000</td>
               <td></td>
             </tr>
-          </tbody>
+          </tfoot>
         </table>
       </div>
     </div>
@@ -152,10 +124,10 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import Row from "../base/table/MISARow.vue";
+import axios from 'axios';
+import Row from '../base/table/MISARow.vue';
 export default {
-  name: "the-content",
+  name: 'the-content',
 
   components: {
     Row,
@@ -165,7 +137,7 @@ export default {
     // Lấy data
     var me = this;
     await axios
-      .get("https://62591883c5f02d964a4c41d3.mockapi.io/assets")
+      .get('https://62591883c5f02d964a4c41d3.mockapi.io/assets')
       .then(function (res) {
         me.productData = res.data;
       })

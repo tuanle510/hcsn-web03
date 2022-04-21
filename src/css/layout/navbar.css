@@ -53,7 +53,12 @@
   align-items: center;
 }
 
-.m-navbar .m-navbar-list .navbar-item .navbar-down {
+.m-navbar .m-navbar-list .navbar-item .navbar-item-title {
+  display: flex;
+  align-items: center;
+}
+
+.m-navbar .m-navbar-list .navbar-item .navbar-item-title .navbar-down {
   position: absolute;
   right: 10px;
 }

@@ -1,16 +1,32 @@
 <template>
-  <div class="m-search-box">
+  <div class="m-search-box" :class="{ 'm-search-box-focus': isFocus }">
     <div class="search-icon">
       <div class="search"></div>
     </div>
-    <input class="m-search" type="text" :placeholder="placeholder" />
+    <input
+      @focus="this.isFocus = true"
+      @blur="this.isFocus = false"
+      class="m-search"
+      type="text"
+      :placeholder="placeholder"
+    />
   </div>
 </template>
 <script>
 export default {
-  props: ["placeholder"],
+  name: 'seach-box',
+  props: ['placeholder'],
+  methods: {
+    inputFocus() {
+      this.isFocus = true;
+    },
+  },
 
-  name: "seach-box",
+  data() {
+    return {
+      isFocus: false,
+    };
+  },
 };
 </script>
 <style>
