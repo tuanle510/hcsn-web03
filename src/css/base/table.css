@@ -10,7 +10,7 @@
 
 /* table */
 .m-grip .m-table-container {
-  height: calc(100% - 40px);
+  height: 100%;
   width: 100%;
   overflow: auto;
 }
@@ -64,13 +64,7 @@
 
 /* paging */
 .m-paging {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 40px;
-  padding-right: 80px;
-  position: absolute;
+  position: sticky;
   background-color: #fff;
   bottom: 0;
   right: 0;

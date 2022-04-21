@@ -26,3 +26,18 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+input[type="date"] {
+  font-family: MISA Font;
+  font-size: 13px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color: rgba(0, 0, 0, 0);
+  opacity: 1;
+  display: block;
+  background: url("../../assets/icon/qlts-icon.png") no-repeat -287px -67px;
+  width: 18px;
+  height: 18px;
+  border-width: thin;
+}

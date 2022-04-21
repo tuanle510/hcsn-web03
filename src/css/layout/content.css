@@ -15,6 +15,10 @@
   height: 36px;
 }
 
+.m-content .m-toolbar .toolbar-field {
+  width: 200px;
+}
+
 .m-content .m-toolbar .m-toolbar-left,
 .m-content .m-toolbar .m-toolbar-right {
   display: flex;

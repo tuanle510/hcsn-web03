@@ -10,7 +10,7 @@
   height: 50px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
   padding: 0 15px;
 }
 
@@ -33,6 +33,7 @@
 }
 
 .m-navbar .m-navbar-list .navbar-item {
+  cursor: pointer;
   position: relative;
   height: 40px;
   color: #fff;
@@ -52,7 +53,7 @@
   align-items: center;
 }
 
-.m-navbar .m-navbar-list .navbar-item .navbar-down{
+.m-navbar .m-navbar-list .navbar-item .navbar-down {
   position: absolute;
   right: 10px;
 }

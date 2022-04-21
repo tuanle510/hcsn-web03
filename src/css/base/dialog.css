@@ -64,8 +64,7 @@
   margin-bottom: 8px;
 }
 
-.m-modal-centent .modal-field label::after {
-  content: ' *';
+.m-modal-centent .modal-field label span {
   color: red;
 }
 

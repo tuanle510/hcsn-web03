@@ -7,7 +7,7 @@
       </div>
       <div class="m-modal-centent">
         <div class="modal-field">
-          <label for="input">Mã tài sản</label>
+          <label for="input">Mã tài sản <span>*</span></label>
           <input
             ref="firstInput"
             class="m-input"
@@ -17,7 +17,7 @@
           />
         </div>
         <div class="modal-field modal-field-long">
-          <label for="input">Tên tài sản</label>
+          <label for="input">Tên tài sản <span>*</span></label>
           <input
             v-model="product.name"
             class="m-input"
@@ -25,16 +25,16 @@
           />
         </div>
         <div class="modal-field">
-          <label for="input">Mã tài sản</label>
+          <label for="input">Mã bộ phận sử dụng <span>*</span></label>
           <MISACombobox
+            :inputValue="product.id"
             :hasIcon="false"
             title="Chọm mã bộ phận sử dụng"
           ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên bộ phận sử dụng</label>
-
-          <input class="m-input" />
+          <input class="m-input" disabled />
         </div>
         <div class="modal-field">
           <label for="input">Mã loại tài sản</label>
@@ -45,18 +45,18 @@
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên loại tài sản</label>
-          <input class="m-input" />
+          <input class="m-input" disabled />
         </div>
         <div class="modal-field">
           <label for="input">Số lượng</label>
           <input class="m-input" />
         </div>
         <div class="modal-field">
-          <label for="input">Nguyên giá</label>
+          <label for="input">Nguyên giá <span>*</span></label>
           <input class="m-input number-input" type="number" />
         </div>
         <div class="modal-field">
-          <label for="input">Số năm sử dụng</label>
+          <label for="input">Số năm sử dụng <span>*</span></label>
           <input class="m-input" />
         </div>
         <div class="modal-field">
@@ -64,20 +64,20 @@
           <input class="m-input" />
         </div>
         <div class="modal-field">
-          <label for="input">Giá trị hao mòm năm</label>
+          <label for="input">Giá trị hao mòm năm <span>*</span></label>
           <input class="m-input" />
         </div>
         <div class="modal-field">
           <label for="input">Năm theo dõi</label>
-          <input class="m-input" />
+          <input class="m-input number-input" disabled :value="newYear" />
         </div>
         <div class="modal-field">
-          <label for="input">Ngày mua</label>
-          <input class="m-input" />
+          <label for="input">Ngày mua <span>*</span></label>
+          <input type="date" class="m-input" />
         </div>
         <div class="modal-field">
-          <label for="input">Ngày bắt đầy sử dụng</label>
-          <input class="m-input" />
+          <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
+          <input type="date" class="m-input" />
         </div>
       </div>
       <div class="m-modal-footer">
@@ -91,8 +91,8 @@
 </template>
 <script>
 export default {
-  name: 'the-dialog',
-  props: ['isShow', 'productSelected'],
+  name: "the-dialog",
+  props: ["isShow", "productSelected"],
 
   watch: {
     /**
@@ -103,18 +103,6 @@ export default {
     productSelected: function (newValue) {
       this.product = newValue;
     },
-
-    /**
-     *  validate: kiểm tra khi có sự thay đổi mà người dùng ấn tắt => hiện cảnh báo
-     * CREATED BY: LTTUAN(19.04.2022)
-     */
-    // product: function (newValue, oldValue) {
-    //   if (oldValue != newValue) {
-    //     console.log("true");
-    //   }
-    //   console.log(newValue);
-    //   console.log(oldValue);
-    // },
   },
 
   methods: {
@@ -133,36 +121,7 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     btnCloseDialog() {
-      // Kiếm tra xem là thêm mới sản phẩm hay sửa sản phẩm
-      // nếu là sửa sản phẩm
-      if (this.$refs.firstInput.value !== '') {
-        this.checkForm(this.product.id);
-      }
-      // nếu là thêm mới sản phẩm
-      else {
-        this.checkForm('');
-        this.closeDialog();
-      }
-    },
-
-    /**
-     *kiểm tra có thay đổi trong form không
-     */
-    checkForm(inputValue) {
-      if (this.$refs.firstInput.value == inputValue) {
-        this.closeDialog();
-      }
-      // Nếu có thì hiện thông báo
-      else {
-        alert('bạn đa thay đổi form ');
-      }
-    },
-
-    /**
-     * Đóng dialog
-     */
-    closeDialog() {
-      this.$emit('closeDialog', false);
+      this.$emit("closeDialog", false);
       //xóa dữ liệu trong input khi đóng
       this.product = {};
     },
@@ -173,6 +132,7 @@ export default {
       isFormInputChange: false,
       product: {},
       productChanged: {},
+      newYear: new Date().getFullYear(),
     };
   },
 };

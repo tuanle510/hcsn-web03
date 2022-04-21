@@ -36,9 +36,6 @@
 <script>
 export default {
   name: 'the-combobox',
-  mounted() {
-    console.log(this.iconCheck);
-  },
 
   data() {
     return {
@@ -54,6 +51,7 @@ export default {
   methods: {
     /**
      * Chọn giá trị cho dropdown
+     * 
      */
     onClickDropDown(option) {
       this.optionSeleced = option;

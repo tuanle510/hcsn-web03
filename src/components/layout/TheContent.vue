@@ -2,9 +2,15 @@
   <div class="m-content">
     <div class="m-toolbar">
       <div class="m-toolbar-left">
-        <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
-        <MISACombobox hasIcon="true" title="Loại tài sản"></MISACombobox>
-        <MISACombobox hasIcon="true" title="Bộ phận sử dụng"></MISACombobox>
+        <div class="toolbar-field">
+          <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
+        </div>
+        <div class="toolbar-field">
+          <MISACombobox hasIcon="true" title="Loại tài sản"></MISACombobox>
+        </div>
+        <div class="toolbar-field">
+          <MISACombobox hasIcon="true" title="Bộ phận sử dụng"></MISACombobox>
+        </div>
       </div>
       <div class="m-toolbar-right">
         <MISAButton
@@ -97,43 +103,43 @@
               :key="product.id"
               :product="product"
             ></Row>
+            <tr class="m-paging">
+              <td colspan="6">
+                <div class="m-paging-left">
+                  <div class="m-total-number">
+                    Tổng số: <strong>200</strong> bản ghi
+                  </div>
+                  <div class="m-dropdown-paging">
+                    20
+                    <div class="down"></div>
+                  </div>
+                  <div class="m-paging-list">
+                    <button class="m-page-control">
+                      <div class="pre"></div>
+                    </button>
+                    <div class="m-paging-group">
+                      <button class="m-number m-number-selected">1</button>
+                      <button class="m-number">2</button>
+                      <div class="m-number-more">
+                        <div class="more"></div>
+                      </div>
+                      <button class="m-number">10</button>
+                    </div>
+                    <button class="m-page-control">
+                      <div class="next"></div>
+                    </button>
+                  </div>
+                </div>
+              </td>
+
+              <td class="text-align-right">13</td>
+              <td class="text-align-right">249.2284.000</td>
+              <td class="text-align-right">19.715.000</td>
+              <td class="text-align-right">229.2284.000</td>
+              <td></td>
+            </tr>
           </tbody>
         </table>
-      </div>
-
-      <div class="m-paging">
-        <div class="m-paging-left">
-          <div class="m-total-number">
-            Tổng số: <strong>200</strong> bản ghi
-          </div>
-          <div class="m-dropdown-paging-paging">
-            20
-            <div class="down"></div>
-          </div>
-          <div class="m-paging-list">
-            <button class="m-page-control">
-              <div class="pre"></div>
-            </button>
-            <div class="m-paging-group">
-              <button class="m-number m-number-selected">1</button>
-              <button class="m-number">2</button>
-              <div class="m-number-more">
-                <div class="more"></div>
-              </div>
-              <button class="m-number">10</button>
-            </div>
-            <button class="m-page-control">
-              <div class="next"></div>
-            </button>
-          </div>
-        </div>
-
-        <div class="m-paging-right">
-          <div class="text-align-right" style="width: 80px">13</div>
-          <div class="text-align-right" style="width: 130px">249.2284.000</div>
-          <div class="text-align-right" style="width: 130px">19.715.000</div>
-          <div class="text-align-right" style="width: 130px">229.2284.000</div>
-        </div>
       </div>
     </div>
 
@@ -146,10 +152,10 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
-import Row from '../base/table/MISARow.vue';
+import axios from "axios";
+import Row from "../base/table/MISARow.vue";
 export default {
-  name: 'the-content',
+  name: "the-content",
 
   components: {
     Row,
@@ -159,7 +165,7 @@ export default {
     // Lấy data
     var me = this;
     await axios
-      .get('https://62591883c5f02d964a4c41d3.mockapi.io/assets')
+      .get("https://62591883c5f02d964a4c41d3.mockapi.io/assets")
       .then(function (res) {
         me.productData = res.data;
       })
