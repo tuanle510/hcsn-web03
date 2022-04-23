@@ -5,16 +5,20 @@
     :class="{
       'm-checkbox-selected': isChecked,
     }"
-    @click="isChecked = !isChecked"
+    @click="this.isChecked = !this.isChecked"
   ></div>
 </template>
 <script>
 export default {
   name: "the-checkbox",
 
+  props: ["checked", "id"],
+
+  methods: {},
+
   data() {
     return {
-      isChecked: false,
+      isChecked: this.checked,
     };
   },
 };

@@ -3,7 +3,7 @@
     <td style="width: 50px; padding-left: 16px">
       <MISACheckbox v-on:dblclick.stop="this.$emit(dblclick)"></MISACheckbox>
     </td>
-    <td class="text-align-center">{{ count }}</td>
+    <td class="text-align-left">{{ count }}</td>
     <td class="text-align-left">{{ product.id }}</td>
     <td class="text-align-left">{{ product.name }}</td>
     <td class="text-align-left">{{ product.type }}</td>
@@ -13,7 +13,7 @@
     <td class="text-align-right">{{ product.accumulate }}</td>
     <td class="text-align-right">{{ product.priceExtra }}</td>
     <td style="width: 80px">
-      <div class="m-function-box" v-show="isFunShow">
+      <div class="m-function-box" style="display: none">
         <div class="icon-box" v-on:click="btnEditClick">
           <div class="table-icon edit"></div>
         </div>

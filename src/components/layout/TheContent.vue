@@ -35,7 +35,7 @@
               <th style="width: 50px; padding-left: 16px">
                 <MISACheckbox></MISACheckbox>
               </th>
-              <th class="text-align-center" style="max-width: 50px">STT</th>
+              <th class="text-align-left" style="max-width: 50px">STT</th>
               <th class="text-align-left" style="max-width: 80px">
                 Mã tài sản
               </th>
@@ -65,13 +65,47 @@
           </thead>
 
           <tbody>
-            <Row
-              @dblclick="onRowDblClick(product)"
+            <!-- <Row
               v-for="(product, index) in productData"
               :count="index + 1"
               :key="product.id"
               :product="product"
-            ></Row>
+            ></Row> -->
+            <tr
+              @dblclick="onRowDblClick(product)"
+              @click="clickOnRow(index)"
+              v-for="(product, index) in productData"
+              :count="index + 1"
+              :key="product.id"
+              class="m-tr"
+            >
+              <td style="width: 50px; padding-left: 16px">
+                <MISACheckbox
+                  :checked="isChecked"
+                  :id="index"
+                  v-on:dblclick.stop="this.$emit(dblclick)"
+                ></MISACheckbox>
+              </td>
+              <td class="text-align-left">{{ count }}</td>
+              <td class="text-align-left">{{ product.id }}</td>
+              <td class="text-align-left">{{ product.name }}</td>
+              <td class="text-align-left">{{ product.type }}</td>
+              <td class="text-align-left">{{ product.partsUse }}</td>
+              <td class="text-align-right">{{ product.quantity }}</td>
+              <td class="text-align-right">{{ product.price }}</td>
+              <td class="text-align-right">{{ product.accumulate }}</td>
+              <td class="text-align-right">{{ product.priceExtra }}</td>
+              <td style="width: 80px">
+                <div class="m-function-box" style="display: none">
+                  <div class="icon-box" v-on:click="btnEditClick">
+                    <div class="table-icon edit"></div>
+                  </div>
+                  <div class="icon-box" v-on:click="btnPriceClick">
+                    <div class="table-icon print"></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
           </tbody>
 
           <tfoot>
@@ -124,20 +158,16 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
-import Row from '../base/table/MISARow.vue';
+import axios from "axios";
+// import Row from "../base/table/MISARow.vue";
 export default {
-  name: 'the-content',
-
-  components: {
-    Row,
-  },
+  name: "the-content",
 
   async beforeMount() {
     // Lấy data
     var me = this;
     await axios
-      .get('https://62591883c5f02d964a4c41d3.mockapi.io/assets')
+      .get("https://62591883c5f02d964a4c41d3.mockapi.io/assets")
       .then(function (res) {
         me.productData = res.data;
       })
@@ -174,14 +204,16 @@ export default {
     /**
      * Hiển thị chức năng khi hover chuột vào dòng
      */
-    onMouseOver(event) {
-      console.log(event.target);
+    clickOnRow(index) {
+      this.productClicked = index;
     },
   },
 
   data() {
     return {
       count: 0,
+      isChecked: false,
+      productClicked: null,
       productSelected: {},
       isDialogShow: false,
       productData: {},

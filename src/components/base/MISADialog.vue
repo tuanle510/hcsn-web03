@@ -8,21 +8,16 @@
       <div class="m-modal-centent">
         <div class="modal-field">
           <label for="input">Mã tài sản <span>*</span></label>
-          <input
+          <MISAInput
             ref="firstInput"
-            class="m-input"
             type="text"
             placeholder="Nhập mã tài sản"
-            :value="product.id"
+            v-model="product.id"
           />
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên tài sản <span>*</span></label>
-          <input
-            v-model="product.name"
-            class="m-input"
-            placeholder="Nhập tên tài sản"
-          />
+          <MISAInput v-model="product.name" placeholder="Nhập tên tài sản" />
         </div>
         <div class="modal-field">
           <label for="input">Mã bộ phận sử dụng <span>*</span></label>
@@ -34,7 +29,7 @@
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên bộ phận sử dụng</label>
-          <input class="m-input" disabled />
+          <MISAInput disabled />
         </div>
         <div class="modal-field">
           <label for="input">Mã loại tài sản</label>
@@ -45,39 +40,39 @@
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên loại tài sản</label>
-          <input class="m-input" disabled />
+          <MISAInput disabled />
         </div>
         <div class="modal-field">
-          <label for="input">Số lượng</label>
-          <input class="m-input" />
+          <label for="input">Số lượng<span>*</span></label>
+          <MISAInput />
         </div>
         <div class="modal-field">
           <label for="input">Nguyên giá <span>*</span></label>
-          <input class="m-input number-input" type="number" value="0" />
+          <MISAInput class="m-input number-input" type="number" value="0" />
         </div>
         <div class="modal-field">
           <label for="input">Số năm sử dụng <span>*</span></label>
-          <input class="m-input number-input" />
+          <MISAInput class="m-input number-input" />
         </div>
         <div class="modal-field">
-          <label for="input">Tỉ lệ hao mòn(%)</label>
-          <input class="m-input" />
+          <label for="input">Tỉ lệ hao mòn(%)<span>*</span></label>
+          <MISAInput />
         </div>
         <div class="modal-field">
           <label for="input">Giá trị hao mòm năm <span>*</span></label>
-          <input class="m-input number-input" />
+          <MISAInput class="m-input number-input" />
         </div>
         <div class="modal-field">
           <label for="input">Năm theo dõi</label>
-          <input class="m-input number-input" disabled :value="newYear" />
+          <MISAInput class="m-input number-input" disabled :value="newYear" />
         </div>
         <div class="modal-field">
           <label for="input">Ngày mua <span>*</span></label>
-          <input type="date" placeholder="DD-MM-YYYY" class="m-input" />
+          <MISAInput type="date" placeholder="DD-MM-YYYY" />
         </div>
         <div class="modal-field">
           <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
-          <input type="date" placeholder="DD-MM-YYYY" class="m-input" />
+          <MISAInput type="date" placeholder="DD-MM-YYYY" />
         </div>
       </div>
       <div class="m-modal-footer">
@@ -91,8 +86,8 @@
 </template>
 <script>
 export default {
-  name: 'the-dialog',
-  props: ['isShow', 'productSelected'],
+  name: "the-dialog",
+  props: ["isShow", "productSelected"],
 
   watch: {
     /**
@@ -112,7 +107,7 @@ export default {
      */
     focusFirstInput() {
       this.$nextTick(() => {
-        this.$refs.firstInput.focus();
+        this.$refs.firstInput.setFocus();
       });
     },
 
@@ -121,7 +116,7 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     btnCloseDialog() {
-      this.$emit('closeDialog', false);
+      this.$emit("closeDialog", false);
       //xóa dữ liệu trong input khi đóng
       this.product = {};
     },
