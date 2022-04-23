@@ -72,7 +72,7 @@
 }
 
 .m-grip .m-table tfoot tr::after {
-  content: "";
+  content: '';
   position: absolute;
   height: 1px;
   background-color: rgba(175, 175, 175, 0.6);
@@ -149,18 +149,20 @@
 }
 
 ::-webkit-scrollbar {
-  width: 3px;
+  width: 2px;
   height: 0;
 }
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  border-radius: 1px;
+  background: #fff;
   margin-block: 38px 40px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #afafaf;
+  border-radius: 1px;
 }
 
 /* Handle on hover */
@@ -170,4 +172,8 @@
 
 .m-tr:hover .m-function-box {
   display: flex !important;
+}
+
+.m-tr-color {
+  background-color: red;
 }

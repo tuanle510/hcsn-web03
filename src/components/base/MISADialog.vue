@@ -5,31 +5,38 @@
       <div class="m-modal-close" @click="btnCloseDialog">
         <div class="close"></div>
       </div>
-      <div class="m-modal-centent">
+
+      <div action="" class="m-modal-centent">
         <div class="modal-field">
           <label for="input">Mã tài sản <span>*</span></label>
-          <MISAInput
+          <input
+            class="m-input"
             ref="firstInput"
             type="text"
+            maxlength="20"
             placeholder="Nhập mã tài sản"
-            v-model="product.id"
+            v-model="asset.code"
           />
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên tài sản <span>*</span></label>
-          <MISAInput v-model="product.name" placeholder="Nhập tên tài sản" />
+          <input
+            class="m-input"
+            placeholder="Nhập tên tài sản"
+            v-model="asset.name"
+          />
         </div>
         <div class="modal-field">
           <label for="input">Mã bộ phận sử dụng <span>*</span></label>
           <MISACombobox
-            :inputValue="product.id"
+            :inputValue="asset.id"
             :hasIcon="false"
             title="Chọm mã bộ phận sử dụng"
           ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên bộ phận sử dụng</label>
-          <MISAInput disabled />
+          <input class="m-input" disabled />
         </div>
         <div class="modal-field">
           <label for="input">Mã loại tài sản</label>
@@ -40,63 +47,69 @@
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên loại tài sản</label>
-          <MISAInput disabled />
+          <input class="m-input" disabled />
         </div>
         <div class="modal-field">
           <label for="input">Số lượng<span>*</span></label>
-          <MISAInput />
+          <input class="m-input" v-model="asset.quantity" />
         </div>
         <div class="modal-field">
           <label for="input">Nguyên giá <span>*</span></label>
-          <MISAInput class="m-input number-input" type="number" value="0" />
+          <input
+            class="m-input number-input"
+            type="number"
+            v-model="asset.price"
+          />
         </div>
         <div class="modal-field">
           <label for="input">Số năm sử dụng <span>*</span></label>
-          <MISAInput class="m-input number-input" />
+          <input class="m-input number-input" v-model="asset.year" />
         </div>
         <div class="modal-field">
           <label for="input">Tỉ lệ hao mòn(%)<span>*</span></label>
-          <MISAInput />
+          <input class="m-input" />
         </div>
         <div class="modal-field">
           <label for="input">Giá trị hao mòm năm <span>*</span></label>
-          <MISAInput class="m-input number-input" />
+          <input class="m-input number-input" />
         </div>
         <div class="modal-field">
           <label for="input">Năm theo dõi</label>
-          <MISAInput class="m-input number-input" disabled :value="newYear" />
+          <input class="m-input number-input" disabled :value="newYear" />
         </div>
         <div class="modal-field">
           <label for="input">Ngày mua <span>*</span></label>
-          <MISAInput type="date" placeholder="DD-MM-YYYY" />
+          <input class="m-input" type="date" placeholder="DD-MM-YYYY" />
         </div>
         <div class="modal-field">
           <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
-          <MISAInput type="date" placeholder="DD-MM-YYYY" />
+          <input class="m-input" type="date" placeholder="DD-MM-YYYY" />
         </div>
       </div>
+
       <div class="m-modal-footer">
         <MISAButton type="outline-button" @click="btnCloseDialog"
           >Hủy</MISAButton
         >
-        <MISAButton>Lưu</MISAButton>
+        <MISAButton @click="btnSaveOnClick">Lưu</MISAButton>
       </div>
     </div>
   </div>
 </template>
 <script>
+import axios from 'axios';
 export default {
-  name: "the-dialog",
-  props: ["isShow", "productSelected"],
+  name: 'the-dialog',
+  props: ['isShow', 'assetSelected'],
 
   watch: {
     /**
-     *Theo dõi sự thay đổi dữ liệu ở biến productSelected và
+     *Theo dõi sự thay đổi dữ liệu ở biến assetSelected và
      *Truyền dữ liệu vào dialog khi double Click
      *CREATED BY: LTTUAN(18.04.2022)
      */
-    productSelected: function (newValue) {
-      this.product = newValue;
+    assetSelected: function (newValue) {
+      this.asset = newValue;
     },
   },
 
@@ -107,7 +120,8 @@ export default {
      */
     focusFirstInput() {
       this.$nextTick(() => {
-        this.$refs.firstInput.setFocus();
+        // this.$refs.firstInput.setFocus();
+        this.$refs.firstInput.focus();
       });
     },
 
@@ -116,16 +130,31 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     btnCloseDialog() {
-      this.$emit("closeDialog", false);
+      this.$emit('closeDialog', false);
       //xóa dữ liệu trong input khi đóng
-      this.product = {};
+      this.asset = {};
+    },
+
+    btnSaveOnClick() {
+      axios
+        .post(
+          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
+          this.asset
+        )
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      this.asset = {};
     },
   },
 
   data() {
     return {
       isFormInputChange: false,
-      product: {},
+      asset: {},
       productChanged: {},
       newYear: new Date().getFullYear(),
     };

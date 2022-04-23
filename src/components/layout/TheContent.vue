@@ -21,19 +21,19 @@
         <div class="toolbar-btn icon-box">
           <div class="excel"></div>
         </div>
-        <div class="toolbar-btn icon-box">
+        <div class="toolbar-btn icon-box" @click="btnRemove">
           <div class="remove"></div>
         </div>
       </div>
     </div>
-
-    <div class="m-grip">
+    <p style="height: 100%" v-if="isLoading">Loading...</p>
+    <div v-else class="m-grip">
       <div class="m-table-container">
         <table class="m-table">
           <thead>
             <tr>
               <th style="width: 50px; padding-left: 16px">
-                <MISACheckbox></MISACheckbox>
+                <MISACheckbox @click="onClickAll"></MISACheckbox>
               </th>
               <th class="text-align-left" style="max-width: 50px">STT</th>
               <th class="text-align-left" style="max-width: 80px">
@@ -65,36 +65,30 @@
           </thead>
 
           <tbody>
-            <!-- <Row
-              v-for="(product, index) in productData"
-              :count="index + 1"
-              :key="product.id"
-              :product="product"
-            ></Row> -->
             <tr
               @dblclick="onRowDblClick(product)"
-              @click="clickOnRow(index)"
-              v-for="(product, index) in productData"
-              :count="index + 1"
-              :key="product.id"
+              @click="onRowClick(product)"
+              v-for="(product, index) in assetData"
+              :key="index"
               class="m-tr"
             >
               <td style="width: 50px; padding-left: 16px">
                 <MISACheckbox
-                  :checked="isChecked"
-                  :id="index"
+                  :checked="chekcedaAssetList.includes(product)"
                   v-on:dblclick.stop="this.$emit(dblclick)"
                 ></MISACheckbox>
               </td>
-              <td class="text-align-left">{{ count }}</td>
               <td class="text-align-left">{{ product.id }}</td>
+              <td class="text-align-left">{{ product.code }}</td>
               <td class="text-align-left">{{ product.name }}</td>
-              <td class="text-align-left">{{ product.type }}</td>
-              <td class="text-align-left">{{ product.partsUse }}</td>
+              <td class="text-align-left">{{ product.typeName }}</td>
+              <td class="text-align-left">{{ product.partUseName }}</td>
               <td class="text-align-right">{{ product.quantity }}</td>
               <td class="text-align-right">{{ product.price }}</td>
               <td class="text-align-right">{{ product.accumulate }}</td>
-              <td class="text-align-right">{{ product.priceExtra }}</td>
+              <td class="text-align-right">
+                {{ product.price - product.accumulate }}
+              </td>
               <td style="width: 80px">
                 <div class="m-function-box" style="display: none">
                   <div class="icon-box" v-on:click="btnEditClick">
@@ -152,28 +146,42 @@
     <MISADialog
       ref="dialog"
       v-show="isDialogShow"
-      :productSelected="productSelected"
+      :assetSelected="assetSelected"
       @closeDialog="btnDialog"
     ></MISADialog>
+
+    <MISAAlert
+      v-show="showAlert"
+      :alert="alertTitle"
+      :removeAsset="removeAsset"
+    >
+    </MISAAlert>
   </div>
 </template>
 <script>
-import axios from "axios";
-// import Row from "../base/table/MISARow.vue";
+import axios from 'axios';
 export default {
-  name: "the-content",
+  name: 'the-content',
 
   async beforeMount() {
+    this.isLoading = true;
     // Lấy data
     var me = this;
     await axios
-      .get("https://62591883c5f02d964a4c41d3.mockapi.io/assets")
+      .get('https://62616774327d3896e27b58d2.mockapi.io/api/asset')
       .then(function (res) {
-        me.productData = res.data;
+        me.assetData = res.data;
       })
       .catch(function (err) {
         console.log(err);
       });
+    this.isLoading = false;
+  },
+
+  provide() {
+    return {
+      removeAsset: this.removeAsset,
+    };
   },
 
   methods: {
@@ -191,32 +199,128 @@ export default {
     },
 
     /**
+     * Mô tả : Chọn tất cả sản phẩm
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 17:42 23/04/2022
+     */
+    onClickAll() {
+      //kiểm tra xem có tích hết chưa
+      // Nếu chưa chưa thì tích hết
+      if (this.chekcedaAssetList != this.assetData) {
+        this.chekcedaAssetList = [...this.assetData];
+      }
+      // nếu tích hết rồi thì click thứ 2 sẽ bỏ tích đi
+      else {
+        this.chekcedaAssetList = [];
+      }
+    },
+
+    /**
+     * Mô tả : Click nào dòng thì chọn dòng đấy
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1108
+     * Created date: 17:14 23/04/2022
+     */
+    onRowClick(product) {
+      // Kiểm tra xem đã tích sản phẩm trước đó chưa
+      if (this.chekcedaAssetList.includes(product)) {
+        console.log(product);
+        // Nếu tích r thì bỏ tích
+        // Lấy index của sản phẩm được chọn
+        const selecedIndex = this.chekcedaAssetList.findIndex(
+          (prd) => prd.id == product.id
+        );
+        // Xóa theo index splice(start, deleteCount)
+        this.chekcedaAssetList.splice(selecedIndex, 1);
+      } else {
+        // Nếu chưa thì add vào list
+        this.chekcedaAssetList.push(product);
+      }
+    },
+
+    /**
      * Gắn dữ liệu từ component Table vào để truyền vào Dialog khi doubleclick
      * CREATED BY: LTTUAN(18.04.2022)
      */
-    onRowDblClick(product) {
+    async onRowDblClick(product) {
+      //Lấy dữ liệu từ api theo id của sản phẩm
+      var me = this;
+      await axios
+        .get(
+          `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${product.id}`
+        )
+        .then(function (res) {
+          me.assetSelected = res.data;
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+
+      //Hiểm thị form
       this.btnDialog(true);
-      this.productSelected = product;
+
       //focus
       this.$refs.dialog.focusFirstInput();
     },
 
     /**
-     * Hiển thị chức năng khi hover chuột vào dòng
+     * Xóa dòng đã chọn
+     * CREATED BY: LTTUAN(23.04.2022)
      */
-    clickOnRow(index) {
-      this.productClicked = index;
+    btnRemove() {
+      if (this.chekcedaAssetList === null) {
+        alert('bạn chưa chọn sản phẩm để xóa');
+      } else {
+        let length = this.chekcedaAssetList.length;
+        // Hiển thị cảnh báo
+        this.showAlert = true;
+        if (length == 1) {
+          this.alertTitle = `Bạn có muốn xóa tài sản ${this.chekcedaAssetList[0].code} - ${this.chekcedaAssetList[0].name}?`;
+        } else if (length > 1) {
+          if (length < 10) {
+            length = `0${length}`;
+          }
+          this.alertTitle = `${length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách?`;
+        }
+      }
+    },
+
+    /**
+     * Mô tả : Xóa sản phẩm đã thêm vào danh sách lưu tạm
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 00:23 24/04/2022
+     */
+    removeAsset() {
+      // vòng lặp danh sách lưu tạm đã được chọn và xóa
+      for (let i = 0; i < this.chekcedaAssetList.length; i++) {
+        const prdIndex = this.assetData.findIndex(
+          (prd) => prd.id === this.chekcedaAssetList[i].id
+        );
+        // Xóa theo index splice(start, deleteCount)
+        this.assetData.splice(prdIndex, 1);
+      }
+
+      // xóa hết giá trị cho list tạm thời
+      this.chekcedaAssetList = [];
+      // tắt alert
+      this.showAlert = false;
     },
   },
 
   data() {
     return {
-      count: 0,
-      isChecked: false,
-      productClicked: null,
-      productSelected: {},
-      isDialogShow: false,
-      productData: {},
+      showAlert: false,
+      alertTitle: '',
+      isLoading: false,
+      assetSelected: null, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
+      chekcedaAssetList: [], // lưu tạm khi click
+      isDialogShow: false, //Hiển thị form hay không
+      assetData: [], //dữ liệu lấy về từ api
     };
   },
 };

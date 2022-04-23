@@ -10,15 +10,21 @@
 </template>
 <script>
 export default {
-  name: "the-checkbox",
+  name: 'the-checkbox',
 
-  props: ["checked", "id"],
+  props: ['checked', 'id'],
+
+  watch: {
+    checked: function (newValue) {
+      this.isChecked = newValue;
+    },
+  },
 
   methods: {},
 
   data() {
     return {
-      isChecked: this.checked,
+      isChecked: false,
     };
   },
 };

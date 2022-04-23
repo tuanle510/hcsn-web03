@@ -13,6 +13,12 @@
   height: 5px;
 }
 
+.alert {
+  background: url('/src/assets/icon/qlts-icon.png') no-repeat -416px -66px;
+  width: 24px;
+  height: 20px;
+}
+
 .up {
 }
 

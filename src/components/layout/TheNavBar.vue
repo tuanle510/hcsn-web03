@@ -11,11 +11,11 @@
         :key="index"
         @click="onClickNavBar(navbar)"
         class="navbar-item"
-        :class="{ 'navbar-selected': this.navBarSelced == navbar }"
+        :class="{ 'navbar-selected': this.navBarSeleced == navbar }"
       >
         <div class="navbar-logo">
           <div
-            v-if="this.navBarSelced == navbar"
+            v-if="this.navBarSeleced == navbar"
             :class="`${navbar.icon}-active`"
           ></div>
           <div v-else :class="navbar.icon"></div>
@@ -43,8 +43,8 @@ export default {
   name: 'the-navbar',
   props: ['navBarWidth'],
 
-  beforeMount(){
-    this.navBarSelced = this.navBarList[1]
+  beforeMount() {
+    this.navBarSeleced = this.navBarList[1];
   },
 
   methods: {
@@ -54,14 +54,14 @@ export default {
     },
 
     onClickNavBar(navbar) {
-      this.navBarSelced = navbar;
+      this.navBarSeleced = navbar;
     },
   },
   data() {
     return {
-      isNavbarSeleced: false, //chọn navbar
-      navBarSelced: {}, 
       isNavBarClose: false, //đóng mở navbar
+      navBarSeleced: {},
+      isNavbarSeleced: false, //chọn navbar
       navBarList: [
         {
           title: 'Tổng quan',
