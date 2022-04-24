@@ -19,6 +19,12 @@
   height: 20px;
 }
 
+.toast {
+  background: url('/src/assets/icon/qlts-icon.png') no-repeat -111px -594px;
+  width: 18px;
+  height: 20px;
+}
+
 .up {
 }
 

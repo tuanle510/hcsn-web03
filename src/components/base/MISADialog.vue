@@ -1,5 +1,5 @@
 <template>
-  <div class="m-dialog">
+  <div class="m-dialog" @keydown.esc="btnCloseDialog()">
     <div class="m-modal">
       <div class="m-nodal-title">Sửa tài sản</div>
       <div class="m-modal-close" @click="btnCloseDialog">
@@ -94,6 +94,8 @@
         <MISAButton @click="btnSaveOnClick">Lưu</MISAButton>
       </div>
     </div>
+
+    <MISAToast v-if="isToastShow" title="Lưu dữ liệu thành công"></MISAToast>
   </div>
 </template>
 <script>
@@ -135,8 +137,8 @@ export default {
       this.asset = {};
     },
 
-    btnSaveOnClick() {
-      axios
+    async createNewAsset() {
+      await axios
         .post(
           'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
           this.asset
@@ -147,15 +149,20 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+
+    btnSaveOnClick() {
+      console.log('click');
+      this.createNewAsset();
+      //set lại giá trị trong dialog về trống
       this.asset = {};
     },
   },
 
   data() {
     return {
-      isFormInputChange: false,
+      isToastShow: false,
       asset: {},
-      productChanged: {},
       newYear: new Date().getFullYear(),
     };
   },

@@ -11,6 +11,7 @@
 @import url(./base/dialog.css);
 @import url(./base/search.css);
 @import url(./base/table.css);
+@import url(./base/toast.css);
 
 * {
   padding: 0;

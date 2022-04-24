@@ -1,0 +1,25 @@
+.m-toast {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  background-color: #fff;
+  height: 50px;
+  width: 300px;
+  border-radius: 3px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 16%);
+  display: flex;
+  z-index: 999;
+}
+
+.m-toast .toast-icon {
+  display: flex;
+  height: 50xp;
+  width: 50px;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-title {
+  display: flex;
+  align-items: center;
+}

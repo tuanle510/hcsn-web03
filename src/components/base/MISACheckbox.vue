@@ -12,15 +12,13 @@
 export default {
   name: 'the-checkbox',
 
-  props: ['checked', 'id'],
+  props: ['checked'],
 
   watch: {
     checked: function (newValue) {
       this.isChecked = newValue;
     },
   },
-
-  methods: {},
 
   data() {
     return {

@@ -33,7 +33,7 @@
           <thead>
             <tr>
               <th style="width: 50px; padding-left: 16px">
-                <MISACheckbox @click="onClickAll"></MISACheckbox>
+                <MISACheckbox @click="onCheckedAll"></MISACheckbox>
               </th>
               <th class="text-align-left" style="max-width: 50px">STT</th>
               <th class="text-align-left" style="max-width: 80px">
@@ -151,11 +151,12 @@
     ></MISADialog>
 
     <MISAAlert
-      v-show="showAlert"
+      v-show="isAlertShow"
       :alert="alertTitle"
       :removeAsset="removeAsset"
     >
     </MISAAlert>
+    <MISAToast v-if="isToastShow" title="Xóa dữ liệu thành công"> </MISAToast>
   </div>
 </template>
 <script>
@@ -163,6 +164,13 @@ import axios from 'axios';
 export default {
   name: 'the-content',
 
+  /**
+   * Mô tả : lấy data từ api
+   * @param
+   * @return
+   * Created by: Lê Thiện Tuấn - MF1118
+   * Created date: 15/04/2022
+   */
   async beforeMount() {
     this.isLoading = true;
     // Lấy data
@@ -178,6 +186,13 @@ export default {
     this.isLoading = false;
   },
 
+  /**
+   * Mô tả : cung cấp method cho component con thực hiện
+   * @param
+   * @return
+   * Created by: Lê Thiện Tuấn - MF1118
+   * Created date: 21:55 24/04/2022
+   */
   provide() {
     return {
       removeAsset: this.removeAsset,
@@ -205,10 +220,10 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 17:42 23/04/2022
      */
-    onClickAll() {
+    onCheckedAll() {
       //kiểm tra xem có tích hết chưa
       // Nếu chưa chưa thì tích hết
-      if (this.chekcedaAssetList != this.assetData) {
+      if (this.chekcedaAssetList.length != this.assetData.length) {
         this.chekcedaAssetList = [...this.assetData];
       }
       // nếu tích hết rồi thì click thứ 2 sẽ bỏ tích đi
@@ -225,9 +240,9 @@ export default {
      * Created date: 17:14 23/04/2022
      */
     onRowClick(product) {
+      console.log(this.chekcedaAssetList);
       // Kiểm tra xem đã tích sản phẩm trước đó chưa
       if (this.chekcedaAssetList.includes(product)) {
-        console.log(product);
         // Nếu tích r thì bỏ tích
         // Lấy index của sản phẩm được chọn
         const selecedIndex = this.chekcedaAssetList.findIndex(
@@ -271,12 +286,13 @@ export default {
      * CREATED BY: LTTUAN(23.04.2022)
      */
     btnRemove() {
-      if (this.chekcedaAssetList === null) {
+      console.log(this.chekcedaAssetList);
+      if (this.chekcedaAssetList.length == 0) {
         alert('bạn chưa chọn sản phẩm để xóa');
       } else {
         let length = this.chekcedaAssetList.length;
         // Hiển thị cảnh báo
-        this.showAlert = true;
+        this.isAlertShow = true;
         if (length == 1) {
           this.alertTitle = `Bạn có muốn xóa tài sản ${this.chekcedaAssetList[0].code} - ${this.chekcedaAssetList[0].name}?`;
         } else if (length > 1) {
@@ -295,9 +311,29 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 00:23 24/04/2022
      */
-    removeAsset() {
+    async removeAsset() {
+      var me = this;
       // vòng lặp danh sách lưu tạm đã được chọn và xóa
       for (let i = 0; i < this.chekcedaAssetList.length; i++) {
+        // Xóa trên api
+        await axios
+          .delete(
+            `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.chekcedaAssetList[i].id}`
+          )
+          .then(function (res) {
+            if (res.statusText == 'OK') {
+              //  Hiển thị toast xóa thành công
+              me.isToastShow = true;
+              setTimeout(() => {
+                me.isToastShow = false;
+              }, 3000);
+            }
+          })
+          .catch(function (err) {
+            console.log(err);
+          });
+
+        // xóa trên giao diện
         const prdIndex = this.assetData.findIndex(
           (prd) => prd.id === this.chekcedaAssetList[i].id
         );
@@ -308,13 +344,14 @@ export default {
       // xóa hết giá trị cho list tạm thời
       this.chekcedaAssetList = [];
       // tắt alert
-      this.showAlert = false;
+      this.isAlertShow = false;
     },
   },
 
   data() {
     return {
-      showAlert: false,
+      isAlertShow: false,
+      isToastShow: false,
       alertTitle: '',
       isLoading: false,
       assetSelected: null, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
