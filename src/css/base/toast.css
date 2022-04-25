@@ -9,6 +9,7 @@
   box-shadow: 0 3px 10px rgb(0 0 0 / 16%);
   display: flex;
   z-index: 999;
+  animation: slideInLeft ease 0.3s, fadeOut linear 1s 1.5s forwards;
 }
 
 .m-toast .toast-icon {
@@ -22,4 +23,21 @@
 .toast-title {
   display: flex;
   align-items: center;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(calc(100% + 32px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
 }

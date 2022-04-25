@@ -13,8 +13,8 @@
   position: relative;
 }
 
-.m-combobox-focus {
-  border: 1px solid #22a7ca !important;
+.m-combobox .combobox-contaner:focus-within {
+  border: 1px solid #22a7ca;
 }
 
 .m-combobox .combobox-icon {

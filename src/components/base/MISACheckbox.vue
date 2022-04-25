@@ -28,5 +28,4 @@ export default {
 };
 </script>
 <style>
-@import url(/src/css/base/checkbox.css);
 </style>

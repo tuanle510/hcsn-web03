@@ -1,12 +1,12 @@
 <template>
   <div class="m-dialog" @keydown.esc="btnCloseDialog()">
     <div class="m-modal">
-      <div class="m-nodal-title">Sửa tài sản</div>
+      <div class="m-nodal-title">{{ dialogTitle }}</div>
       <div class="m-modal-close" @click="btnCloseDialog">
         <div class="close"></div>
       </div>
 
-      <div action="" class="m-modal-centent">
+      <div class="m-modal-centent">
         <div class="modal-field">
           <label for="input">Mã tài sản <span>*</span></label>
           <input
@@ -31,7 +31,7 @@
           <MISACombobox
             :inputValue="asset.id"
             :hasIcon="false"
-            title="Chọm mã bộ phận sử dụng"
+            placeholder="Chọm mã bộ phận sử dụng"
           ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">
@@ -42,7 +42,7 @@
           <label for="input">Mã loại tài sản</label>
           <MISACombobox
             :hasIcon="false"
-            title="Chọm mã loại tài sản"
+            placeholder="Chọm mã loại tài sản"
           ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">
@@ -85,6 +85,10 @@
           <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
           <input class="m-input" type="date" placeholder="DD-MM-YYYY" />
         </div>
+        <div class="modal-field">
+          <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
+          <Datepicker v-model="date"></Datepicker>
+        </div>
       </div>
 
       <div class="m-modal-footer">
@@ -94,15 +98,13 @@
         <MISAButton @click="btnSaveOnClick">Lưu</MISAButton>
       </div>
     </div>
-
-    <MISAToast v-if="isToastShow" title="Lưu dữ liệu thành công"></MISAToast>
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'the-dialog',
-  props: ['isShow', 'assetSelected'],
+  name: "the-dialog",
+  props: ["isShow", "assetSelected", "dialogTitle"],
 
   watch: {
     /**
@@ -132,19 +134,22 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     btnCloseDialog() {
-      this.$emit('closeDialog', false);
+      
+      this.$emit("closeDialog", false);
       //xóa dữ liệu trong input khi đóng
       this.asset = {};
     },
 
+    //Thêm asset mới
     async createNewAsset() {
+      var me = this;
       await axios
         .post(
-          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
+          "https://62616774327d3896e27b58d2.mockapi.io/api/asset",
           this.asset
         )
-        .then((res) => {
-          console.log(res.data);
+        .then(() => {
+          me.$emit("showSaveToast", true);
         })
         .catch((error) => {
           console.log(error);
@@ -152,8 +157,11 @@ export default {
     },
 
     btnSaveOnClick() {
-      console.log('click');
+      console.log("click");
       this.createNewAsset();
+
+      // set Toast tắt đi
+      this.$emit("showSaveToast", false);
       //set lại giá trị trong dialog về trống
       this.asset = {};
     },
@@ -161,9 +169,9 @@ export default {
 
   data() {
     return {
-      isToastShow: false,
       asset: {},
       newYear: new Date().getFullYear(),
+      date: null,
     };
   },
 };

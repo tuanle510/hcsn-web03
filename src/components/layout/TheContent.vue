@@ -6,15 +6,21 @@
           <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
         </div>
         <div class="toolbar-field">
-          <MISACombobox hasIcon="true" title="Loại tài sản"></MISACombobox>
+          <MISACombobox
+            hasIcon="true"
+            placeholder="Loại tài sản"
+          ></MISACombobox>
         </div>
         <div class="toolbar-field">
-          <MISACombobox hasIcon="true" title="Bộ phận sử dụng"></MISACombobox>
+          <MISACombobox
+            hasIcon="true"
+            placeholder="Bộ phận sử dụng"
+          ></MISACombobox>
         </div>
       </div>
       <div class="m-toolbar-right">
         <MISAButton
-          @click="showDialog"
+          @click="showAddDialog"
           style="box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16)"
           >+Thêm tài sản</MISAButton
         >
@@ -145,24 +151,31 @@
 
     <MISADialog
       ref="dialog"
+      :dialogTitle="isEditing ? 'Sửa tài sản' : 'Thêm tài sản '"
       v-show="isDialogShow"
       :assetSelected="assetSelected"
-      @closeDialog="btnDialog"
+      @closeDialog="closeDialog"
+      @showSaveToast="showSaveToast"
     ></MISADialog>
 
     <MISAAlert
-      v-show="isAlertShow"
+      v-if="isDeleteAlertShow"
       :alert="alertTitle"
       :removeAsset="removeAsset"
     >
     </MISAAlert>
-    <MISAToast v-if="isToastShow" title="Xóa dữ liệu thành công"> </MISAToast>
+    <MISAToast v-show="isDeleteToastShow" title="Xóa dữ liệu thành công">
+    </MISAToast>
+    <MISAToast
+      v-if="isSaveToastShow"
+      title="Lưu dữ liệu thành công"
+    ></MISAToast>
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'the-content',
+  name: "the-content",
 
   /**
    * Mô tả : lấy data từ api
@@ -176,7 +189,7 @@ export default {
     // Lấy data
     var me = this;
     await axios
-      .get('https://62616774327d3896e27b58d2.mockapi.io/api/asset')
+      .get("https://62616774327d3896e27b58d2.mockapi.io/api/asset")
       .then(function (res) {
         me.assetData = res.data;
       })
@@ -204,13 +217,27 @@ export default {
      * Bật dialog thêm sản phẩm mới
      * CREATED BY: LTTUAN(19.04.2022)
      */
-    showDialog() {
+    showAddDialog() {
+      this.isEditing = false;
       this.btnDialog(true);
       //Focus vào input đầu tiên thông qua ref
       this.$refs.dialog.focusFirstInput();
     },
     btnDialog(isShow) {
       this.isDialogShow = isShow;
+    },
+
+    /**
+     * Đóng dialog và hiển thị cảnh báo
+     * 5.15
+     */
+    closeDialog() {
+      // validate: Kiểm tra xem có sự thay đổi không
+
+      // hiển thị cảnh báo có muốn đóng form
+
+      // Đóng form
+      this.btnDialog(false);
     },
 
     /**
@@ -276,6 +303,7 @@ export default {
 
       //Hiểm thị form
       this.btnDialog(true);
+      this.isEditing = true;
 
       //focus
       this.$refs.dialog.focusFirstInput();
@@ -286,13 +314,12 @@ export default {
      * CREATED BY: LTTUAN(23.04.2022)
      */
     btnRemove() {
-      console.log(this.chekcedaAssetList);
       if (this.chekcedaAssetList.length == 0) {
-        alert('bạn chưa chọn sản phẩm để xóa');
+        alert("bạn chưa chọn sản phẩm để xóa");
       } else {
         let length = this.chekcedaAssetList.length;
         // Hiển thị cảnh báo
-        this.isAlertShow = true;
+        this.isDeleteAlertShow = true;
         if (length == 1) {
           this.alertTitle = `Bạn có muốn xóa tài sản ${this.chekcedaAssetList[0].code} - ${this.chekcedaAssetList[0].name}?`;
         } else if (length > 1) {
@@ -321,12 +348,9 @@ export default {
             `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.chekcedaAssetList[i].id}`
           )
           .then(function (res) {
-            if (res.statusText == 'OK') {
+            if (res.statusText == "OK") {
               //  Hiển thị toast xóa thành công
-              me.isToastShow = true;
-              setTimeout(() => {
-                me.isToastShow = false;
-              }, 3000);
+              me.isDeleteToastShow = true;
             }
           })
           .catch(function (err) {
@@ -344,15 +368,25 @@ export default {
       // xóa hết giá trị cho list tạm thời
       this.chekcedaAssetList = [];
       // tắt alert
-      this.isAlertShow = false;
+      this.isDeleteAlertShow = false;
+    },
+
+    /**
+     *Hiển thị toast messege khi lưu thành công
+     4.48
+     */
+    showSaveToast(isShow) {
+      this.isSaveToastShow = isShow;
     },
   },
 
   data() {
     return {
-      isAlertShow: false,
-      isToastShow: false,
-      alertTitle: '',
+      isEditing: true,
+      isDeleteAlertShow: false,
+      isDeleteToastShow: false,
+      isSaveToastShow: false,
+      alertTitle: "",
       isLoading: false,
       assetSelected: null, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       chekcedaAssetList: [], // lưu tạm khi click

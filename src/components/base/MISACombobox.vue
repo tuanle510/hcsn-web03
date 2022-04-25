@@ -1,15 +1,16 @@
 <template>
   <div class="m-combobox">
-    <div class="combobox-contaner" :class="{ 'm-combobox-focus ': isFocus }">
-      <div v-show="this.iconCheck" class="combobox-icon">
+    <label for="">{{ optionSeleced }}</label>
+    <div class="combobox-contaner">
+      <div v-show="this.hasIcon" class="combobox-icon">
         <div class="filter"></div>
       </div>
       <input
-        @focus="this.isFocus = true"
-        @blur="this.isFocus = false"
+        @focus="this.isOptionShow = true"
+        @blur="this.isOptionShow = false"
         class="combobox-text"
-        :class="{ 'input-no-icon': !this.iconCheck }"
-        :placeholder="title"
+        :class="{ 'input-no-icon': !this.hasIcon }"
+        :placeholder="placeholder"
         :value="optionSeleced"
       />
       <div @click="this.isOptionShow = !this.isOptionShow" class="icon-box">
@@ -21,7 +22,7 @@
         v-for="(option, index) in optionList"
         :key="index"
         class="m-option-item"
-        @click="onClickComboBox(option)"
+        @click="onChoseOpton(option)"
         :class="{ 'm-item-selected': optionSeleced == option }"
       >
         <div
@@ -36,17 +37,23 @@
   </div>
 </template>
 <script>
-export default {
-  name: 'the-combobox',
+// $(".input").autocomplete(
+//   {
+//     source: this.optionList,
+//   },
+//   {}
+// );
 
-  props: ['title', 'hasIcon'],
+export default {
+  name: "the-combobox",
+
+  props: ["placeholder", "hasIcon"],
 
   methods: {
     /**
      * Chọn giá trị cho dropdown
-     *
      */
-    onClickComboBox(option) {
+    onChoseOpton(option) {
       this.optionSeleced = option;
       this.isOptionChecked = !this.isOptionChecked;
       this.isOptionShow = false;
@@ -55,15 +62,11 @@ export default {
 
   data() {
     return {
-      isFocus: false,
-      iconCheck: this.hasIcon,
       isOptionShow: false,
-      optionSeleced: '',
-      optionList: ['Saab', 'Volvo', 'BMW'],
+      optionSeleced: "",
+      optionList: ["Saab", "Volvo", "BMW"],
     };
   },
 };
 </script>
-<style>
-@import url(/src/css/base/combobox.css);
-</style>
+<style></style>
