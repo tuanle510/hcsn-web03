@@ -1,8 +1,8 @@
 <template>
-  <div class="m-dialog" @keydown.esc="btnCloseDialog()">
+  <div class="m-dialog" @keydown.esc="btnCancel()">
     <div class="m-modal">
       <div class="m-nodal-title">{{ dialogTitle }}</div>
-      <div class="m-modal-close" @click="btnCloseDialog">
+      <div class="m-modal-close" @click="btnCancel">
         <div class="close"></div>
       </div>
 
@@ -92,19 +92,21 @@
       </div>
 
       <div class="m-modal-footer">
-        <MISAButton type="outline-button" @click="btnCloseDialog"
-          >Hủy</MISAButton
-        >
-        <MISAButton @click="btnSaveOnClick">Lưu</MISAButton>
+        <MISAButton
+          type="outline-button"
+          @click="btnCancel"
+          buttonTitle="Hủy"
+        ></MISAButton>
+        <MISAButton @click="onAddAsset" buttonTitle="Lưu">Lưu</MISAButton>
       </div>
     </div>
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
-  name: "the-dialog",
-  props: ["isShow", "assetSelected", "dialogTitle"],
+  name: 'the-dialog',
+  props: ['isShow', 'assetSelected', 'dialogTitle'],
 
   watch: {
     /**
@@ -133,9 +135,11 @@ export default {
      * Đóng dialog
      * CREATED BY: LTTUAN(18.04.2022)
      */
-    btnCloseDialog() {
+    btnCancel() {
+      // Hiện cảnh báo
       
-      this.$emit("closeDialog", false);
+
+      this.$emit('closeDialog', false);
       //xóa dữ liệu trong input khi đóng
       this.asset = {};
     },
@@ -144,24 +148,25 @@ export default {
     async createNewAsset() {
       var me = this;
       await axios
-        .post(
-          "https://62616774327d3896e27b58d2.mockapi.io/api/asset",
-          this.asset
-        )
+        .post('https://62616774327d3896e27b58d2.mockapi.io/api/asset', me.asset)
         .then(() => {
-          me.$emit("showSaveToast", true);
+          me.$emit('showSaveToast', true);
         })
         .catch((error) => {
           console.log(error);
         });
     },
 
-    btnSaveOnClick() {
-      console.log("click");
+    /**
+     * Mô tả :Ấn Nút thêm mới sản phẩm
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:03 25/04/2022
+     */
+    onAddAsset() {
+      // thêm mới asset
       this.createNewAsset();
-
-      // set Toast tắt đi
-      this.$emit("showSaveToast", false);
       //set lại giá trị trong dialog về trống
       this.asset = {};
     },

@@ -11,6 +11,8 @@ import Toast from './components/base/MISAToast.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
+import SimpleTypeahead from 'vue3-simple-typeahead';
+import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css';
 
 const app = createApp(App);
 /* eslint-disable */
@@ -23,4 +25,5 @@ app.component('MISAAlert', Alert);
 app.component('MISAInput', Input);
 app.component('MISAToast', Toast);
 app.component('Datepicker', Datepicker);
+app.use(SimpleTypeahead);
 app.mount('#app');

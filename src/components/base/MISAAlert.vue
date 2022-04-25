@@ -6,13 +6,13 @@
           <div class="alert"></div>
         </div>
         <div class="content-right">
-          {{ alert }}
+          {{ alertTitle }}
         </div>
       </div>
       <div class="alert-button">
-        <MISAButton type="outline-button">Hủy bỏ</MISAButton>
-        <MISAButton type="sub-button">Không lưu</MISAButton>
-        <MISAButton @click="removeAsset">Xóa</MISAButton>
+        <MISAButton type="outline-button" buttonTitle="Hủy bỏ"></MISAButton>
+        <MISAButton type="sub-button" buttonTitle="Không"></MISAButton>
+        <MISAButton @click="removeAsset" buttonTitle="Xóa"></MISAButton>
       </div>
     </div>
   </div>
@@ -20,7 +20,7 @@
 <script>
 export default {
   name: 'the-alert',
-  props: ['alert', 'type'],
+  props: ['alertTitle'],
   inject: ['removeAsset'],
 };
 </script>

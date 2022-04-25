@@ -6,10 +6,17 @@
           <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
         </div>
         <div class="toolbar-field">
-          <MISACombobox
+          <!-- <MISACombobox
             hasIcon="true"
             placeholder="Loại tài sản"
-          ></MISACombobox>
+          ></MISACombobox> -->
+          <vue3-simple-typeahead
+            id="typeahead_id"
+            placeholder="Loại tài sản"
+            :items="['One', 'Two', 'Three']"
+            :minInputLength="1"
+          >
+          </vue3-simple-typeahead>
         </div>
         <div class="toolbar-field">
           <MISACombobox
@@ -22,8 +29,8 @@
         <MISAButton
           @click="showAddDialog"
           style="box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16)"
-          >+Thêm tài sản</MISAButton
-        >
+          buttonTitle="+Thêm tài sản"
+        ></MISAButton>
         <div class="toolbar-btn icon-box">
           <div class="excel"></div>
         </div>
@@ -158,12 +165,7 @@
       @showSaveToast="showSaveToast"
     ></MISADialog>
 
-    <MISAAlert
-      v-if="isDeleteAlertShow"
-      :alert="alertTitle"
-      :removeAsset="removeAsset"
-    >
-    </MISAAlert>
+    <MISAAlert v-if="isAlertShow" :alertTitle="alertTitle"> </MISAAlert>
     <MISAToast v-show="isDeleteToastShow" title="Xóa dữ liệu thành công">
     </MISAToast>
     <MISAToast
@@ -173,9 +175,9 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
-  name: "the-content",
+  name: 'the-content',
 
   /**
    * Mô tả : lấy data từ api
@@ -189,7 +191,7 @@ export default {
     // Lấy data
     var me = this;
     await axios
-      .get("https://62616774327d3896e27b58d2.mockapi.io/api/asset")
+      .get('https://62616774327d3896e27b58d2.mockapi.io/api/asset')
       .then(function (res) {
         me.assetData = res.data;
       })
@@ -310,16 +312,29 @@ export default {
     },
 
     /**
+     * Mô tả : Tạo ra alert
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:15 25/04/2022
+     */
+    setAlert(title, type) {
+      this.isAlertShow = true;
+      this.alertTitle = title;
+      this.buttonNumber = type;
+    },
+
+    /**
      * Xóa dòng đã chọn
      * CREATED BY: LTTUAN(23.04.2022)
      */
     btnRemove() {
       if (this.chekcedaAssetList.length == 0) {
-        alert("bạn chưa chọn sản phẩm để xóa");
+        alert('bạn chưa chọn sản phẩm để xóa');
       } else {
         let length = this.chekcedaAssetList.length;
+        this.isAlertShow = true;
         // Hiển thị cảnh báo
-        this.isDeleteAlertShow = true;
         if (length == 1) {
           this.alertTitle = `Bạn có muốn xóa tài sản ${this.chekcedaAssetList[0].code} - ${this.chekcedaAssetList[0].name}?`;
         } else if (length > 1) {
@@ -348,7 +363,7 @@ export default {
             `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.chekcedaAssetList[i].id}`
           )
           .then(function (res) {
-            if (res.statusText == "OK") {
+            if (res.statusText == 'OK') {
               //  Hiển thị toast xóa thành công
               me.isDeleteToastShow = true;
             }
@@ -368,7 +383,7 @@ export default {
       // xóa hết giá trị cho list tạm thời
       this.chekcedaAssetList = [];
       // tắt alert
-      this.isDeleteAlertShow = false;
+      this.isAlertShow = false;
     },
 
     /**
@@ -383,10 +398,10 @@ export default {
   data() {
     return {
       isEditing: true,
-      isDeleteAlertShow: false,
       isDeleteToastShow: false,
       isSaveToastShow: false,
-      alertTitle: "",
+      isAlertShow: false,
+      alertTitle: '',
       isLoading: false,
       assetSelected: null, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       chekcedaAssetList: [], // lưu tạm khi click

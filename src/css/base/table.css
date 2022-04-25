@@ -148,25 +148,25 @@
   height: 13px;
 }
 
-::-webkit-scrollbar {
+.m-table-container::-webkit-scrollbar {
   width: 2px;
   height: 0;
 }
 /* Track */
-::-webkit-scrollbar-track {
+.m-table-container::-webkit-scrollbar-track {
   border-radius: 1px;
   background: #fff;
   margin-block: 38px 40px;
 }
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+.m-table-container::-webkit-scrollbar-thumb {
   background: #afafaf;
   border-radius: 1px;
 }
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+.m-table-container::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 

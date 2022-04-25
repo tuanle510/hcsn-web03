@@ -1,6 +1,5 @@
 <template>
   <div class="m-combobox">
-    <label for="">{{ optionSeleced }}</label>
     <div class="combobox-contaner">
       <div v-show="this.hasIcon" class="combobox-icon">
         <div class="filter"></div>
@@ -45,9 +44,9 @@
 // );
 
 export default {
-  name: "the-combobox",
+  name: 'the-combobox',
 
-  props: ["placeholder", "hasIcon"],
+  props: ['placeholder', 'hasIcon'],
 
   methods: {
     /**
@@ -63,8 +62,8 @@ export default {
   data() {
     return {
       isOptionShow: false,
-      optionSeleced: "",
-      optionList: ["Saab", "Volvo", "BMW"],
+      optionSeleced: '',
+      optionList: ['Saab', 'Volvo', 'BMW'],
     };
   },
 };

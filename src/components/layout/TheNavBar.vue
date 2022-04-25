@@ -61,7 +61,6 @@ export default {
     return {
       isNavBarClose: false, //đóng mở navbar
       navBarSeleced: {},
-      isNavbarSeleced: false, //chọn navbar
       navBarList: [
         {
           title: 'Tổng quan',
