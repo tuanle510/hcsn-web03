@@ -48,9 +48,7 @@
               <th style="width: 50px; padding-left: 16px">
                 <MISACheckbox
                   @click="onCheckedAll"
-                  :checked="
-                    this.checkedaAssetList.length == this.assetData.length
-                  "
+                  :checked="this.checkedaAssetList == this.assetData"
                 ></MISACheckbox>
               </th>
               <th class="text-align-left" style="max-width: 50px">STT</th>
@@ -162,33 +160,43 @@
 
     <MISADialog
       ref="dialog"
-      :dialogTitle="dialogTitle"
+      :dialogTitle="isEditing ? 'Sửa sản phẩm' : 'Thêm sản phẩm'"
       :isEditing="isEditing"
       v-if="isDialogShow"
       :assetSelected="assetSelected"
       @toastShow="toastShow"
-      @btnDialog="btnDialog"
-      @btnAlert="btnAlert"
+      @dialogShow="dialogShow"
+      @alertShow="alertShow"
     ></MISADialog>
 
     <MISAAlert
-      :isDelete="isDelete"
       v-if="isAlertShow"
+      :isEditing="isEditing"
       :alertTitle="alertTitle"
+      :alertType="alertType"
+      @createNewAsset="createNewAsset"
+      @updateAsset="updateAsset"
       @removeAsset="removeAsset"
-      @btnDialog="btnDialog"
-      @btnAlert="btnAlert"
+      @dialogShow="dialogShow"
+      @alertShow="alertShow"
     >
     </MISAAlert>
     <MISAToast v-if="isToastShow" :title="toastTitle"> </MISAToast>
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
-  name: "the-content",
+  name: 'the-content',
 
   computed: {
+    /**
+     * Mô tả : Tính tổng số lượng
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:12 26/04/2022
+     */
     quantityTotal: function () {
       const quantityTotal = this.assetData.reduce((currentValue, item) => {
         return currentValue + item.quantity;
@@ -198,13 +206,6 @@ export default {
     },
   },
 
-  watch: {
-    isDialogShow: function (newValue) {
-      if (newValue == false) {
-        this.assetSelected = {};
-      }
-    },
-  },
   /**
    * Mô tả : lấy data từ api
    * @param
@@ -217,7 +218,7 @@ export default {
     // Lấy data
     var me = this;
     await axios
-      .get("https://62616774327d3896e27b58d2.mockapi.io/api/asset")
+      .get('https://62616774327d3896e27b58d2.mockapi.io/api/asset')
       .then(function (res) {
         me.assetData = res.data;
       })
@@ -234,13 +235,31 @@ export default {
      */
     showAddDialog() {
       this.isEditing = false;
-      this.btnDialog(true);
-      this.dialogTitle = "Thêm sản phẩm";
+      this.dialogShow(true);
     },
 
-    // function đóng mở dialog
-    btnDialog(isShow) {
-      this.isDialogShow = isShow;
+    /**
+     * Mô tả : Xóa asset, lấy func từ dialog truyền vào alert
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 20:59 26/04/2022
+     */
+    updateAsset() {
+      this.isEditing = true;
+      this.$refs.dialog.onUpdateAsset();
+    },
+
+    /**
+     * Mô tả : Thêm asset, lấy fuction từ dialog truyền vào alert
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 21:06 26/04/2022
+     */
+    createNewAsset() {
+      this.isEditing = false;
+      this.$refs.dialog.onCreateAsset();
     },
 
     /**
@@ -292,53 +311,42 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     async onRowDblClick(product) {
-      //Lấy dữ liệu từ api theo id của sản phẩm
-      // var me = this;
-      // await axios
-      //   .get(
-      //     `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${product.id}`
-      //   )
-      //   .then(function (res) {
-      //     me.assetSelected = res.data;
-      //   })
-      //   .catch(function (err) {
-      //     console.log(err);
-      //   });
-
-      try {
-        const res = await axios.get(
-          `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${product.id}`
-        );
-        this.assetSelected = res.data;
-      } catch (error) {
-        console.error(error);
-      }
-      this.dialogTitle = "Sửa sản phẩm";
-      //Hiểm thị form
-      this.btnDialog(true);
       this.isEditing = true;
+      // try {
+      //   const res = await axios.get(
+      //     `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${product.id}`
+      //   );
+      //   this.assetSelected = res.data;
+      // } catch (error) {
+      //   console.error(error);
+      // }
+      this.assetSelected = product;
+      //Hiểm thị form
+      this.dialogShow(true);
     },
 
     /**
-     * Xóa dòng đã chọn
-     * CREATED BY: LTTUAN(23.04.2022)
+     * Mô tả : Xóa dòng đã chọn
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 20:28 23/04/2022
      */
     btnRemove() {
       if (this.checkedaAssetList.length == 0) {
-        alert("bạn chưa chọn sản phẩm để xóa");
+        alert('bạn chưa chọn sản phẩm để xóa');
       } else {
-        this.isDelete = true;
         let length = this.checkedaAssetList.length;
-        this.isAlertShow = true;
-        // Hiển thị cảnh báo
+        let title = '';
+        // hiển thị title cảnh báo
         if (length == 1) {
-          this.alertTitle = `Bạn có muốn xóa tài sản ${this.checkedaAssetList[0].code} - ${this.checkedaAssetList[0].name}?`;
-        } else if (length > 1) {
-          if (length < 10) {
-            length = `0${length}`;
-          }
-          this.alertTitle = `${length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách?`;
+          title = `Bạn có muốn xóa tài sản ${this.checkedaAssetList[0].code} - ${this.checkedaAssetList[0].name}?`;
+        } else if (length > 1 && length < 10) {
+          title = `0${length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách?`;
+        } else {
+          title = `${length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách?`;
         }
+        this.alertShow(true, title, 'remove');
       }
     },
 
@@ -359,9 +367,9 @@ export default {
             `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.checkedaAssetList[i].id}`
           )
           .then(function (res) {
-            if (res.statusText == "OK") {
+            if (res.statusText == 'OK') {
               //  Hiển thị toast xóa thành công
-              me.toastShow(true, "Xóa dữ liệu thành công");
+              me.toastShow(true, 'Xóa dữ liệu thành công');
               setTimeout(() => {
                 me.toastShow(false);
               }, 2300);
@@ -377,52 +385,62 @@ export default {
         // Xóa theo index splice(start, deleteCount)
         this.assetData.splice(prdIndex, 1);
       }
-
-      // xóa hết giá trị cho list tạm thời
+      // gán lại giá trị cho list tạm thời
       this.checkedaAssetList = [];
-
-      // gắp lại isDelete = false
-      this.isDelete = false;
+      console.log(this.checkedaAssetList);
     },
 
-    // Đóng mở/ Hủy bỏ/ đóng alert
-    btnAlert(alert, title) {
-      if (alert == true) {
-        this.isAlertShow = true;
-        this.alertTitle = title;
-      } else {
-        this.isAlertShow = false;
-      }
+    /**
+     * Mô tả : Đóng mở dialog
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 14:29 19/04/2022
+     */
+    dialogShow(isShow) {
+      this.isDialogShow = isShow;
+    },
+
+    /**
+     * Mô tả : Đóng mở/ Hủy bỏ/ kiểu alert
+     * @param {Boolean} alert
+     * @param {String} title
+     * @param {String} type kiểu của button alert
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 16:08 26/04/2022
+     */
+    alertShow(alert, title, type) {
+      this.isAlertShow = alert;
+      this.alertTitle = title;
+      this.alertType = type;
     },
 
     /**
      * Mô tả : Hiển thị toast
-     * @param
+     * @param {Boolean} toast
+     * @param {String} title
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 13:56 26/04/2022
      */
     toastShow(toast, title) {
-      if (toast == true) {
-        this.isToastShow = true;
-        this.toastTitle = title;
-      } else {
-        this.isToastShow = false;
-      }
+      this.isToastShow = toast;
+      this.toastTitle = title;
     },
   },
 
   data() {
     return {
-      isDelete: false,
-      dialogTitle: "",
+      isEditing: null,
       isToastShow: false, //Toast
-      toastTitle: "",
+      toastTitle: '',
       isAlertShow: false,
-      alertTitle: "",
+      alertTitle: '',
+      alertType: '',
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
-      isDialogShow: false, //Hiển thị form hay không
+      isDialogShow: true, //Hiển thị form hay không
       assetData: [], //dữ liệu lấy về từ api
       isLoading: false,
     };

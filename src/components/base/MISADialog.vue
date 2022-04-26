@@ -98,7 +98,7 @@
           buttonTitle="Hủy"
         ></MISAButton>
         <MISAButton
-          @click="!isEditing ? onAddAsset() : onUpdateAsset()"
+          @click="!isEditing ? onCreateAsset() : onUpdateAsset()"
           buttonTitle="Lưu"
         ></MISAButton>
       </div>
@@ -106,121 +106,73 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
-  name: "the-dialog",
-  props: ["assetSelected", "dialogTitle", "isEditing"],
-
-  // watch: {
-  //   /**
-  //    *Theo dõi sự thay đổi dữ liệu ở biến assetSelected và
-  //    *Truyền dữ liệu vào dialog khi double Click
-  //    *CREATED BY: LTTUAN(18.04.2022)
-  //    */
-  //   assetSelected: function (newValue) {
-  //     this.asset = newValue;
-  //   },
-  // },
+  name: 'the-dialog',
+  props: ['assetSelected', 'dialogTitle', 'isEditing'],
 
   mounted() {
+    // mounted mới gắn dữ liệu
     this.asset = this.assetSelected;
-    //Focus vào ô input đầu
+    // Focus vào ô input đầu
     this.$refs.firstInput.focus();
 
     // Tạo ra obj đầu vào để so sánh
     this.assetCopy = Object.assign({}, this.asset);
   },
 
-  beforeUnmount() {
-    this.asset = {};
-  },
-
   methods: {
-    /**
-     *focus vào ô input đầu tiên khi hiển thị fỏrm
-     *CREATED BY: LTTUAN(19.04.2022)
-     */
-    // focusFirstInput() {
-    //   this.$nextTick(() => {
-    //     this.$refs.firstInput.focus();
-    //   });
-    // },
-
     /**
      * Mô tả : Thêm asset mới
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 14:01 26/04/2022
+     * Created date: 20:31 26/04/2022
      */
-    async createNewAsset() {
-      var me = this;
-      await axios
-        .post("https://62616774327d3896e27b58d2.mockapi.io/api/asset", me.asset)
-        .then(() => {
-          me.$emit("toastShow", true, "Thêm mới dữ liệu thành công");
+    async onCreateAsset() {
+      try {
+        const res = await axios.post(
+          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
+          this.asset
+        );
+        this.$emit('alertShow', false);
+        this.$emit('dialogShow', false);
+        if (res.statusText == 'Created') {
+          this.$emit('toastShow', true, 'Lưu dữ liệu thành công');
           setTimeout(() => {
-            me.$emit("toastShow", false);
+            this.$emit('toastShow', false);
           }, 2300);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     /**
-     * Mô tả : Sửa tài sản
+     * Mô tả : Sửa asset
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 08:36 25/04/2022
+     * Created date: 20:46 26/04/2022
      */
-    async updateAsset() {
-      var me = this;
-      await axios
-        .put(
-          `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${me.asset.id}`,
-          me.asset
-        )
-        .then(() => {
-          me.$emit("toastShow", true, "Sửa dữ liệu thành công");
-
+    async onUpdateAsset() {
+      try {
+        const res = await axios.put(
+          `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.asset.id}`,
+          this.asset
+        );
+        console.log(res.data);
+        this.$emit('alertShow', false);
+        this.$emit('dialogShow', false);
+        if (res.statusText == 'OK') {
+          this.$emit('toastShow', true, 'Sửa dữ liệu thành công');
           setTimeout(() => {
-            me.$emit("toastShow", false);
+            this.$emit('toastShow', false);
           }, 2300);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-
-    /**
-     * Mô tả :Ấn Nút thêm mới sản phẩm
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 22:03 25/04/2022
-     */
-    onAddAsset() {
-      console.log("thêm");
-      // thêm mới asset
-      this.createNewAsset();
-      //set lại giá trị trong dialog về trống
-      this.asset = {};
-      this.$emit("btnDialog", false);
-    },
-
-    /**
-     * Mô tả : Ấn lưu khi sửa sản phẩm
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 16:04 26/04/2022
-     */
-    onUpdateAsset() {
-      console.log("sửa");
-      // Sửa tài sản
-      this.updateAsset();
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     /**
@@ -231,18 +183,19 @@ export default {
      * Created date: 17:21 26/04/2022
      */
     onCancelAsset() {
-      console.log(this.assetCopy);
-      console.log(this.asset);
-      console.log(
-        JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)
-      );
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
-        this.$emit("btnAlert", true, "Bạn có muốn hủy bỏ khai báo này?");
+        this.$emit(
+          'alertShow',
+          true,
+          'Bạn có muốn hủy bỏ khai báo này?',
+          'cancel'
+        );
       } else {
         this.$emit(
-          "btnAlert",
+          'alertShow',
           true,
-          "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?"
+          'Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?',
+          'cancelChange'
         );
       }
     },

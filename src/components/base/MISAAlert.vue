@@ -9,43 +9,68 @@
           {{ alertTitle }}
         </div>
       </div>
-
-      <div v-if="isDelete" class="alert-button btn-remove">
+      <!-- Thông báo khi xóa -->
+      <div v-if="alertType == 'remove'" class="alert-button">
         <MISAButton
-          @click="this.$emit('btnAlert', false)"
+          @click="this.$emit('alertShow', false)"
           type="outline-button"
           buttonTitle="Không"
         ></MISAButton>
         <MISAButton @click="btnDelete" buttonTitle="Xóa"></MISAButton>
       </div>
 
-      <div v-else class="alert-button btn-cancel">
-        <!-- <MISAButton type="outline-button" buttonTitle="Hủy bỏ"></MISAButton> -->
+      <!-- Thông báo khi hủy và không có sự thay đổi -->
+      <div v-else-if="alertType == 'cancel'" class="alert-button">
         <MISAButton
-          @click="this.$emit('btnAlert', false)"
+          @click="this.$emit('alertShow', false)"
           type="sub-button"
           buttonTitle="Không"
         ></MISAButton>
         <MISAButton @click="btnCancel" buttonTitle="Hủy bỏ"></MISAButton>
+      </div>
+
+      <!-- Thông báo khi hủy và có sự thay đổi  -->
+      <div v-else-if="alertType == 'cancelChange'" class="alert-button">
+        <MISAButton
+          @click="btnCancel"
+          type="outline-button"
+          buttonTitle="Hủy bỏ"
+        ></MISAButton>
+        <MISAButton
+          @click="this.$emit('alertShow', false)"
+          type="sub-button"
+          buttonTitle="Không lưu"
+        ></MISAButton>
+        <MISAButton
+          @click="
+            isEditing ? this.$emit('updateAsset') : this.$emit('createNewAsset')
+          "
+          buttonTitle="Lưu"
+        ></MISAButton>
+      </div>
+
+      <!-- Thông báo khi không thể xóa khi có phát sinh -->
+      <div v-else class="alert-button">
+        <MISAButton @click="btnCancel" buttonTitle="Đóng"></MISAButton>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: "the-alert",
-  props: ["alertTitle", "isDelete"],
+  name: 'the-alert',
+  props: ['alertTitle', 'alertType', 'isEditing'],
   methods: {
     /**
-     * Mô tả : Đóng cả cảnh báo, dialog khi user chọn hủy
+     * Mô tả : Đóng cả cảnh báo và dialog
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 13:59 26/04/2022
      */
     btnCancel() {
-      this.$emit("btnAlert", false);
-      this.$emit("btnDialog", false);
+      this.$emit('alertShow', false);
+      this.$emit('dialogShow', false);
     },
 
     /**
@@ -57,10 +82,18 @@ export default {
      */
     btnDelete() {
       // xóa asset
-      this.$emit("removeAsset");
+      this.$emit('removeAsset');
       // tắt alert
-      this.$emit("btnAlert", false);
+      this.$emit('alertShow', false);
     },
+
+    /**
+     * Mô tả : Lưu tài sản đã sửa
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 21:03 26/04/2022
+     */
   },
 };
 </script>
