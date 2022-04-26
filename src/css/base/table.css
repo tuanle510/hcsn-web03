@@ -13,6 +13,7 @@
   height: 100%;
   width: 100%;
   overflow: auto;
+  border-radius: 3px;
 }
 
 .m-grip table.m-table {
@@ -72,7 +73,7 @@
 }
 
 .m-grip .m-table tfoot tr::after {
-  content: '';
+  content: "";
   position: absolute;
   height: 1px;
   background-color: rgba(175, 175, 175, 0.6);

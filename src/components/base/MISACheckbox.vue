@@ -5,14 +5,13 @@
     :class="{
       'm-checkbox-selected': isChecked,
     }"
-    @click="this.isChecked = !this.isChecked"
   ></div>
 </template>
 <script>
 export default {
-  name: 'the-checkbox',
+  name: "the-checkbox",
 
-  props: ['checked'],
+  props: ["checked"],
 
   watch: {
     checked: function (newValue) {
@@ -27,5 +26,4 @@ export default {
   },
 };
 </script>
-<style>
-</style>
+<style></style>

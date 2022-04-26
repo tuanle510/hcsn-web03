@@ -9,7 +9,7 @@
   box-shadow: 0 3px 10px rgb(0 0 0 / 16%);
   display: flex;
   z-index: 999;
-  animation: slideInLeft ease 0.3s, fadeOut linear 1s 1.5s forwards;
+  animation: slideInLeft ease 0.3s, fadeOut linear 1s 1s forwards;
 }
 
 .m-toast .toast-icon {
