@@ -26,6 +26,9 @@
 }
 
 .up {
+  background: url('/src/assets/icon/qlts-icon.png') no-repeat -28px -338px;
+  width: 8px;
+  height: 5px;
 }
 
 .close {

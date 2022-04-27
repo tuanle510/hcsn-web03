@@ -1,24 +1,23 @@
 <template>
   <div class="m-combobox">
     <div class="combobox-contaner">
-      <div v-show="this.hasIcon" class="combobox-icon">
+      <div v-if="hasIcon" class="combobox-icon">
         <div class="filter"></div>
       </div>
       <input
-        @focus="this.isOptionShow = true"
-        @blur="this.isOptionShow = false"
         class="combobox-text"
-        :class="{ 'input-no-icon': !this.hasIcon }"
+        :class="{ 'input-no-icon': !hasIcon }"
         :placeholder="placeholder"
-        :value="optionSeleced"
+        v-model="optionSeleced"
       />
-      <div @click="this.isOptionShow = !this.isOptionShow" class="icon-box">
-        <div class="down"></div>
+      <div @click="isOptionShow = !isOptionShow" class="icon-box">
+        <div v-if="isOptionShow" class="up"></div>
+        <div v-else class="down"></div>
       </div>
     </div>
-    <ul class="m-option-list" v-show="isOptionShow">
+    <ul class="m-option-list" v-if="isOptionShow">
       <li
-        v-for="(option, index) in optionList"
+        v-for="(option, index) in optionFilter"
         :key="index"
         class="m-option-item"
         @click="onChoseOpton(option)"
@@ -36,13 +35,6 @@
   </div>
 </template>
 <script>
-// $(".input").autocomplete(
-//   {
-//     source: this.optionList,
-//   },
-//   {}
-// );
-
 export default {
   name: 'the-combobox',
 
@@ -63,7 +55,8 @@ export default {
     return {
       isOptionShow: false,
       optionSeleced: '',
-      optionList: ['Saab', 'Volvo', 'BMW'],
+      optionList: ['Saab', 'Volvo', 'BMW', 'BMW', 'BMW'],
+      optionFilter: [],
     };
   },
 };

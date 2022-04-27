@@ -44,10 +44,13 @@
 .m-option-list {
   position: absolute;
   padding: 4px;
+  border-radius: 2.5px;
   background-color: #fff;
   width: 100%;
-  box-shadow: 7px 8px 11px 2px rgb(0 0 0 / 16%);
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
   z-index: 5;
+  max-height: 152px;
+  overflow: auto;
 }
 
 .m-option-list .m-option-item {
