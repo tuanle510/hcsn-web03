@@ -83,7 +83,7 @@
           <tbody>
             <tr
               @dblclick="onRowDblClick(product)"
-              @click="onRowClick(product)"
+              @click="onRowClick(product, $event)"
               v-for="(product, index) in assetData"
               :key="index"
               class="m-tr"
@@ -106,11 +106,11 @@
               </td>
               <td style="width: 80px">
                 <div class="m-function-box" style="display: none">
-                  <div class="icon-box" v-on:click="btnEditClick">
+                  <div class="icon-box">
                     <div class="table-icon edit"></div>
                   </div>
-                  <div class="icon-box" v-on:click="btnPriceClick">
-                    <div class="table-icon print"></div>
+                  <div class="icon-box">
+                    <div class="table-icon copy"></div>
                   </div>
                 </div>
               </td>
@@ -185,9 +185,9 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'the-content',
+  name: "the-content",
 
   computed: {
     /**
@@ -218,7 +218,7 @@ export default {
     // Lấy data
     var me = this;
     await axios
-      .get('https://62616774327d3896e27b58d2.mockapi.io/api/asset')
+      .get("https://62616774327d3896e27b58d2.mockapi.io/api/asset")
       .then(function (res) {
         me.assetData = res.data;
       })
@@ -234,6 +234,7 @@ export default {
      * CREATED BY: LTTUAN(19.04.2022)
      */
     showAddDialog() {
+      this.assetSelected = {};
       this.isEditing = false;
       this.dialogShow(true);
     },
@@ -289,20 +290,30 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1108
      * Created date: 17:14 23/04/2022
      */
-    onRowClick(product) {
-      // console.log(this.checkedaAssetList);
-      // Kiểm tra xem đã tích sản phẩm trước đó chưa
-      if (this.checkedaAssetList.includes(product)) {
-        // Nếu tích r thì bỏ tích
-        // Lấy index của sản phẩm được chọn
-        const selecedIndex = this.checkedaAssetList.findIndex(
-          (prd) => prd.id == product.id
-        );
-        // Xóa theo index splice(start, deleteCount)
-        this.checkedaAssetList.splice(selecedIndex, 1);
-      } else {
-        // Nếu chưa thì add vào list
-        this.checkedaAssetList.push(product);
+    onRowClick(product, event) {
+      //Nếu ấn vào edit
+      if (event.target.classList.contains("edit")) {
+        this.onRowDblClick(product);
+      }
+      // Nếu ấn vào copy
+      else if (event.target.classList.contains("copy")) {
+        console.log("Nhận đôi");
+      }
+      // Nếu ấn vào cả dòng
+      else {
+        // Kiểm tra xem đã tích sản phẩm trước đó chưa
+        if (this.checkedaAssetList.includes(product)) {
+          // Nếu tích r thì bỏ tích
+          // Lấy index của sản phẩm được chọn
+          const selecedIndex = this.checkedaAssetList.findIndex(
+            (prd) => prd.id == product.id
+          );
+          // Xóa theo index splice(start, deleteCount)
+          this.checkedaAssetList.splice(selecedIndex, 1);
+        } else {
+          // Nếu chưa thì add vào list
+          this.checkedaAssetList.push(product);
+        }
       }
     },
 
@@ -310,8 +321,7 @@ export default {
      * Gắn dữ liệu từ component Table vào để truyền vào Dialog khi doubleclick
      * CREATED BY: LTTUAN(18.04.2022)
      */
-    async onRowDblClick(product) {
-      this.isEditing = true;
+    onRowDblClick(product) {
       // try {
       //   const res = await axios.get(
       //     `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${product.id}`
@@ -334,10 +344,10 @@ export default {
      */
     btnRemove() {
       if (this.checkedaAssetList.length == 0) {
-        alert('bạn chưa chọn sản phẩm để xóa');
+        alert("bạn chưa chọn sản phẩm để xóa");
       } else {
         let length = this.checkedaAssetList.length;
-        let title = '';
+        let title = "";
         // hiển thị title cảnh báo
         if (length == 1) {
           title = `Bạn có muốn xóa tài sản ${this.checkedaAssetList[0].code} - ${this.checkedaAssetList[0].name}?`;
@@ -346,7 +356,7 @@ export default {
         } else {
           title = `${length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách?`;
         }
-        this.alertShow(true, title, 'remove');
+        this.alertShow(true, title, "remove");
       }
     },
 
@@ -358,26 +368,23 @@ export default {
      * Created date: 00:23 24/04/2022
      */
     async removeAsset() {
-      var me = this;
       // vòng lặp danh sách lưu tạm đã được chọn và xóa
       for (let i = 0; i < this.checkedaAssetList.length; i++) {
-        // Xóa trên api
-        await axios
-          .delete(
+        // xóa trên api
+        try {
+          const res = await axios.delete(
             `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.checkedaAssetList[i].id}`
-          )
-          .then(function (res) {
-            if (res.statusText == 'OK') {
-              //  Hiển thị toast xóa thành công
-              me.toastShow(true, 'Xóa dữ liệu thành công');
-              setTimeout(() => {
-                me.toastShow(false);
-              }, 2300);
-            }
-          })
-          .catch(function (err) {
-            console.log(err);
-          });
+          );
+          if (res.statusText == "OK") {
+            //  Hiển thị toast xóa thành công
+            this.toastShow(true, "Xóa dữ liệu thành công");
+            setTimeout(() => {
+              this.toastShow(false);
+            }, 2300);
+          }
+        } catch (error) {
+          console.log(error);
+        }
         // xóa trên giao diện
         const prdIndex = this.assetData.findIndex(
           (prd) => prd.id === this.checkedaAssetList[i].id
@@ -387,7 +394,8 @@ export default {
       }
       // gán lại giá trị cho list tạm thời
       this.checkedaAssetList = [];
-      console.log(this.checkedaAssetList);
+
+      this.alertShow(false);
     },
 
     /**
@@ -432,15 +440,16 @@ export default {
 
   data() {
     return {
+      isEdit: false,
       isEditing: null,
-      isToastShow: false, //Toast
-      toastTitle: '',
+      isToastShow: false,
+      toastTitle: "",
       isAlertShow: false,
-      alertTitle: '',
-      alertType: '',
+      alertTitle: "",
+      alertType: "",
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
-      isDialogShow: true, //Hiển thị form hay không
+      isDialogShow: false, //Hiển thị form hay không
       assetData: [], //dữ liệu lấy về từ api
       isLoading: false,
     };

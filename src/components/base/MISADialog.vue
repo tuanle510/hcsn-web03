@@ -106,10 +106,10 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'the-dialog',
-  props: ['assetSelected', 'dialogTitle', 'isEditing'],
+  name: "the-dialog",
+  props: ["assetSelected", "dialogTitle", "isEditing"],
 
   mounted() {
     // mounted mới gắn dữ liệu
@@ -132,15 +132,15 @@ export default {
     async onCreateAsset() {
       try {
         const res = await axios.post(
-          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
+          "https://62616774327d3896e27b58d2.mockapi.io/api/asset",
           this.asset
         );
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'Created') {
-          this.$emit('toastShow', true, 'Lưu dữ liệu thành công');
+        this.$emit("alertShow", false);
+        this.$emit("dialogShow", false);
+        if (res.statusText == "Created") {
+          this.$emit("toastShow", true, "Lưu dữ liệu thành công");
           setTimeout(() => {
-            this.$emit('toastShow', false);
+            this.$emit("toastShow", false);
           }, 2300);
         }
       } catch (error) {
@@ -162,12 +162,12 @@ export default {
           this.asset
         );
         console.log(res.data);
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'OK') {
-          this.$emit('toastShow', true, 'Sửa dữ liệu thành công');
+        this.$emit("alertShow", false);
+        this.$emit("dialogShow", false);
+        if (res.statusText == "OK") {
+          this.$emit("toastShow", true, "Sửa dữ liệu thành công");
           setTimeout(() => {
-            this.$emit('toastShow', false);
+            this.$emit("toastShow", false);
           }, 2300);
         }
       } catch (error) {
@@ -185,17 +185,17 @@ export default {
     onCancelAsset() {
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
         this.$emit(
-          'alertShow',
+          "alertShow",
           true,
-          'Bạn có muốn hủy bỏ khai báo này?',
-          'cancel'
+          "Bạn có muốn hủy bỏ khai báo này?",
+          "cancel"
         );
       } else {
         this.$emit(
-          'alertShow',
+          "alertShow",
           true,
-          'Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?',
-          'cancelChange'
+          "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?",
+          "cancelChange"
         );
       }
     },

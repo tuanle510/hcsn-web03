@@ -83,8 +83,6 @@ export default {
     btnDelete() {
       // xóa asset
       this.$emit('removeAsset');
-      // tắt alert
-      this.$emit('alertShow', false);
     },
 
     /**
