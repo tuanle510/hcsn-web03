@@ -97,7 +97,7 @@ export default {
       this.selecedIndex = index;
       this.selectItem();
     },
-
+    
     selectItem() {
       this.optionInput = this.matches[this.selecedIndex].name;
       this.isOptionShow = false;
@@ -121,7 +121,7 @@ export default {
     },
 
     scrollToItem() {
-      this.$refs.optionList.   = this.selecedIndex * 36;
+      this.$refs.optionList.scrollTop = this.selecedIndex * 36;
     },
   },
 
