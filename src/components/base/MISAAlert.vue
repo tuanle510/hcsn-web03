@@ -51,15 +51,18 @@
 
       <!-- Thông báo lỗi, chỉ có thể đóng -->
       <div v-else class="alert-button">
-        <MISAButton @click="btnCancel" buttonTitle="Đóng"></MISAButton>
+        <MISAButton
+          @click="this.$emit('alertShow', false)"
+          buttonTitle="Đóng"
+        ></MISAButton>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: "the-alert",
-  props: ["alertTitle", "alertType", "isEditing"],
+  name: 'the-alert',
+  props: ['alertTitle', 'alertType', 'isEditing'],
   methods: {
     /**
      * Mô tả : Đóng cả cảnh báo và dialog
@@ -69,8 +72,8 @@ export default {
      * Created date: 13:59 26/04/2022
      */
     btnCancel() {
-      this.$emit("alertShow", false);
-      this.$emit("dialogShow", false);
+      this.$emit('alertShow', false);
+      this.$emit('dialogShow', false);
     },
 
     /**
@@ -82,7 +85,7 @@ export default {
      */
     btnDelete() {
       // xóa asset
-      this.$emit("removeAsset");
+      this.$emit('removeAsset');
     },
 
     /**
