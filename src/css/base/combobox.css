@@ -30,7 +30,7 @@
 }
 
 .m-combobox input {
-  width: calc(100% - 24px - 36px);
+  width: calc(100% - 40px - 36px);
   height: 100%;
   border: none;
   outline: none;
@@ -43,7 +43,6 @@
 
 .m-option-list {
   position: absolute;
-  padding: 4px;
   border-radius: 2.5px;
   background-color: #fff;
   width: 100%;
@@ -55,10 +54,18 @@
 
 .m-option-list .m-option-item {
   border-radius: 2.5px;
-  width: 100%;
+  width: calc(100% - 8px);
   height: 36px;
   display: flex;
   align-items: center;
+  margin: 0px 4px;
+}
+
+.m-option-list .m-option-item:first-child {
+  margin-top: 4px;
+}
+.m-option-list .m-option-item:last-child {
+  margin-bottom: 4px;
 }
 
 .m-option-list .m-option-item:hover {
@@ -78,14 +85,15 @@
   visibility: hidden;
 }
 
-.m-option-list .m-option-item .option-item-box-selected {
-  visibility: visible;
-}
-.rotate {
-  transform: rotate (0deg);
-  transition: all 0.4s ease;
+.icon-combobox {
+  height: 100%;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* typeahead */
 .simple-typeahead {
   height: 36px;
   width: 100%;
