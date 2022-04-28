@@ -7,6 +7,12 @@
 }
 
 /* common icon */
+.calendar {
+  background: url("/src/assets/icon/qlts-icon.png") no-repeat -287px -67px;
+  width: 18px;
+  height: 18px;
+}
+
 .clear {
   background: url("/src/assets/icon/qlts-icon.png") no-repeat -291px -247px;
   width: 10px;

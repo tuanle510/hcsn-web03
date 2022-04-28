@@ -77,17 +77,36 @@
           <label for="input">Năm theo dõi</label>
           <input class="m-input number-input" disabled :value="newYear" />
         </div>
+        <!-- <div class="modal-field">
+          <input class="m-input" type="date" placeholder="DD-MM-YYYY" />
+        </div> -->
+        <!-- <div class="modal-field">
+          <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
+          <input class="m-input" type="date" placeholder="DD-MM-YYYY" />
+        </div> -->
         <div class="modal-field">
           <label for="input">Ngày mua <span>*</span></label>
-          <input class="m-input" type="date" placeholder="DD-MM-YYYY" />
+          <div class="datepicker-container">
+            <Datepicker
+              class="mt-input input-datepicker"
+              v-model="buyDate"
+              format="dd/MM/yyyy"
+              :maxDate="new Date()"
+            ></Datepicker>
+            <div class="datepicker-icon"></div>
+          </div>
         </div>
         <div class="modal-field">
           <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
-          <input class="m-input" type="date" placeholder="DD-MM-YYYY" />
-        </div>
-        <div class="modal-field">
-          <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
-          <Datepicker v-model="date"></Datepicker>
+          <div class="datepicker-container">
+            <Datepicker
+              class="mt-input input-datepicker"
+              v-model="startDate"
+              format="dd/MM/yyyy"
+              :maxDate="new Date()"
+            ></Datepicker>
+            <div class="datepicker-icon"></div>
+          </div>
         </div>
       </div>
 
@@ -206,7 +225,8 @@ export default {
       assetCopy: {},
       asset: {},
       newYear: new Date().getFullYear(),
-      date: null,
+      startDate: new Date(),
+      buyDate: new Date(),
     };
   },
 };

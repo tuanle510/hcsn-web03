@@ -14,12 +14,12 @@
 </template>
 
 <script>
-import Header from './components/layout/TheHeader.vue';
-import Navbar from './components/layout/TheNavBar.vue';
-import Content from './components/layout/TheContent.vue';
+import Header from "./components/layout/TheHeader.vue";
+import Navbar from "./components/layout/TheNavBar.vue";
+import Content from "./components/layout/TheContent.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Header,
     Content,
@@ -49,4 +49,5 @@ export default {
 
 <style>
 @import url(./css/main.css);
+/* @import "@vuepic/vue-datepicker/src/VueDatePicker/style/main.scss"; */
 </style>

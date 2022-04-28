@@ -477,7 +477,7 @@ export default {
       alertType: "",
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
-      isDialogShow: false, //Hiển thị form hay không
+      isDialogShow: true, //Hiển thị form hay không
       assetData: [], //dữ liệu lấy về từ api
       isLoading: false,
       partUseData: [],

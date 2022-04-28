@@ -1,0 +1,41 @@
+:root {
+}
+.dp__menu {
+  font-family: MISA Font !important;
+  font-size: 13px !important;
+}
+.dp__input {
+  height: 36px !important;
+  font-family: MISA Font !important;
+  font-size: 14px !important;
+}
+.dp__input_icon_pad {
+  /* padding-left: 14px !important; */
+  border: 1px solid #afafaf !important;
+}
+
+.dp__input_focus {
+  border: 1px solid #22a7ca !important;
+}
+
+.dp__input_icon {
+  right: 0 !important;
+}
+.dp__input_icons {
+  display: none !important;
+}
+
+.datepicker-container {
+  height: 38px;
+  width: 100%;
+  position: relative;
+}
+
+.datepicker-container .datepicker-icon {
+  background: url("../../assets/icon/qlts-icon.png") no-repeat -287px -67px;
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  right: 10px;
+  top: 25%;
+}

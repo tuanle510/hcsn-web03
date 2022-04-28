@@ -12,6 +12,7 @@
 @import url(./base/search.css);
 @import url(./base/table.css);
 @import url(./base/toast.css);
+@import url(./base/datePicker.css);
 
 * {
   padding: 0;
@@ -74,27 +75,3 @@ ul li {
 .text-align-center {
   text-align: center;
 }
-
-/* scrollbar */
-/* ::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
-} */
-
-/* Track
-::-webkit-scrollbar-track {
-  display: none;
-  margin-top: 38px;
-}
-
-Handle
-::-webkit-scrollbar-thumb {
-  background: #afafaf;
-  height: 100px;
-  border-radius: 2.5px;
-}
-
-Handle on hover
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-} */
