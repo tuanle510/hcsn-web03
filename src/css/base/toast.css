@@ -1,10 +1,11 @@
 .m-toast {
   position: fixed;
-  right: 16px;
-  bottom: 16px;
+  right: calc((100% - 300px) / 2);
+  top: 30px;
   background-color: #fff;
   height: 50px;
   width: 300px;
+  border: 1px solid #1ac871;
   border-radius: 3px;
   box-shadow: 0 3px 10px rgb(0 0 0 / 16%);
   display: flex;
@@ -28,7 +29,7 @@
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(calc(100% + 32px));
+    transform: translateY(calc(-100% - 45px));
   }
   to {
     opacity: 1;
