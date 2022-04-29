@@ -9,6 +9,7 @@
         class="combobox-text"
         :class="{ 'input-no-icon': !hasIcon }"
         @focus="this.isOptionShow = true"
+        @blur="this.isOptionShow = false"
         @keydown.up="up"
         @keydown.down="down"
         @keydown.enter="selectItem"
@@ -44,7 +45,7 @@
         @click="choseOpton(index)"
         :class="{ 'm-item-selected': this.selecedIndex == index }"
       >
-        {{ option.name }}
+        {{ option[this.filterby] }}
       </li>
     </ul>
   </div>
@@ -60,7 +61,12 @@ export default {
       if (this.optionList == null) {
         return [];
       }
-      if (this.optionInput == "") {
+      if (
+        this.optionInput == "" ||
+        this.optionList
+          .map((item) => item[this.filterby])
+          .includes(this.optionInput)
+      ) {
         return this.optionList;
       } else {
         return this.optionList.filter((item) =>
@@ -97,9 +103,9 @@ export default {
       this.selecedIndex = index;
       this.selectItem();
     },
-    
+
     selectItem() {
-      this.optionInput = this.matches[this.selecedIndex].name;
+      this.optionInput = this.matches[this.selecedIndex][this.filterby];
       this.isOptionShow = false;
       this.$refs.optionInput.blur();
     },

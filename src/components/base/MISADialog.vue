@@ -30,7 +30,8 @@
         <div class="modal-field">
           <label for="input">Mã bộ phận sử dụng <span>*</span></label>
           <MISACombobox
-            :inputValue="asset.id"
+            :optionList="partUseData"
+            filterby="partUseName"
             :hasIcon="false"
             placeholder="Chọm mã bộ phận sử dụng"
           ></MISACombobox>
@@ -42,6 +43,8 @@
         <div class="modal-field">
           <label for="input">Mã loại tài sản</label>
           <MISACombobox
+            :optionList="typeData"
+            filterby="typeName"
             :hasIcon="false"
             placeholder="Chọm mã loại tài sản"
           ></MISACombobox>
@@ -52,7 +55,24 @@
         </div>
         <div class="modal-field">
           <label for="input">Số lượng<span>*</span></label>
-          <input class="m-input" v-model="asset.quantity" />
+          <input
+            @keydown.up="asset.quantity++"
+            @keydown.down="
+              asset.quantity == 0 ? asset.quantity == 0 : asset.quantity--
+            "
+            ref="quantity"
+            class="m-input number-input-icon"
+            v-model="asset.quantity"
+          />
+          <div class="spin-button-container">
+            <div class="up" @click="asset.quantity++"></div>
+            <div
+              class="down"
+              @click="
+                asset.quantity == 0 ? asset.quantity == 0 : asset.quantity--
+              "
+            ></div>
+          </div>
         </div>
         <div class="modal-field">
           <label for="input">Nguyên giá <span>*</span></label>
@@ -68,11 +88,35 @@
         </div>
         <div class="modal-field">
           <label for="input">Tỉ lệ hao mòn(%)<span>*</span></label>
-          <input class="m-input" />
+          <input
+            @keydown.up="asset.depreciationRate++"
+            @keydown.down="
+              asset.depreciationRate == 0
+                ? asset.depreciationRate == 0
+                : asset.depreciationRate--
+            "
+            ref="quantity"
+            class="m-input number-input-icon"
+            v-model="asset.depreciationRate"
+          />
+          <div class="spin-button-container">
+            <div class="up" @click="asset.depreciationRate++"></div>
+            <div
+              class="down"
+              @click="
+                asset.depreciationRate == 0
+                  ? asset.depreciationRate == 0
+                  : asset.depreciationRate--
+              "
+            ></div>
+          </div>
         </div>
         <div class="modal-field">
           <label for="input">Giá trị hao mòm năm <span>*</span></label>
-          <input class="m-input number-input" />
+          <input
+            class="m-input number-input"
+            v-model="annualDepreciationRate"
+          />
         </div>
         <div class="modal-field">
           <label for="input">Năm theo dõi</label>
@@ -113,6 +157,7 @@
 
       <div class="m-modal-footer">
         <MISAButton
+          style="border: none"
           type="outline-button"
           @click="onCancelAsset"
           buttonTitle="Hủy"
@@ -123,10 +168,22 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'the-dialog',
-  props: ['assetSelected', 'dialogTitle', 'isEditing'],
+  name: "the-dialog",
+  props: [
+    "assetSelected",
+    "dialogTitle",
+    "isEditing",
+    "partUseData",
+    "typeData",
+  ],
+
+  // computed: {
+  //   formatPrice: function () {
+  //     return this.asset.price.toLocaleString();
+  //   },
+  // },
 
   mounted() {
     // mounted mới gắn dữ liệu
@@ -136,6 +193,12 @@ export default {
 
     // Tạo ra obj đầu vào để so sánh
     this.assetCopy = Object.assign({}, this.asset);
+  },
+
+  computed: {
+    annualDepreciationRate: function () {
+      return this.asset.price * (this.asset.depreciationRate / 100);
+    },
   },
 
   methods: {
@@ -149,15 +212,15 @@ export default {
     async onCreateAsset() {
       try {
         const res = await axios.post(
-          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
+          "https://62616774327d3896e27b58d2.mockapi.io/api/asset",
           this.asset
         );
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'Created') {
-          this.$emit('toastShow', true, 'Lưu dữ liệu thành công');
+        this.$emit("alertShow", false);
+        this.$emit("dialogShow", false);
+        if (res.statusText == "Created") {
+          this.$emit("toastShow", true, "Lưu dữ liệu thành công");
           setTimeout(() => {
-            this.$emit('toastShow', false);
+            this.$emit("toastShow", false);
           }, 2300);
         }
       } catch (error) {
@@ -178,13 +241,12 @@ export default {
           `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.asset.id}`,
           this.asset
         );
-        console.log(res.data);
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'OK') {
-          this.$emit('toastShow', true, 'Sửa dữ liệu thành công');
+        this.$emit("alertShow", false);
+        this.$emit("dialogShow", false);
+        if (res.statusText == "OK") {
+          this.$emit("toastShow", true, "Sửa dữ liệu thành công");
           setTimeout(() => {
-            this.$emit('toastShow', false);
+            this.$emit("toastShow", false);
           }, 2300);
         }
       } catch (error) {
@@ -202,17 +264,17 @@ export default {
     onCancelAsset() {
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
         this.$emit(
-          'alertShow',
+          "alertShow",
           true,
-          'Bạn có muốn hủy bỏ khai báo này?',
-          'cancel'
+          "Bạn có muốn hủy bỏ khai báo này?",
+          "cancel"
         );
       } else {
         this.$emit(
-          'alertShow',
+          "alertShow",
           true,
-          'Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?',
-          'cancelChange'
+          "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?",
+          "cancelChange"
         );
       }
     },
@@ -227,9 +289,8 @@ export default {
      */
     onSubmit() {
       if (!this.asset.name) {
-        this.error.assetCode = 'Mã tài sản không được để trống';
-        this.$emit('alertShow', true, this.error.assetCode);
-
+        this.error.assetCode = "Mã tài sản không được để trống";
+        this.$emit("alertShow", true, this.error.assetCode);
         this.$$refs.firstInput.focus();
       }
     },
@@ -243,8 +304,8 @@ export default {
       startDate: new Date(),
       buyDate: new Date(),
       error: {
-        assetCode: '',
-        assetName: '',
+        assetCode: "",
+        assetName: "",
       },
     };
   },

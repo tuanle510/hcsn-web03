@@ -6,10 +6,6 @@
           <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
         </div>
         <div class="toolbar-field">
-          <!-- <MISACombobox
-            hasIcon="true"
-            placeholder="Loại tài sản"
-          ></MISACombobox> -->
           <vue3-simple-typeahead
             id="typeahead_id"
             placeholder="Loại tài sản"
@@ -17,11 +13,17 @@
             :minInputLength="1"
           >
           </vue3-simple-typeahead>
+          <!-- <MISACombobox
+            :optionList="typeData"
+            filterby="typeName"
+            hasIcon="true"
+            placeholder="Loại tài sản"
+          ></MISACombobox> -->
         </div>
         <div class="toolbar-field">
           <MISACombobox
             :optionList="partUseData"
-            :filterby="'name'"
+            filterby="partUseName"
             hasIcon="true"
             placeholder="Bộ phận sử dụng"
           ></MISACombobox>
@@ -50,7 +52,7 @@
               <th style="width: 50px; padding-left: 16px">
                 <MISACheckbox
                   @click="onCheckedAll"
-                  :checked="this.checkedaAssetList == this.assetData"
+                  :checked="checked"
                 ></MISACheckbox>
               </th>
               <th class="text-align-left" style="max-width: 50px">STT</th>
@@ -84,7 +86,7 @@
 
           <tbody>
             <tr
-              @dblclick="onRowDblClick(product)"
+              @dblclick="showEditDialog(product)"
               @click="onRowClick(product, $event)"
               v-for="(product, index) in assetData"
               :key="index"
@@ -95,7 +97,7 @@
                   :checked="checkedaAssetList.includes(product)"
                 ></MISACheckbox>
               </td>
-              <td class="text-align-left">{{ product.id }}</td>
+              <td class="text-align-left">{{ index + 1 }}</td>
               <td class="text-align-left">{{ product.code }}</td>
               <td class="text-align-left">{{ product.name }}</td>
               <td class="text-align-left">{{ product.typeName }}</td>
@@ -174,6 +176,8 @@
       :isEditing="isEditing"
       v-if="isDialogShow"
       :assetSelected="assetSelected"
+      :partUseData="partUseData"
+      :typeData="typeData"
       @toastShow="toastShow"
       @dialogShow="dialogShow"
       @alertShow="alertShow"
@@ -195,11 +199,28 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'the-content',
+  name: "the-content",
 
   computed: {
+    /**
+     * Mô tả : Giá trị ô check all
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:17 29/04/2022
+     */
+    checked: function () {
+      if (
+        this.assetData.length == this.checkedaAssetList.length &&
+        this.checkedaAssetList != 0
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     /**
      * Mô tả : Tính tổng số lượng
      * @param
@@ -228,7 +249,7 @@ export default {
     // Lấy data
     var me = this;
     await axios
-      .get('https://62616774327d3896e27b58d2.mockapi.io/api/asset')
+      .get("https://62616774327d3896e27b58d2.mockapi.io/api/asset")
       .then(function (res) {
         me.assetData = res.data;
       })
@@ -244,12 +265,27 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 22:01 27/04/2022
      */
-
     try {
       const res = await axios.get(
-        'https://62616774327d3896e27b58d2.mockapi.io/api/partUse'
+        "https://62616774327d3896e27b58d2.mockapi.io/api/partUse"
       );
       this.partUseData = res.data;
+    } catch (error) {
+      console.log(error);
+    }
+
+    /**
+     * Mô tả : Lấy dữ liệu type
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 13:33 29/04/2022
+     */
+    try {
+      const res = await axios.get(
+        "https://62616774327d3896e27b58d2.mockapi.io/api/type"
+      );
+      this.typeData = res.data;
     } catch (error) {
       console.log(error);
     }
@@ -261,7 +297,12 @@ export default {
      * CREATED BY: LTTUAN(19.04.2022)
      */
     showAddDialog() {
-      this.assetSelected = {};
+      this.assetSelected = {
+        price: 0,
+        annualDepreciationRate: 0,
+        depreciationRate: 0,
+        quantity: 0,
+      };
       this.isEditing = false;
       this.dialogShow(true);
     },
@@ -298,15 +339,20 @@ export default {
      * Created date: 17:42 23/04/2022
      */
     onCheckedAll() {
-      //kiểm tra xem có tích hết chưa
-      // Nếu chưa chưa thì tích hết
-      if (this.checkedaAssetList.length != this.assetData.length) {
-        // thay đổi
-        this.checkedaAssetList = [...this.assetData];
-      }
-      // nếu tích hết rồi thì click thứ 2 sẽ bỏ tích đi
-      else {
-        this.checkedaAssetList = [];
+      //  Kiểm tra xem assetData có dữ liệu không
+      if (this.assetData == 0) {
+        this.alertShow(true, "Không có tài sản trong danh sách");
+      } else {
+        //kiểm tra xem có tích hết chưa
+        // Nếu chưa chưa thì tích hết
+        if (this.checkedaAssetList.length != this.assetData.length) {
+          // thay đổi
+          this.checkedaAssetList = [...this.assetData];
+        }
+        // nếu tích hết rồi thì click thứ 2 sẽ bỏ tích đi
+        else {
+          this.checkedaAssetList = [];
+        }
       }
     },
 
@@ -319,12 +365,12 @@ export default {
      */
     onRowClick(product, event) {
       //Nếu ấn vào edit
-      if (event.target.classList.contains('edit')) {
-        this.onRowDblClick(product);
+      if (event.target.classList.contains("edit")) {
+        this.showEditDialog(product);
       }
       // Nếu ấn vào copy
-      else if (event.target.classList.contains('copy')) {
-        console.log('Nhận đôi');
+      else if (event.target.classList.contains("copy")) {
+        console.log("Nhận đôi");
       }
       // Nếu ấn vào cả dòng
       else {
@@ -348,16 +394,17 @@ export default {
      * Gắn dữ liệu từ component Table vào để truyền vào Dialog khi doubleclick
      * CREATED BY: LTTUAN(18.04.2022)
      */
-    onRowDblClick(product) {
-      // try {
-      //   const res = await axios.get(
-      //     `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${product.id}`
-      //   );
-      //   this.assetSelected = res.data;
-      // } catch (error) {
-      //   console.error(error);
-      // }
-      this.assetSelected = product;
+    async showEditDialog(product) {
+      this.isEditing = true;
+      try {
+        const res = await axios.get(
+          `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${product.id}`
+        );
+        this.assetSelected = res.data;
+      } catch (error) {
+        console.error(error);
+      }
+      // this.assetSelected = product;
       //Hiểm thị form
       this.dialogShow(true);
     },
@@ -371,11 +418,11 @@ export default {
      */
     btnRemove() {
       if (this.checkedaAssetList.length == 0) {
-        this.alertShow(true, 'Bạn chưa chọn sản phẩm để xóa');
+        this.alertShow(true, "Bạn chưa chọn sản phẩm để xóa");
         // alert("bạn chưa chọn sản phẩm để xóa");
       } else {
         let length = this.checkedaAssetList.length;
-        let title = '';
+        let title = "";
         // hiển thị title cảnh báo
         if (length == 1) {
           title = `Bạn có muốn xóa tài sản ${this.checkedaAssetList[0].code} - ${this.checkedaAssetList[0].name}?`;
@@ -384,7 +431,7 @@ export default {
         } else {
           title = `${length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách?`;
         }
-        this.alertShow(true, title, 'remove');
+        this.alertShow(true, title, "remove");
       }
     },
 
@@ -403,13 +450,7 @@ export default {
           const res = await axios.delete(
             `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.checkedaAssetList[i].id}`
           );
-          if (res.statusText == 'OK') {
-            //  Hiển thị toast xóa thành công
-            this.toastShow(true, 'Xóa dữ liệu thành công');
-            setTimeout(() => {
-              this.toastShow(false);
-            }, 2300);
-          }
+          console.log(res);
         } catch (error) {
           console.log(error);
         }
@@ -420,6 +461,13 @@ export default {
         // Xóa theo index splice(start, deleteCount)
         this.assetData.splice(prdIndex, 1);
       }
+
+      //  Hiển thị toast xóa thành công
+      this.toastShow(true, "Xóa dữ liệu thành công");
+      setTimeout(() => {
+        this.toastShow(false);
+      }, 2300);
+
       // gán lại giá trị cho list tạm thời
       this.checkedaAssetList = [];
 
@@ -442,6 +490,7 @@ export default {
      * @param {Boolean} alert
      * @param {String} title
      * @param {String} type kiểu của button alert
+     * hàm
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 16:08 26/04/2022
@@ -471,16 +520,17 @@ export default {
       isEdit: false,
       isEditing: null,
       isToastShow: false,
-      toastTitle: '',
+      toastTitle: "",
       isAlertShow: false,
-      alertTitle: '',
-      alertType: '',
+      alertTitle: "",
+      alertType: "",
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
       isDialogShow: false, //Hiển thị form hay không
       assetData: [], //dữ liệu lấy về từ api
       isLoading: false,
       partUseData: [],
+      typeData: [],
     };
   },
 };

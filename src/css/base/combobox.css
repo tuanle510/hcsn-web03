@@ -3,6 +3,10 @@
   height: 36px;
 }
 
+.m-combobox input {
+  font-size: 13px;
+}
+
 .m-combobox .combobox-contaner {
   height: 100%;
   border-radius: 2.5px;

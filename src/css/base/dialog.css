@@ -52,7 +52,21 @@
 }
 
 .m-modal-centent .modal-field {
+  position: relative;
   width: calc((100% - 32px) / 3);
+}
+
+.m-modal-centent .modal-field .spin-button-container {
+  position: absolute;
+  right: 0px;
+  gap: 4px;
+  width: 20px;
+  height: 34px;
+  bottom: 0px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .m-modal-centent .modal-field.modal-field-long {
