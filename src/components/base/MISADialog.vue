@@ -162,21 +162,24 @@
           @click="onCancelAsset"
           buttonTitle="Hủy"
         ></MISAButton>
-        <MISAButton @click="onSubmit" buttonTitle="Lưu"></MISAButton>
+        <MISAButton
+          @click="!isEditing ? onCreateAsset() : onUpdateAsset()"
+          buttonTitle="Lưu"
+        ></MISAButton>
       </div>
     </div>
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
-  name: "the-dialog",
+  name: 'the-dialog',
   props: [
-    "assetSelected",
-    "dialogTitle",
-    "isEditing",
-    "partUseData",
-    "typeData",
+    'assetSelected',
+    'dialogTitle',
+    'isEditing',
+    'partUseData',
+    'typeData',
   ],
 
   // computed: {
@@ -212,15 +215,15 @@ export default {
     async onCreateAsset() {
       try {
         const res = await axios.post(
-          "https://62616774327d3896e27b58d2.mockapi.io/api/asset",
+          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
           this.asset
         );
-        this.$emit("alertShow", false);
-        this.$emit("dialogShow", false);
-        if (res.statusText == "Created") {
-          this.$emit("toastShow", true, "Lưu dữ liệu thành công");
+        this.$emit('alertShow', false);
+        this.$emit('dialogShow', false);
+        if (res.statusText == 'Created') {
+          this.$emit('toastShow', true, 'Lưu dữ liệu thành công');
           setTimeout(() => {
-            this.$emit("toastShow", false);
+            this.$emit('toastShow', false);
           }, 2300);
         }
       } catch (error) {
@@ -241,12 +244,12 @@ export default {
           `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.asset.id}`,
           this.asset
         );
-        this.$emit("alertShow", false);
-        this.$emit("dialogShow", false);
-        if (res.statusText == "OK") {
-          this.$emit("toastShow", true, "Sửa dữ liệu thành công");
+        this.$emit('alertShow', false);
+        this.$emit('dialogShow', false);
+        if (res.statusText == 'OK') {
+          this.$emit('toastShow', true, 'Sửa dữ liệu thành công');
           setTimeout(() => {
-            this.$emit("toastShow", false);
+            this.$emit('toastShow', false);
           }, 2300);
         }
       } catch (error) {
@@ -264,17 +267,17 @@ export default {
     onCancelAsset() {
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
         this.$emit(
-          "alertShow",
+          'alertShow',
           true,
-          "Bạn có muốn hủy bỏ khai báo này?",
-          "cancel"
+          'Bạn có muốn hủy bỏ khai báo này?',
+          'cancel'
         );
       } else {
         this.$emit(
-          "alertShow",
+          'alertShow',
           true,
-          "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?",
-          "cancelChange"
+          'Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?',
+          'cancelChange'
         );
       }
     },
@@ -289,8 +292,8 @@ export default {
      */
     onSubmit() {
       if (!this.asset.name) {
-        this.error.assetCode = "Mã tài sản không được để trống";
-        this.$emit("alertShow", true, this.error.assetCode);
+        this.error.assetCode = 'Mã tài sản không được để trống';
+        this.$emit('alertShow', true, this.error.assetCode);
         this.$$refs.firstInput.focus();
       }
     },
@@ -304,8 +307,8 @@ export default {
       startDate: new Date(),
       buyDate: new Date(),
       error: {
-        assetCode: "",
-        assetName: "",
+        assetCode: '',
+        assetName: '',
       },
     };
   },

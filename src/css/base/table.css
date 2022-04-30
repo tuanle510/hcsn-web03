@@ -42,6 +42,10 @@
   overflow: auto;
 }
 
+.m-grip .m-table tbody .m-tr:hover .m-function-box {
+  display: flex !important;
+}
+
 .m-grip .m-table tbody tr:hover {
   cursor: pointer;
   background-color: rgba(26, 164, 200, 0.2);
@@ -63,23 +67,15 @@
 }
 
 /* tfoot */
-.m-grip .m-table tfoot tr {
-  position: sticky;
-  bottom: 0;
-  right: 0;
-  height: 40px;
-  width: 100%;
-  background-color: #fff;
-}
-
-.m-grip .m-table tfoot tr::after {
-  content: "";
+.m-table-footer {
   position: absolute;
-  height: 1px;
-  background-color: rgba(175, 175, 175, 0.6);
-  width: 100%;
-  top: 0;
-  right: 0;
+  bottom: 0px;
+  background-color: #fff;
+  width: calc(100% - 2px);
+  height: 40px;
+  border-radius: 3px;
+  border-collapse: collapse;
+  border-top: 1px solid rgba(175, 175, 175, 0.6);
 }
 
 .m-paging-left {
@@ -150,31 +146,21 @@
 }
 
 .m-table-container::-webkit-scrollbar {
-  width: 2px;
+  width: 1px;
   height: 0;
 }
-/* Track */
+
 .m-table-container::-webkit-scrollbar-track {
   border-radius: 1px;
   background: #fff;
   margin-block: 38px 40px;
 }
 
-/* Handle */
 .m-table-container::-webkit-scrollbar-thumb {
   background: #afafaf;
   border-radius: 1px;
 }
 
-/* Handle on hover */
 .m-table-container::-webkit-scrollbar-thumb:hover {
   background: #555;
-}
-
-.m-tr:hover .m-function-box {
-  display: flex !important;
-}
-
-.m-tr-color {
-  background-color: red;
 }

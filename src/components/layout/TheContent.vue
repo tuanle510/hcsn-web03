@@ -2,10 +2,13 @@
   <div class="m-content">
     <div class="m-toolbar">
       <div class="m-toolbar-left">
-        <div class="toolbar-field">
+        <div class="toolbar-field" tabindex="0">
           <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
         </div>
-        <div class="toolbar-field">
+        <div class="toolbar-field" tabindex="1">
+          <div class="simple-typeahead-icon left-icon">
+            <div class="filter"></div>
+          </div>
           <vue3-simple-typeahead
             id="typeahead_id"
             placeholder="Loại tài sản"
@@ -13,6 +16,10 @@
             :minInputLength="1"
           >
           </vue3-simple-typeahead>
+          <div class="simple-typeahead-icon right-icon">
+            <div v-if="isOptionShow" class="up"></div>
+            <div v-else class="down"></div>
+          </div>
           <!-- <MISACombobox
             :optionList="typeData"
             filterby="typeName"
@@ -20,7 +27,7 @@
             placeholder="Loại tài sản"
           ></MISACombobox> -->
         </div>
-        <div class="toolbar-field">
+        <div class="toolbar-field" tabindex="2">
           <MISACombobox
             :optionList="partUseData"
             filterby="partUseName"
@@ -55,35 +62,22 @@
                   :checked="checked"
                 ></MISACheckbox>
               </th>
-              <th class="text-align-left" style="max-width: 50px">STT</th>
-              <th class="text-align-left" style="max-width: 80px">
-                Mã tài sản
-              </th>
-              <th class="text-align-left" style="max-width: 130px">
-                Tên tài sản
-              </th>
-              <th class="text-align-left" style="max-width: 150px">
-                Loại tài sản
-              </th>
-              <th class="text-align-left" style="max-width: 200px">
-                Bộ phận sử dụng
-              </th>
-              <th class="text-align-right" style="max-width: 80px">Số lượng</th>
-              <th class="text-align-right" style="max-width: 130px">
-                Nguyên giá
-              </th>
-              <th class="text-align-right" style="max-width: 130px">
+              <th class="text-align-left" style="width: 50px">STT</th>
+              <th class="text-align-left" style="width: 80px">Mã tài sản</th>
+              <th class="text-align-left">Tên tài sản</th>
+              <th class="text-align-left">Loại tài sản</th>
+              <th class="text-align-left">Bộ phận sử dụng</th>
+              <th class="text-align-right" style="width: 80px">Số lượng</th>
+              <th class="text-align-right" style="width: 130px">Nguyên giá</th>
+              <th class="text-align-right" style="width: 130px">
                 HM/KH lũy kế
               </th>
-              <th class="text-align-right" style="max-width: 130px">
+              <th class="text-align-right" style="width: 130px">
                 Giá trị còn lại
               </th>
-              <th class="text-align-center" style="max-width: 80px">
-                Chức năng
-              </th>
+              <th class="text-align-center" style="width: 80px">Chức năng</th>
             </tr>
           </thead>
-
           <tbody>
             <tr
               @dblclick="showEditDialog(product)"
@@ -99,7 +93,7 @@
               </td>
               <td class="text-align-left">{{ index + 1 }}</td>
               <td class="text-align-left">{{ product.code }}</td>
-              <td class="text-align-left">{{ product.name }}</td>
+              <td class="text-align-left text-limit">{{ product.name }}</td>
               <td class="text-align-left">{{ product.typeName }}</td>
               <td class="text-align-left">{{ product.partUseName }}</td>
               <td class="text-align-right">{{ product.quantity }}</td>
@@ -120,8 +114,10 @@
               </td>
             </tr>
           </tbody>
-
-          <tfoot>
+        </table>
+        <!-- paginhg -->
+        <table class="m-table-footer">
+          <tbody>
             <tr>
               <td colspan="6">
                 <div class="m-paging-left">
@@ -150,22 +146,17 @@
                   </div>
                 </div>
               </td>
-
-              <td class="text-align-right" style="font-weight: 700">
+              <td class="text-align-right" style="width: 80px">
                 {{ quantityTotal }}
               </td>
-              <td class="text-align-right" style="font-weight: 700">
-                249.2284.000
-              </td>
-              <td class="text-align-right" style="font-weight: 700">
-                19.715.000
-              </td>
-              <td class="text-align-right" style="font-weight: 700">
+              <td class="text-align-right" style="width: 130px">2492284000</td>
+              <td class="text-align-right" style="width: 130px">19.715.000</td>
+              <td class="text-align-right" style="width: 130px">
                 229.2284.000
               </td>
-              <td></td>
+              <td style="width: 80px"></td>
             </tr>
-          </tfoot>
+          </tbody>
         </table>
       </div>
     </div>
@@ -235,6 +226,14 @@ export default {
 
       return quantityTotal;
     },
+
+    /**
+     * Mô tả : Format tiền
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 02:07 01/05/2022
+     */
   },
 
   /**
@@ -531,6 +530,7 @@ export default {
       isLoading: false,
       partUseData: [],
       typeData: [],
+      defaultData: ['TUAN', 'LE'],
     };
   },
 };

@@ -16,6 +16,7 @@
 }
 
 .m-content .m-toolbar .toolbar-field {
+  position: relative;
   width: 200px;
 }
 

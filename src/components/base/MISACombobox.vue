@@ -1,5 +1,10 @@
 <template>
-  <div class="m-combobox">
+  <div
+    class="m-combobox-out"
+    v-if="isOptionShow"
+    @click="this.isOptionShow = false"
+  ></div>
+  <div class="m-combobox" ref="combobox">
     <div class="combobox-contaner">
       <div v-if="hasIcon" class="combobox-icon">
         <div class="filter"></div>
@@ -8,8 +13,7 @@
         ref="optionInput"
         class="combobox-text"
         :class="{ 'input-no-icon': !hasIcon }"
-        @focus="this.isOptionShow = true"
-        @blur="this.isOptionShow = false"
+        @focus="setFocus"
         @keydown.up="up"
         @keydown.down="down"
         @keydown.enter="selectItem"
@@ -52,17 +56,14 @@
 </template>
 <script>
 export default {
-  name: "the-combobox",
+  name: 'the-combobox',
 
-  props: ["placeholder", "hasIcon", "filterby", "optionList"],
+  props: ['placeholder', 'hasIcon', 'filterby', 'optionList'],
 
   computed: {
     matches() {
-      if (this.optionList == null) {
-        return [];
-      }
       if (
-        this.optionInput == "" ||
+        this.optionInput == '' ||
         this.optionList
           .map((item) => item[this.filterby])
           .includes(this.optionInput)
@@ -80,6 +81,34 @@ export default {
 
   methods: {
     /**
+     * Mô tả : Án hiện hết lựa chọm
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:42 30/04/2022
+     */
+
+    // btnDropdown() {
+    //   if (this.matches.length != 0) {
+    //     this.isOptionShow = false;
+    //   } else {
+    //     this.matches = this.optionList;
+    //     this.isOptionShow = true;
+    //   }
+    // },
+    /**
+     * Mô tả : khi focus vào thì hiện out line
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:23 30/04/2022
+     */
+    setFocus() {
+      this.$refs.combobox.style.border = '1px solid #22a7ca';
+      this.isOptionShow = true;
+    },
+
+    /**
      * Mô tả : clear input
      * @param
      * @return
@@ -87,7 +116,7 @@ export default {
      * Created date: 14:52 28/04/2022
      */
     clearInput() {
-      this.optionInput = "";
+      this.optionInput = '';
       this.isOptionShow = false;
       this.selecedIndex = 0;
     },
@@ -103,6 +132,12 @@ export default {
       this.selecedIndex = index;
       this.selectItem();
     },
+
+    // blur() {
+    //   setTimeout(() => {
+    //     this.isOptionShow = false;
+    //   }, 500);
+    // },
 
     selectItem() {
       this.optionInput = this.matches[this.selecedIndex][this.filterby];
@@ -135,7 +170,7 @@ export default {
     return {
       selecedIndex: 0,
       isOptionShow: false,
-      optionInput: "",
+      optionInput: '',
     };
   },
 };
