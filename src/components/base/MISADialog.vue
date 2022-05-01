@@ -75,11 +75,11 @@
           </div>
         </div>
         <div class="modal-field">
-          <label for="input">Nguyên giá <span>*</span></label>
+          <label for="input">{{ this.priceFormat }} <span>*</span></label>
           <input
             class="m-input number-input"
             type="number"
-            v-model="asset.price"
+            v-model="formatCurrency"
           />
         </div>
         <div class="modal-field">
@@ -122,13 +122,6 @@
           <label for="input">Năm theo dõi</label>
           <input class="m-input number-input" disabled :value="newYear" />
         </div>
-        <!-- <div class="modal-field">
-          <input class="m-input" type="date" placeholder="DD-MM-YYYY" />
-        </div> -->
-        <!-- <div class="modal-field">
-          <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
-          <input class="m-input" type="date" placeholder="DD-MM-YYYY" />
-        </div> -->
         <div class="modal-field">
           <label for="input">Ngày mua <span>*</span></label>
           <div class="datepicker-container">
@@ -201,6 +194,26 @@ export default {
   computed: {
     annualDepreciationRate: function () {
       return this.asset.price * (this.asset.depreciationRate / 100);
+    },
+    /**
+     * Mô tả : format tiền tại inputt
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:26 01/05/2022
+     */
+    formatCurrency: {
+      get: function () {
+        return this.asset;
+      },
+      set: function (value) {
+        this.priceFormat = new Intl.NumberFormat(
+          'vi-VN',
+          {
+            currency: 'VND',
+          }.format(value)
+        );
+      },
     },
   },
 
@@ -306,6 +319,7 @@ export default {
       newYear: new Date().getFullYear(),
       startDate: new Date(),
       buyDate: new Date(),
+      priceFormat: '',
       error: {
         assetCode: '',
         assetName: '',

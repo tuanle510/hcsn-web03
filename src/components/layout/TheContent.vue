@@ -50,7 +50,9 @@
         </div>
       </div>
     </div>
+    <!-- Loading -->
     <p style="height: calc(100% - 46px)" v-if="isLoading">Loading...</p>
+    <!-- Table -->
     <div v-else class="m-grip">
       <div class="m-table-container">
         <table class="m-table">
@@ -97,7 +99,9 @@
               <td class="text-align-left">{{ product.typeName }}</td>
               <td class="text-align-left">{{ product.partUseName }}</td>
               <td class="text-align-right">{{ product.quantity }}</td>
-              <td class="text-align-right">{{ product.price }}</td>
+              <td class="text-align-right">
+                {{ currencyFormat(product.price) }}
+              </td>
               <td class="text-align-right">{{ product.accumulate }}</td>
               <td class="text-align-right">
                 {{ product.price - product.accumulate }}
@@ -115,7 +119,7 @@
             </tr>
           </tbody>
         </table>
-        <!-- paginhg -->
+        <!-- paging -->
         <table class="m-table-footer">
           <tbody>
             <tr>
@@ -149,7 +153,9 @@
               <td class="text-align-right" style="width: 80px">
                 {{ quantityTotal }}
               </td>
-              <td class="text-align-right" style="width: 130px">2492284000</td>
+              <td class="text-align-right" style="width: 130px">
+                {{ currencyFormat(2492284000) }}
+              </td>
               <td class="text-align-right" style="width: 130px">19.715.000</td>
               <td class="text-align-right" style="width: 130px">
                 229.2284.000
@@ -160,7 +166,6 @@
         </table>
       </div>
     </div>
-
     <MISADialog
       ref="dialog"
       :dialogTitle="isEditing ? 'Sửa sản phẩm' : 'Thêm sản phẩm'"
@@ -190,6 +195,7 @@
   </div>
 </template>
 <script>
+/* eslint-disable */
 import axios from 'axios';
 export default {
   name: 'the-content',
@@ -226,14 +232,6 @@ export default {
 
       return quantityTotal;
     },
-
-    /**
-     * Mô tả : Format tiền
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 02:07 01/05/2022
-     */
   },
 
   /**
@@ -291,6 +289,19 @@ export default {
   },
 
   methods: {
+    /**
+     * Mô tả : format tiền ttrong bảng
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 09:55 01/05/2022
+     */
+    currencyFormat(value) {
+      var formatter = new Intl.NumberFormat('vi-VN', {
+        currency: 'VND',
+      });
+      return formatter.format(value);
+    },
     /**
      * Bật dialog thêm sản phẩm mới
      * CREATED BY: LTTUAN(19.04.2022)

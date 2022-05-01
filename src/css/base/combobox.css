@@ -54,6 +54,7 @@
 
 .m-option-list {
   position: absolute;
+  top: 36px;
   border-radius: 2.5px;
   background-color: #fff;
   width: 100%;
