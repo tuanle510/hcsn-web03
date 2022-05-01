@@ -16,6 +16,7 @@
             type="text"
             maxlength="20"
             placeholder="Nhập mã tài sản"
+            v-model="asset.code"
           />
         </div>
         <div class="modal-field modal-field-long">
@@ -29,11 +30,11 @@
         <div class="modal-field">
           <label for="input">Mã bộ phận sử dụng <span>*</span></label>
           <MISACombobox
-            :optionList="partUseData"
-            filterby="partUseName"
             :hasIcon="false"
+            :optionList="partUseData"
+            filterby="partUseCode"
             placeholder="Chọm mã bộ phận sử dụng"
-            @selected="getComboboxValue"
+            v-model="asset.partUseCode"
           ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">
@@ -43,11 +44,11 @@
         <div class="modal-field">
           <label for="input">Mã loại tài sản <span>*</span></label>
           <MISACombobox
-            :optionList="typeData"
-            filterby="typeName"
             :hasIcon="false"
+            :optionList="typeData"
+            filterby="typeCode"
             placeholder="Chọm mã loại tài sản"
-            @selected="getComboboxValue"
+            v-model="asset.typeCode"
           ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">

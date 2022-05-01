@@ -6,7 +6,7 @@
         <div class="filter"></div>
       </div>
       <input
-        ref="optionInput"
+        ref="input"
         class="combobox-text"
         :class="{ 'input-no-icon': !hasIcon }"
         @keydown.tab="tab"
@@ -16,13 +16,14 @@
         @keydown.down="down"
         @keydown.enter="selectItem"
         :placeholder="placeholder"
-        v-model="optionInput"
+        @input="onChangeHandler"
+        :value="this.modelValue"
       />
 
       <div
         style="position: absolute; right: 20px"
         @click="clearInput"
-        v-if="optionInput != ''"
+        v-if="hasInput"
         class="icon-combobox"
       >
         <div class="clear"></div>
@@ -56,29 +57,50 @@
 export default {
   name: 'the-combobox',
 
-  props: ['hasIcon', 'placeholder', 'filterby', 'optionList'],
+  props: ['hasIcon', 'placeholder', 'filterby', 'optionList', 'modelValue'],
 
   computed: {
     matches() {
       if (
-        this.optionInput == '' ||
+        this.modelValue == undefined ||
         this.optionList
           .map((item) => item[this.filterby])
-          .includes(this.optionInput)
+          .includes(this.modelValue)
       ) {
         return this.optionList;
       } else {
         return this.optionList.filter((item) =>
           item[this.filterby]
             .toLowerCase()
-            .includes(this.optionInput.toLowerCase())
+            .includes(this.modelValue.toLowerCase())
         );
       }
     },
   },
 
+  watch: {
+    modelValue: function (newValue) {
+      if (newValue == undefined) {
+        this.hasInput = false;
+      } else {
+        this.hasInput = true;
+      }
+    },
+  },
+
   methods: {
-    
+    /**
+     * Mô tả : Lấy giá trị từ v-model bên cha
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 00:00 02/05/2022
+     */
+    onChangeHandler(e) {
+      e.preventDefault();
+      this.$emit('update:modelValue', e.target.value);
+    },
+
     /**
      * Mô tả : click ra ngoài thì tắtt
      * @param
@@ -88,10 +110,10 @@ export default {
      */
     onClickOut() {
       this.isOptionShow = false;
-      this.$refs.optionInput.blur();
+      this.$refs.modelValue.blur();
     },
     /**
-     * Mô tả : khi focus vào thì hiện out line
+     * Mô tả : khi focus vào thì hiện out line, blur thì bỏ outline
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
@@ -101,7 +123,6 @@ export default {
       this.$refs.combobox.style.border = '1px solid #22a7ca';
       this.isOptionShow = true;
     },
-
     outFoucs() {
       this.$refs.combobox.style.border = '1px solid #afafaf';
     },
@@ -114,7 +135,8 @@ export default {
      * Created date: 14:52 28/04/2022
      */
     clearInput() {
-      this.optionInput = '';
+      this.$emit('update:modelValue');
+      this.hasInput = false;
       this.isOptionShow = false;
       this.selecedIndex = 0;
     },
@@ -143,11 +165,12 @@ export default {
     },
 
     selectItem() {
-      this.optionInput = this.matches[this.selecedIndex][this.filterby];
-      console.log(this.optionInput);
-      console.log(this.matches[this.selecedIndex]);
+      this.$emit(
+        'update:modelValue',
+        this.matches[this.selecedIndex][this.filterby]
+      );
       this.isOptionShow = false;
-      this.$refs.optionInput.blur();
+      this.$refs.input.blur();
       this.$emit(
         'selected',
         JSON.parse(JSON.stringify(this.matches[this.selecedIndex]))
@@ -179,7 +202,7 @@ export default {
     return {
       selecedIndex: 0,
       isOptionShow: false,
-      optionInput: '',
+      hasInput: false,
     };
   },
 };
