@@ -2,38 +2,25 @@
   <div class="m-content">
     <div class="m-toolbar">
       <div class="m-toolbar-left">
-        <div class="toolbar-field" tabindex="0">
+        <div class="toolbar-field" tabindex="1">
           <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
         </div>
-        <div class="toolbar-field" tabindex="1">
-          <div class="simple-typeahead-icon left-icon">
-            <div class="filter"></div>
-          </div>
-          <vue3-simple-typeahead
-            id="typeahead_id"
-            placeholder="Loại tài sản"
-            :items="['One', 'Two', 'Three']"
-            :minInputLength="1"
-          >
-          </vue3-simple-typeahead>
-          <div class="simple-typeahead-icon right-icon">
-            <div v-if="isOptionShow" class="up"></div>
-            <div v-else class="down"></div>
-          </div>
-          <!-- <MISACombobox
-            :optionList="typeData"
-            filterby="typeName"
-            hasIcon="true"
-            placeholder="Loại tài sản"
-          ></MISACombobox> -->
-        </div>
         <div class="toolbar-field" tabindex="2">
-          <MISACombobox
-            :optionList="partUseData"
-            filterby="partUseName"
-            hasIcon="true"
-            placeholder="Bộ phận sử dụng"
-          ></MISACombobox>
+          <ejs-combobox
+            id="combobox"
+            :dataSource="partUseData"
+            :fields="{ text: 'partUseName' }"
+            placeholder="Select a game"
+          ></ejs-combobox>
+        </div>
+
+        <div class="toolbar-field" tabindex="3">
+          <ejs-combobox
+            id="combobox"
+            :dataSource="typeData"
+            :fields="{ text: 'typeName' }"
+            placeholder="Select a game"
+          ></ejs-combobox>
         </div>
       </div>
       <div class="m-toolbar-right">
@@ -197,8 +184,14 @@
 <script>
 /* eslint-disable */
 import axios from 'axios';
+import { ComboBoxComponent } from '@syncfusion/ej2-vue-dropdowns';
+
 export default {
   name: 'the-content',
+
+  components: {
+    'ejs-combobox': ComboBoxComponent,
+  },
 
   computed: {
     /**

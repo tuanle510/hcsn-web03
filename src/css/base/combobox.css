@@ -163,3 +163,68 @@
   .simple-typeahead-list-item.simple-typeahead-list-item-active {
   background-color: #c7e0f5 !important;
 }
+
+/* custom syncfusion */
+/* .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left) {
+  border: 1px solid #afafaf;
+  border-radius: 2.5px;
+  height: 36px;
+  background-color: #fff;
+}
+
+.e-input-group.e-input-focus:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled):not(.e-float-icon-left),
+.e-input-group.e-control-wrapper.e-input-focus:hover:not(.e-success):not(.e-warning):not(.e-error):not(.e-disabled):not(.e-float-icon-left) {
+  border: 1px solid #22a7ca !important;
+  padding-left: 14px;
+}
+.e-ddl.e-input-group.e-control-wrapper .e-input {
+  font-size: 13px;
+  font-family: MISA Font;
+  padding-left: 14px;
+}
+.e-ddl.e-input-group input.e-input::placeholder {
+  font-size: 13px;
+  font-family: MISA Font;
+} */
+.e-input-group:not(.e-float-icon-left),
+.e-input-group.e-control-wrapper:not(.e-float-icon-left) {
+  border-width: 1px !important;
+  border-color: #afafaf !important;
+}
+
+.e-input-group input.e-input,
+.e-input-group.e-control-wrapper input.e-input {
+  min-height: 26px;
+  padding-left: 16px;
+}
+.e-input-group,
+.e-input-group.e-control-wrapper {
+  margin-bottom: 0;
+  border-radius: 2.5px;
+}
+.e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+  content: '' !important;
+  background: url('../../assets/icon/qlts-icon.png') no-repeat -72px -338px;
+  width: 8px;
+  height: 5px;
+  font-family: 'e-icons';
+  margin-right: 12px !important;
+}
+
+.e-ddl.e-input-group.e-control-wrapper.e-input-focus::before,
+.e-ddl.e-input-group.e-control-wrapper.e-input-focus::after {
+  display: none;
+  padding-left: 16px;
+}
+
+.e-input-focus {
+  display: none;
+  border: 1px solid #afafaf !important;
+}
+
+.e-input-group input.e-input:focus,
+.e-input-group.e-control-wrapper input.e-input:focus,
+.e-input-group.e-input-focus input.e-input,
+.e-input-group.e-control-wrapper.e-input-focus input.e-input {
+  padding: 4px 0 4px 16px;
+}

@@ -12,6 +12,12 @@ import Datepicker from '@vuepic/vue-datepicker';
 
 import SimpleTypeahead from 'vue3-simple-typeahead';
 import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css';
+import { registerLicense } from '@syncfusion/ej2-base';
+
+// Registering Syncfusion license key
+registerLicense(
+  'ORg4AjUWIQA/Gnt2VVhhQlFaclhJWHxKf0x0RWFbb19wfldCalhWVAciSV9jS3xTc0ViWH9ad3BQQGReVQ=='
+);
 
 const app = createApp(App);
 /* eslint-disable */
@@ -26,4 +32,3 @@ app.component('MISAToast', Toast);
 app.component('Datepicker', Datepicker);
 app.use(SimpleTypeahead);
 app.mount('#app');
-

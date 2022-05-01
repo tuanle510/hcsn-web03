@@ -16,7 +16,6 @@
             type="text"
             maxlength="20"
             placeholder="Nhập mã tài sản"
-            v-model="asset.code"
           />
         </div>
         <div class="modal-field modal-field-long">
@@ -34,6 +33,7 @@
             filterby="partUseName"
             :hasIcon="false"
             placeholder="Chọm mã bộ phận sử dụng"
+            @selected="getComboboxValue"
           ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">
@@ -41,12 +41,13 @@
           <input class="m-input" disabled />
         </div>
         <div class="modal-field">
-          <label for="input">Mã loại tài sản</label>
+          <label for="input">Mã loại tài sản <span>*</span></label>
           <MISACombobox
             :optionList="typeData"
             filterby="typeName"
             :hasIcon="false"
             placeholder="Chọm mã loại tài sản"
+            @selected="getComboboxValue"
           ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">
@@ -159,6 +160,7 @@
           @click="!isEditing ? onCreateAsset() : onUpdateAsset()"
           buttonTitle="Lưu"
         ></MISAButton>
+        <div tabindex="-1"></div>
       </div>
     </div>
   </div>
@@ -309,6 +311,10 @@ export default {
         this.$emit('alertShow', true, this.error.assetCode);
         this.$$refs.firstInput.focus();
       }
+    },
+
+    getComboboxValue(value) {
+      console.log(value);
     },
   },
 

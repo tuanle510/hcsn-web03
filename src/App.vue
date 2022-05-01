@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="m-layout">
+  
       <Navbar @onCloseNavBar="onCloseNavBar" :navBarWidth="navBarWidth" />
       <div
         class="m-main"
@@ -24,6 +25,7 @@ export default {
     Header,
     Content,
     Navbar,
+  
   },
 
   methods: {
@@ -50,4 +52,8 @@ export default {
 <style>
 @import url(./css/main.css);
 @import '@vuepic/vue-datepicker/dist/main.css';
+
+@import '../node_modules/@syncfusion/ej2-base/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-inputs/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-vue-dropdowns/styles/material.css';
 </style>

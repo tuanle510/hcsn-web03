@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="m-combobox-out"
-    v-if="isOptionShow"
-    @click="this.isOptionShow = false"
-  ></div>
+  <div class="m-combobox-out" v-if="isOptionShow" @click="onClickOut()"></div>
   <div class="m-combobox" ref="combobox">
     <div class="combobox-contaner">
       <div v-if="hasIcon" class="combobox-icon">
@@ -13,7 +9,9 @@
         ref="optionInput"
         class="combobox-text"
         :class="{ 'input-no-icon': !hasIcon }"
+        @keydown.tab="tab"
         @focus="setFocus"
+        @blur="outFoucs"
         @keydown.up="up"
         @keydown.down="down"
         @keydown.enter="selectItem"
@@ -58,7 +56,7 @@
 export default {
   name: 'the-combobox',
 
-  props: ['placeholder', 'hasIcon', 'filterby', 'optionList'],
+  props: ['hasIcon', 'placeholder', 'filterby', 'optionList'],
 
   computed: {
     matches() {
@@ -80,22 +78,18 @@ export default {
   },
 
   methods: {
+    
     /**
-     * Mô tả : Án hiện hết lựa chọm
+     * Mô tả : click ra ngoài thì tắtt
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 11:42 30/04/2022
+     * Created date: 22:42 01/05/2022
      */
-
-    // btnDropdown() {
-    //   if (this.matches.length != 0) {
-    //     this.isOptionShow = false;
-    //   } else {
-    //     this.matches = this.optionList;
-    //     this.isOptionShow = true;
-    //   }
-    // },
+    onClickOut() {
+      this.isOptionShow = false;
+      this.$refs.optionInput.blur();
+    },
     /**
      * Mô tả : khi focus vào thì hiện out line
      * @param
@@ -106,6 +100,10 @@ export default {
     setFocus() {
       this.$refs.combobox.style.border = '1px solid #22a7ca';
       this.isOptionShow = true;
+    },
+
+    outFoucs() {
+      this.$refs.combobox.style.border = '1px solid #afafaf';
     },
 
     /**
@@ -122,6 +120,17 @@ export default {
     },
 
     /**
+     * Mô tả : Tab thì ẩn option listt
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:51 01/05/2022
+     */
+    tab() {
+      this.isOptionShow = false;
+    },
+
+    /**
      * Mô tả : Chọn option
      * @param
      * @return
@@ -133,16 +142,16 @@ export default {
       this.selectItem();
     },
 
-    // blur() {
-    //   setTimeout(() => {
-    //     this.isOptionShow = false;
-    //   }, 500);
-    // },
-
     selectItem() {
       this.optionInput = this.matches[this.selecedIndex][this.filterby];
+      console.log(this.optionInput);
+      console.log(this.matches[this.selecedIndex]);
       this.isOptionShow = false;
       this.$refs.optionInput.blur();
+      this.$emit(
+        'selected',
+        JSON.parse(JSON.stringify(this.matches[this.selecedIndex]))
+      );
     },
 
     up() {
