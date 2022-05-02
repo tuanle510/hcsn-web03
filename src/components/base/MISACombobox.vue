@@ -1,15 +1,20 @@
 <template>
-  <div class="m-combobox-out" v-if="isOptionShow" @click="onClickOut()"></div>
+  <div
+    class="m-combobox-out"
+    v-if="isOptionShow"
+    @click="isOptionShow = false"
+  ></div>
   <div class="m-combobox" ref="combobox">
     <div class="combobox-contaner">
       <div v-if="hasIcon" class="combobox-icon">
         <div class="filter"></div>
       </div>
       <input
+        type="text"
         ref="input"
         class="combobox-text"
         :class="{ 'input-no-icon': !hasIcon }"
-        @keydown.tab="tab"
+        @keydown.tab="this.isOptionShow = false"
         @focus="setFocus"
         @blur="outFoucs"
         @keydown.up="up"
@@ -30,7 +35,7 @@
       </div>
       <div
         style="position: absolute; right: 0"
-        @click="isOptionShow = !isOptionShow"
+        @click="this.isOptionShow = !this.isOptionShow"
         class="icon-combobox"
       >
         <div v-if="isOptionShow" class="up"></div>
@@ -56,17 +61,13 @@
 <script>
 export default {
   name: 'the-combobox',
+  emits: ['blur', 'keydown', 'update:modelValue'],
 
   props: ['hasIcon', 'placeholder', 'filterby', 'optionList', 'modelValue'],
 
   computed: {
     matches() {
-      if (
-        this.modelValue == undefined ||
-        this.optionList
-          .map((item) => item[this.filterby])
-          .includes(this.modelValue)
-      ) {
+      if (this.modelValue == undefined) {
         return this.optionList;
       } else {
         return this.optionList.filter((item) =>
@@ -80,10 +81,16 @@ export default {
 
   watch: {
     modelValue: function (newValue) {
-      if (newValue == undefined) {
+      if (newValue == undefined || newValue == '') {
         this.hasInput = false;
       } else {
         this.hasInput = true;
+      }
+    },
+
+    matches: function (newValue) {
+      if (newValue.length != this.optionList.length) {
+        this.selecedIndex = 0;
       }
     },
   },
@@ -101,17 +108,6 @@ export default {
       this.$emit('update:modelValue', e.target.value);
     },
 
-    /**
-     * Mô tả : click ra ngoài thì tắtt
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 22:42 01/05/2022
-     */
-    onClickOut() {
-      this.isOptionShow = false;
-      this.$refs.modelValue.blur();
-    },
     /**
      * Mô tả : khi focus vào thì hiện out line, blur thì bỏ outline
      * @param
@@ -142,17 +138,6 @@ export default {
     },
 
     /**
-     * Mô tả : Tab thì ẩn option listt
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 22:51 01/05/2022
-     */
-    tab() {
-      this.isOptionShow = false;
-    },
-
-    /**
      * Mô tả : Chọn option
      * @param
      * @return
@@ -165,16 +150,17 @@ export default {
     },
 
     selectItem() {
-      this.$emit(
-        'update:modelValue',
-        this.matches[this.selecedIndex][this.filterby]
-      );
-      this.isOptionShow = false;
-      this.$refs.input.blur();
-      this.$emit(
-        'selected',
-        JSON.parse(JSON.stringify(this.matches[this.selecedIndex]))
-      );
+      try {
+        this.$emit(
+          'update:modelValue',
+          this.matches[this.selecedIndex][this.filterby]
+        );
+        this.isOptionShow = false;
+
+        this.$refs.input.blur();
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     up() {

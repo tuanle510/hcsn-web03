@@ -24,7 +24,6 @@
 .m-alert .m-alert-container .alert-content {
   height: 100px;
   width: 100%;
-  /* background-color: red; */
   display: flex;
   align-items: center;
 }

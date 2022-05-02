@@ -6,21 +6,23 @@
           <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
         </div>
         <div class="toolbar-field" tabindex="2">
-          <ejs-combobox
-            id="combobox"
-            :dataSource="partUseData"
-            :fields="{ text: 'partUseName' }"
-            placeholder="Select a game"
-          ></ejs-combobox>
+          <MISACombobox
+            :hasIcon="true"
+            :optionList="typeData"
+            filterby="typeName"
+            placeholder="Loại tài sản"
+            v-model="typeSearch"
+          ></MISACombobox>
         </div>
 
         <div class="toolbar-field" tabindex="3">
-          <ejs-combobox
-            id="combobox"
-            :dataSource="typeData"
-            :fields="{ text: 'typeName' }"
-            placeholder="Select a game"
-          ></ejs-combobox>
+          <MISACombobox
+            :hasIcon="true"
+            :optionList="partUseData"
+            filterby="partUseName"
+            placeholder="Bộ phận sử dụng"
+            v-model="usePartSearch"
+          ></MISACombobox>
         </div>
       </div>
       <div class="m-toolbar-right">
@@ -51,7 +53,7 @@
                   :checked="checked"
                 ></MISACheckbox>
               </th>
-              <th class="text-align-left" style="width: 50px">STT</th>
+              <th class="text-align-left" style="width: 40px">STT</th>
               <th class="text-align-left" style="width: 80px">Mã tài sản</th>
               <th class="text-align-left">Tên tài sản</th>
               <th class="text-align-left">Loại tài sản</th>
@@ -167,18 +169,17 @@
     ></MISADialog>
 
     <MISAAlert
-      v-if="isAlertShow"
+      v-if="this.alert.isShow"
       :isEditing="isEditing"
-      :alertTitle="alertTitle"
-      :alertType="alertType"
-      @createNewAsset="createNewAsset"
-      @updateAsset="updateAsset"
+      :alertTitle="this.alert.title"
+      :alertType="this.alert.type"
+      @onSubmit="onSubmit"
       @removeAsset="removeAsset"
       @dialogShow="dialogShow"
       @alertShow="alertShow"
     >
     </MISAAlert>
-    <MISAToast v-if="isToastShow" :title="toastTitle"> </MISAToast>
+    <MISAToast v-if="this.toast.isShow" :title="this.toast.title"> </MISAToast>
   </div>
 </template>
 <script>
@@ -317,21 +318,9 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 20:59 26/04/2022
      */
-    updateAsset() {
+    onSubmit() {
       this.isEditing = true;
-      this.$refs.dialog.onUpdateAsset();
-    },
-
-    /**
-     * Mô tả : Thêm asset, lấy fuction từ dialog truyền vào alert
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 21:06 26/04/2022
-     */
-    createNewAsset() {
-      this.isEditing = false;
-      this.$refs.dialog.onCreateAsset();
+      this.$refs.dialog.onSubmit();
     },
 
     /**
@@ -453,7 +442,6 @@ export default {
           const res = await axios.delete(
             `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.checkedaAssetList[i].id}`
           );
-          console.log(res);
         } catch (error) {
           console.log(error);
         }
@@ -499,9 +487,9 @@ export default {
      * Created date: 16:08 26/04/2022
      */
     alertShow(alert, title, type) {
-      this.isAlertShow = alert;
-      this.alertTitle = title;
-      this.alertType = type;
+      this.alert.isShow = alert;
+      this.alert.title = title;
+      this.alert.type = type;
     },
 
     /**
@@ -512,29 +500,35 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 13:56 26/04/2022
      */
-    toastShow(toast, title) {
-      this.isToastShow = toast;
-      this.toastTitle = title;
+    toastShow(isShow, title) {
+      this.toast.isShow = isShow;
+      this.toast.title = title;
+      // this.isToastShow = toast;
+      // this.toastTitle = title;
     },
   },
 
   data() {
     return {
-      isEdit: false,
       isEditing: null,
-      isToastShow: false,
-      toastTitle: '',
-      isAlertShow: false,
-      alertTitle: '',
-      alertType: '',
+      toast: {
+        title: '',
+        isShow: false,
+      },
+      alert: {
+        title: '',
+        isShow: false,
+        type: '',
+      },
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
+      isLoading: false,
       isDialogShow: false, //Hiển thị form hay không
       assetData: [], //dữ liệu lấy về từ api
-      isLoading: false,
       partUseData: [],
       typeData: [],
-      defaultData: ['TUAN', 'LE'],
+      typeSearch: '',
+      usePartSearch: '',
     };
   },
 };

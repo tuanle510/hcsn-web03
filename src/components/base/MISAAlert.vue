@@ -42,9 +42,7 @@
           buttonTitle="Không lưu"
         ></MISAButton>
         <MISAButton
-          @click="
-            isEditing ? this.$emit('updateAsset') : this.$emit('createNewAsset')
-          "
+          @click="this.$emit('onSubmit')"
           buttonTitle="Lưu"
         ></MISAButton>
       </div>

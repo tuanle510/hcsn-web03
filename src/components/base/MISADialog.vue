@@ -30,7 +30,6 @@
         <div class="modal-field">
           <label for="input">Mã bộ phận sử dụng <span>*</span></label>
           <MISACombobox
-            :hasIcon="false"
             :optionList="partUseData"
             filterby="partUseCode"
             placeholder="Chọm mã bộ phận sử dụng"
@@ -39,12 +38,11 @@
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên bộ phận sử dụng</label>
-          <input class="m-input" disabled />
+          <input class="m-input" disabled v-model="asset.partUseName" />
         </div>
         <div class="modal-field">
           <label for="input">Mã loại tài sản <span>*</span></label>
           <MISACombobox
-            :hasIcon="false"
             :optionList="typeData"
             filterby="typeCode"
             placeholder="Chọm mã loại tài sản"
@@ -53,15 +51,18 @@
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên loại tài sản</label>
-          <input class="m-input" disabled />
+          <input
+            ref="typeName"
+            class="m-input"
+            disabled
+            v-model="asset.typeName"
+          />
         </div>
         <div class="modal-field">
           <label for="input">Số lượng<span>*</span></label>
           <input
-            @keydown.up="asset.quantity++"
-            @keydown.down="
-              asset.quantity == 0 ? asset.quantity == 0 : asset.quantity--
-            "
+            type="number"
+            min="0"
             ref="quantity"
             class="m-input number-input-icon"
             v-model="asset.quantity"
@@ -77,27 +78,27 @@
           </div>
         </div>
         <div class="modal-field">
-          <label for="input">{{ this.priceFormat }} <span>*</span></label>
+          <label for="input">Nguyên giá <span>*</span></label>
           <input
             class="m-input number-input"
+            min="0"
             type="number"
-            v-model="formatCurrency"
+            v-model="this.asset.price"
           />
         </div>
         <div class="modal-field">
           <label for="input">Số năm sử dụng <span>*</span></label>
-          <input class="m-input number-input" v-model="asset.year" />
+          <input
+            type="number"
+            class="m-input number-input"
+            v-model="asset.year"
+          />
         </div>
         <div class="modal-field">
           <label for="input">Tỉ lệ hao mòn(%)<span>*</span></label>
           <input
-            @keydown.up="asset.depreciationRate++"
-            @keydown.down="
-              asset.depreciationRate == 0
-                ? asset.depreciationRate == 0
-                : asset.depreciationRate--
-            "
-            ref="quantity"
+            type="number"
+            min="0"
             class="m-input number-input-icon"
             v-model="asset.depreciationRate"
           />
@@ -178,15 +179,10 @@ export default {
     'typeData',
   ],
 
-  // computed: {
-  //   formatPrice: function () {
-  //     return this.asset.price.toLocaleString();
-  //   },
-  // },
-
   mounted() {
     // mounted mới gắn dữ liệu
     this.asset = this.assetSelected;
+
     // Focus vào ô input đầu
     this.$refs.firstInput.focus();
 
@@ -199,7 +195,7 @@ export default {
       return this.asset.price * (this.asset.depreciationRate / 100);
     },
     /**
-     * Mô tả : format tiền tại inputt
+     * Mô tả : format tiền
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
@@ -220,7 +216,67 @@ export default {
     },
   },
 
+  /**
+   * Mô tả : hiển thị dữ liệu từ code của combobox lên cột còn lại
+   * @param
+   * @return
+   * Created by: Lê Thiện Tuấn - MF1118
+   * Created date: 00:43 03/05/2022
+   */
+  watch: {
+    'asset.typeCode'(newValue) {
+      let chosedType = this.typeData.find((item) => item.typeCode == newValue);
+      if (chosedType) {
+        this.asset.typeName = chosedType.typeName;
+      } else {
+        this.asset.typeName = '';
+      }
+    },
+
+    'asset.partUseCode'(newValue) {
+      let chosedUsePart = this.partUseData.find(
+        (item) => item.partUseCode == newValue
+      );
+      if (chosedUsePart) {
+        this.asset.partUseName = chosedUsePart.partUseName;
+      } else {
+        this.asset.partUseName = '';
+      }
+    },
+  },
+
   methods: {
+    /**
+     * Mô tả : format tiền
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 00:35 03/05/2022
+     */
+    formatSalary(value) {
+      this.priceFormat = new Intl.NumberFormat(
+        'vi-VN',
+        {
+          currency: 'VND',
+        }.format(value)
+      );
+    },
+    /**
+     * Mô tả : Chỉ nhận input
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 23:44 02/05/2022
+     */
+    onlyNumber($event) {
+      //console.log($event.keyCode); //keyCodes value
+      let keyCode = $event.keyCode ? $event.keyCode : $event.which;
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
+        // 46 is dot
+        $event.preventDefault();
+      }
+    },
+
     /**
      * Mô tả : Thêm asset mới
      * @param
@@ -307,11 +363,19 @@ export default {
      * Created date: 22:40 28/04/2022
      */
     onSubmit() {
-      if (!this.asset.name) {
-        this.error.assetCode = 'Mã tài sản không được để trống';
-        this.$emit('alertShow', true, this.error.assetCode);
-        this.$$refs.firstInput.focus();
-      }
+      // 1.validate input
+      // 1.1 Check các ô input bắt buộc phải điền
+      // if (!this.asset.name) {
+      //   this.error.assetCode = 'Mã tài sản không được để trống';
+      //   this.$emit('alertShow', true, this.error.assetCode);
+      //   this.$$refs.firstInput.focus();
+      // }
+      // 1.2 Check trùng mã tài sản
+
+      // 2 Nếu không có lỗi gì thì thực hiện thêm hoặc sửa
+      if (!this.isEditing) {
+        this.onCreateAsset();
+      } else this.onUpdateAsset();
     },
 
     getComboboxValue(value) {
