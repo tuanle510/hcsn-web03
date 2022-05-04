@@ -1,9 +1,4 @@
 <template>
-  <!-- <div
-    class="m-combobox-out"
-    v-if="isOptionShow"
-    @click="isOptionShow = false"
-  ></div> -->
   <div
     v-on:clickout="this.isOptionShow = false"
     class="m-combobox"
@@ -39,7 +34,7 @@
       </div>
       <div
         style="position: absolute; right: 0"
-        @click="this.isOptionShow = !this.isOptionShow"
+        @click="clickComboBox()"
         class="icon-combobox"
       >
         <div v-if="isOptionShow" class="up"></div>
@@ -63,30 +58,31 @@
   </div>
 </template>
 <script>
-import 'clickout-event';
+import "clickout-event";
 export default {
-  name: 'the-combobox',
-  emits: ['blur', 'keydown', 'update:modelValue'],
+  name: "the-combobox",
+  emits: ["blur", "keydown", "update:modelValue"],
 
-  props: ['hasIcon', 'placeholder', 'filterby', 'optionList', 'modelValue'],
+  props: ["hasIcon", "placeholder", "filterby", "optionList", "modelValue"],
 
-  computed: {
-    matches() {
-      if (this.modelValue == undefined) {
-        return this.optionList;
-      } else {
-        return this.optionList.filter((item) =>
-          item[this.filterby]
-            .toLowerCase()
-            .includes(this.modelValue.toLowerCase())
-        );
-      }
-    },
-  },
+  // computed: {
+  //   matches() {
+  //     if (this.modelValue == undefined) {
+  //       return this.optionList;
+  //     } else {
+  //       return this.optionList.filter((item) =>
+  //         item[this.filterby]
+  //           .toLowerCase()
+  //           .includes(this.modelValue.toLowerCase())
+  //       );
+  //     }
+  //   },
+  // },
 
   watch: {
-    modelValue: function (newValue) {
-      if (newValue == undefined || newValue == '') {
+    modelValue: function (newValue, oldValue) {
+      console.log(newValue, oldValue);
+      if (newValue == undefined || newValue == "") {
         this.hasInput = false;
       } else {
         this.hasInput = true;
@@ -110,7 +106,13 @@ export default {
      */
     onChangeHandler(e) {
       e.preventDefault();
-      this.$emit('update:modelValue', e.target.value);
+      // this.isInputing = true;
+      this.$emit("update:modelValue", e.target.value);
+      this.matches = this.optionList.filter((item) =>
+        item[this.filterby]
+          .toLowerCase()
+          .includes(this.modelValue.toLowerCase())
+      );
     },
 
     /**
@@ -121,11 +123,14 @@ export default {
      * Created date: 11:23 30/04/2022
      */
     setFocus() {
-      this.$refs.combobox.style.border = '1px solid #22a7ca';
-      this.isOptionShow = true;
+      this.$refs.combobox.style.border = "1px solid #22a7ca";
+      // this.matches = this.optionList;
+      // this.isInputing = false;
+      this.$emit("update:modelValue", this.modelValue);
+      this.clickComboBox();
     },
     outFoucs() {
-      this.$refs.combobox.style.border = '1px solid #afafaf';
+      this.$refs.combobox.style.border = "1px solid #afafaf";
     },
 
     /**
@@ -136,7 +141,7 @@ export default {
      * Created date: 14:52 28/04/2022
      */
     clearInput() {
-      this.$emit('update:modelValue');
+      this.$emit("update:modelValue");
       this.hasInput = false;
       this.isOptionShow = false;
       this.selecedIndex = 0;
@@ -157,7 +162,7 @@ export default {
     selectItem() {
       try {
         this.$emit(
-          'update:modelValue',
+          "update:modelValue",
           this.matches[this.selecedIndex][this.filterby]
         );
         this.isOptionShow = false;
@@ -184,6 +189,16 @@ export default {
       this.scrollToItem();
     },
 
+    clickComboBox() {
+      this.isOptionShow = !this.isOptionShow;
+      this.matches = [...this.optionList];
+      // console.log(`list ${this.optionList}`);
+      // console.log(this.matches);
+      this.$nextTick(() => {
+        this.$refs.optionList.scrollTop = this.selecedIndex * 36;
+      });
+    },
+
     scrollToItem() {
       this.$refs.optionList.scrollTop = this.selecedIndex * 36;
     },
@@ -192,6 +207,8 @@ export default {
   data() {
     return {
       selecedIndex: 0,
+      matches: [],
+      // isInputing: false,
       isOptionShow: false,
       hasInput: false,
     };

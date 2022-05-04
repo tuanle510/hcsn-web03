@@ -13,9 +13,12 @@
   height: 36px;
   border: 1px solid #afafaf;
   border-radius: 2.5px;
+  outline: none;
 }
 
 .m-combobox input {
+  border: none;
+  border-radius: 2.5px;
   font-size: 13px;
 }
 
@@ -30,6 +33,7 @@
 }
 
 .combobox-icon {
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,6 +70,7 @@
 }
 
 .m-option-list .m-option-item {
+  padding-left: 36px;
   border-radius: 2.5px;
   width: calc(100% - 8px);
   height: 36px;
@@ -205,11 +210,11 @@
   border-radius: 2.5px !important;
 }
 .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
-  content: '' !important;
-  background: url('../../assets/icon/qlts-icon.png') no-repeat -72px -338px;
+  content: "" !important;
+  background: url("../../assets/icon/qlts-icon.png") no-repeat -72px -338px;
   width: 8px;
   height: 5px;
-  font-family: 'e-icons';
+  font-family: "e-icons";
   margin-right: 12px !important;
 }
 

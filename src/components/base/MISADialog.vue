@@ -48,18 +48,18 @@
         </div>
         <div class="modal-field">
           <label for="input">Mã loại tài sản <span>*</span></label>
-          <ejs-combobox
+          <!-- <ejs-combobox
             :dataSource="typeData"
             :fields="{ value: 'typeCode' }"
             placeholder="Chọn mã loại tài sản"
             v-model="asset.typeCode"
-          ></ejs-combobox>
-          <!-- <MISACombobox
+          ></ejs-combobox> -->
+          <MISACombobox
             :optionList="typeData"
             filterby="typeCode"
             placeholder="Chọm mã loại tài sản"
             v-model="asset.typeCode"
-          ></MISACombobox> -->
+          ></MISACombobox>
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên loại tài sản</label>
@@ -73,9 +73,11 @@
         <div class="modal-field">
           <label for="input">Số lượng<span>*</span></label>
           <input
-            type="number"
-            min="0"
-            ref="quantity"
+            @keypress="onlyNumber"
+            @keydown.down="
+              asset.quantity == 0 ? (asset.quantity = 0) : asset.quantity--
+            "
+            @keydown.up="asset.quantity++"
             class="m-input number-input-icon"
             v-model="asset.quantity"
           />
@@ -84,33 +86,29 @@
             <div
               class="down"
               @click="
-                asset.quantity == 0 ? asset.quantity == 0 : asset.quantity--
+                asset.quantity == 0 ? (asset.quantity = 0) : asset.quantity--
               "
             ></div>
           </div>
         </div>
         <div class="modal-field">
           <label for="input">Nguyên giá <span>*</span></label>
-          <input
-            class="m-input number-input"
-            min="0"
-            type="number"
-            v-model="this.asset.price"
-          />
+          <input class="m-input number-input" v-model="this.asset.price" />
         </div>
         <div class="modal-field">
           <label for="input">Số năm sử dụng <span>*</span></label>
-          <input
-            type="number"
-            class="m-input number-input"
-            v-model="asset.year"
-          />
+          <input class="m-input number-input" v-model="asset.year" />
         </div>
         <div class="modal-field">
           <label for="input">Tỉ lệ hao mòn(%)<span>*</span></label>
           <input
-            type="number"
-            min="0"
+            @keypress="onlyNumber"
+            @keydown.down="
+              asset.depreciationRate == 0
+                ? (asset.depreciationRate = 0)
+                : asset.depreciationRate--
+            "
+            @keydown.up="asset.depreciationRate++"
             class="m-input number-input-icon"
             v-model="asset.depreciationRate"
           />
@@ -120,7 +118,7 @@
               class="down"
               @click="
                 asset.depreciationRate == 0
-                  ? asset.depreciationRate == 0
+                  ? (asset.depreciationRate = 0)
                   : asset.depreciationRate--
               "
             ></div>
@@ -180,15 +178,15 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'the-dialog',
+  name: "the-dialog",
   props: [
-    'assetSelected',
-    'dialogTitle',
-    'isEditing',
-    'partUseData',
-    'typeData',
+    "assetSelected",
+    "dialogTitle",
+    "isEditing",
+    "partUseData",
+    "typeData",
   ],
 
   mounted() {
@@ -219,9 +217,9 @@ export default {
       },
       set: function (value) {
         this.priceFormat = new Intl.NumberFormat(
-          'vi-VN',
+          "vi-VN",
           {
-            currency: 'VND',
+            currency: "VND",
           }.format(value)
         );
       },
@@ -236,23 +234,23 @@ export default {
    * Created date: 00:43 03/05/2022
    */
   watch: {
-    'asset.typeCode'(newValue) {
+    "asset.typeCode"(newValue) {
       let chosedType = this.typeData.find((item) => item.typeCode == newValue);
       if (chosedType) {
         this.asset.typeName = chosedType.typeName;
       } else {
-        this.asset.typeName = '';
+        this.asset.typeName = "";
       }
     },
 
-    'asset.partUseCode'(newValue) {
+    "asset.partUseCode"(newValue) {
       let chosedUsePart = this.partUseData.find(
         (item) => item.partUseCode == newValue
       );
       if (chosedUsePart) {
         this.asset.partUseName = chosedUsePart.partUseName;
       } else {
-        this.asset.partUseName = '';
+        this.asset.partUseName = "";
       }
     },
   },
@@ -267,9 +265,9 @@ export default {
      */
     formatSalary(value) {
       this.priceFormat = new Intl.NumberFormat(
-        'vi-VN',
+        "vi-VN",
         {
-          currency: 'VND',
+          currency: "VND",
         }.format(value)
       );
     },
@@ -281,10 +279,8 @@ export default {
      * Created date: 23:44 02/05/2022
      */
     onlyNumber($event) {
-      //console.log($event.keyCode); //keyCodes value
       let keyCode = $event.keyCode ? $event.keyCode : $event.which;
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-        // 46 is dot
         $event.preventDefault();
       }
     },
@@ -299,15 +295,15 @@ export default {
     async onCreateAsset() {
       try {
         const res = await axios.post(
-          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
+          "https://62616774327d3896e27b58d2.mockapi.io/api/asset",
           this.asset
         );
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'Created') {
-          this.$emit('toastShow', true, 'Lưu dữ liệu thành công');
+        this.$emit("alertShow", false);
+        this.$emit("dialogShow", false);
+        if (res.statusText == "Created") {
+          this.$emit("toastShow", true, "Lưu dữ liệu thành công");
           setTimeout(() => {
-            this.$emit('toastShow', false);
+            this.$emit("toastShow", false);
           }, 2300);
         }
       } catch (error) {
@@ -328,12 +324,12 @@ export default {
           `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.asset.id}`,
           this.asset
         );
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'OK') {
-          this.$emit('toastShow', true, 'Sửa dữ liệu thành công');
+        this.$emit("alertShow", false);
+        this.$emit("dialogShow", false);
+        if (res.statusText == "OK") {
+          this.$emit("toastShow", true, "Sửa dữ liệu thành công");
           setTimeout(() => {
-            this.$emit('toastShow', false);
+            this.$emit("toastShow", false);
           }, 2300);
         }
       } catch (error) {
@@ -351,17 +347,17 @@ export default {
     onCancelAsset() {
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
         this.$emit(
-          'alertShow',
+          "alertShow",
           true,
-          'Bạn có muốn hủy bỏ khai báo này?',
-          'cancel'
+          "Bạn có muốn hủy bỏ khai báo này?",
+          "cancel"
         );
       } else {
         this.$emit(
-          'alertShow',
+          "alertShow",
           true,
-          'Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?',
-          'cancelChange'
+          "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?",
+          "cancelChange"
         );
       }
     },
@@ -402,10 +398,10 @@ export default {
       newYear: new Date().getFullYear(),
       startDate: new Date(),
       buyDate: new Date(),
-      priceFormat: '',
+      priceFormat: "",
       error: {
-        assetCode: '',
-        assetName: '',
+        assetCode: "",
+        assetName: "",
       },
     };
   },
