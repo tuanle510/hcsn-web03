@@ -2,27 +2,29 @@
   <div class="m-content">
     <div class="m-toolbar">
       <div class="m-toolbar-left">
-        <div class="toolbar-field" tabindex="1">
+        <div class="toolbar-field">
           <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
         </div>
-        <div class="toolbar-field" tabindex="2">
-          <MISACombobox
+        <div class="toolbar-field">
+          <ejs-combobox placeholder="Loại tài sản"></ejs-combobox>
+          <!-- <MISACombobox
             :hasIcon="true"
             :optionList="typeData"
             filterby="typeName"
             placeholder="Loại tài sản"
             v-model="typeSearch"
-          ></MISACombobox>
+          ></MISACombobox> -->
         </div>
 
-        <div class="toolbar-field" tabindex="3">
-          <MISACombobox
+        <div class="toolbar-field">
+          <ejs-combobox placeholder="Bộ phận sử dụng"></ejs-combobox>
+          <!-- <MISACombobox
             :hasIcon="true"
             :optionList="partUseData"
             filterby="partUseName"
             placeholder="Bộ phận sử dụng"
             v-model="usePartSearch"
-          ></MISACombobox>
+          ></MISACombobox> -->
         </div>
       </div>
       <div class="m-toolbar-right">
@@ -185,14 +187,9 @@
 <script>
 /* eslint-disable */
 import axios from 'axios';
-import { ComboBoxComponent } from '@syncfusion/ej2-vue-dropdowns';
 
 export default {
   name: 'the-content',
-
-  components: {
-    'ejs-combobox': ComboBoxComponent,
-  },
 
   computed: {
     /**

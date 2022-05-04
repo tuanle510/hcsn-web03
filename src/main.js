@@ -9,9 +9,10 @@ import Alert from './components/base/MISAAlert.vue';
 import Input from './components/base/MISAInput.vue';
 import Toast from './components/base/MISAToast.vue';
 import Datepicker from '@vuepic/vue-datepicker';
+import { ComboBoxComponent } from '@syncfusion/ej2-vue-dropdowns';
 
-import SimpleTypeahead from 'vue3-simple-typeahead';
-import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css';
+// import SimpleTypeahead from 'vue3-simple-typeahead';
+// import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css';
 import { registerLicense } from '@syncfusion/ej2-base';
 
 // Registering Syncfusion license key
@@ -30,5 +31,6 @@ app.component('MISAAlert', Alert);
 app.component('MISAInput', Input);
 app.component('MISAToast', Toast);
 app.component('Datepicker', Datepicker);
-app.use(SimpleTypeahead);
+app.component('ejs-combobox', ComboBoxComponent);
+// app.use(SimpleTypeahead);
 app.mount('#app');

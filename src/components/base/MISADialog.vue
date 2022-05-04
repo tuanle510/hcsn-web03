@@ -29,6 +29,12 @@
         </div>
         <div class="modal-field">
           <label for="input">Mã bộ phận sử dụng <span>*</span></label>
+          <!-- <ejs-combobox
+            :dataSource="partUseData"
+            :fields="{ value: 'partUseCode' }"
+            placeholder="Chọn mã bộ phận sử dụng"
+            v-model="asset.partUseCode"
+          ></ejs-combobox> -->
           <MISACombobox
             :optionList="partUseData"
             filterby="partUseCode"
@@ -42,12 +48,18 @@
         </div>
         <div class="modal-field">
           <label for="input">Mã loại tài sản <span>*</span></label>
-          <MISACombobox
+          <ejs-combobox
+            :dataSource="typeData"
+            :fields="{ value: 'typeCode' }"
+            placeholder="Chọn mã loại tài sản"
+            v-model="asset.typeCode"
+          ></ejs-combobox>
+          <!-- <MISACombobox
             :optionList="typeData"
             filterby="typeCode"
             placeholder="Chọm mã loại tài sản"
             v-model="asset.typeCode"
-          ></MISACombobox>
+          ></MISACombobox> -->
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên loại tài sản</label>

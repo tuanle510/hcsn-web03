@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="m-layout">
-  
       <Navbar @onCloseNavBar="onCloseNavBar" :navBarWidth="navBarWidth" />
       <div
         class="m-main"
@@ -25,7 +24,6 @@ export default {
     Header,
     Content,
     Navbar,
-  
   },
 
   methods: {

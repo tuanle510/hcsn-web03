@@ -1,10 +1,14 @@
 <template>
-  <div
+  <!-- <div
     class="m-combobox-out"
     v-if="isOptionShow"
     @click="isOptionShow = false"
-  ></div>
-  <div class="m-combobox" ref="combobox">
+  ></div> -->
+  <div
+    v-on:clickout="this.isOptionShow = false"
+    class="m-combobox"
+    ref="combobox"
+  >
     <div class="combobox-contaner">
       <div v-if="hasIcon" class="combobox-icon">
         <div class="filter"></div>
@@ -59,6 +63,7 @@
   </div>
 </template>
 <script>
+import 'clickout-event';
 export default {
   name: 'the-combobox',
   emits: ['blur', 'keydown', 'update:modelValue'],
