@@ -51,7 +51,6 @@
   border: none;
   outline: none;
 }
-
 .m-combobox .input-no-icon {
   width: calc(100% - 24px);
   padding-left: 14px;
@@ -210,11 +209,11 @@
   border-radius: 2.5px !important;
 }
 .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
-  content: "" !important;
-  background: url("../../assets/icon/qlts-icon.png") no-repeat -72px -338px;
+  content: '' !important;
+  background: url('../../assets/icon/qlts-icon.png') no-repeat -72px -338px;
   width: 8px;
   height: 5px;
-  font-family: "e-icons";
+  font-family: 'e-icons';
   margin-right: 12px !important;
 }
 

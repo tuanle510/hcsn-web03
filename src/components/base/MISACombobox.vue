@@ -58,40 +58,25 @@
   </div>
 </template>
 <script>
-import "clickout-event";
+import 'clickout-event';
 export default {
-  name: "the-combobox",
-  emits: ["blur", "keydown", "update:modelValue"],
+  name: 'the-combobox',
+  emits: ['blur', 'keydown', 'update:modelValue'],
 
-  props: ["hasIcon", "placeholder", "filterby", "optionList", "modelValue"],
-
-  // computed: {
-  //   matches() {
-  //     if (this.modelValue == undefined) {
-  //       return this.optionList;
-  //     } else {
-  //       return this.optionList.filter((item) =>
-  //         item[this.filterby]
-  //           .toLowerCase()
-  //           .includes(this.modelValue.toLowerCase())
-  //       );
-  //     }
-  //   },
-  // },
+  props: ['hasIcon', 'placeholder', 'filterby', 'optionList', 'modelValue'],
 
   watch: {
-    modelValue: function (newValue, oldValue) {
-      console.log(newValue, oldValue);
-      if (newValue == undefined || newValue == "") {
+    modelValue: function (newValue) {
+      if (newValue == undefined || newValue == '') {
         this.hasInput = false;
+        this.matches = [...this.optionList];
       } else {
         this.hasInput = true;
-      }
-    },
-
-    matches: function (newValue) {
-      if (newValue.length != this.optionList.length) {
-        this.selecedIndex = 0;
+        this.matches = this.optionList.filter((item) =>
+          item[this.filterby]
+            .toLowerCase()
+            .includes(this.modelValue.toLowerCase())
+        );
       }
     },
   },
@@ -106,13 +91,7 @@ export default {
      */
     onChangeHandler(e) {
       e.preventDefault();
-      // this.isInputing = true;
-      this.$emit("update:modelValue", e.target.value);
-      this.matches = this.optionList.filter((item) =>
-        item[this.filterby]
-          .toLowerCase()
-          .includes(this.modelValue.toLowerCase())
-      );
+      this.$emit('update:modelValue', e.target.value);
     },
 
     /**
@@ -123,14 +102,15 @@ export default {
      * Created date: 11:23 30/04/2022
      */
     setFocus() {
-      this.$refs.combobox.style.border = "1px solid #22a7ca";
-      // this.matches = this.optionList;
-      // this.isInputing = false;
-      this.$emit("update:modelValue", this.modelValue);
-      this.clickComboBox();
+      this.$refs.combobox.style.border = '1px solid #22a7ca';
+      this.isOptionShow = true;
+      this.matches = [...this.optionList];
+      this.$nextTick(() => {
+        this.$refs.optionList.scrollTop = this.selecedIndex * 36;
+      });
     },
     outFoucs() {
-      this.$refs.combobox.style.border = "1px solid #afafaf";
+      this.$refs.combobox.style.border = '1px solid #afafaf';
     },
 
     /**
@@ -141,8 +121,7 @@ export default {
      * Created date: 14:52 28/04/2022
      */
     clearInput() {
-      this.$emit("update:modelValue");
-      this.hasInput = false;
+      this.$emit('update:modelValue');
       this.isOptionShow = false;
       this.selecedIndex = 0;
     },
@@ -162,7 +141,7 @@ export default {
     selectItem() {
       try {
         this.$emit(
-          "update:modelValue",
+          'update:modelValue',
           this.matches[this.selecedIndex][this.filterby]
         );
         this.isOptionShow = false;
@@ -192,11 +171,11 @@ export default {
     clickComboBox() {
       this.isOptionShow = !this.isOptionShow;
       this.matches = [...this.optionList];
-      // console.log(`list ${this.optionList}`);
-      // console.log(this.matches);
-      this.$nextTick(() => {
-        this.$refs.optionList.scrollTop = this.selecedIndex * 36;
-      });
+      if (this.isOptionShow == true) {
+        this.$nextTick(() => {
+          this.$refs.optionList.scrollTop = this.selecedIndex * 36;
+        });
+      }
     },
 
     scrollToItem() {
@@ -208,7 +187,6 @@ export default {
     return {
       selecedIndex: 0,
       matches: [],
-      // isInputing: false,
       isOptionShow: false,
       hasInput: false,
     };

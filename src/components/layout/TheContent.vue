@@ -162,6 +162,7 @@
       :dialogTitle="isEditing ? 'Sửa sản phẩm' : 'Thêm sản phẩm'"
       :isEditing="isEditing"
       v-if="isDialogShow"
+      :assetCodes="assetCodes"
       :assetSelected="assetSelected"
       :partUseData="partUseData"
       :typeData="typeData"
@@ -240,6 +241,7 @@ export default {
       .get('https://62616774327d3896e27b58d2.mockapi.io/api/asset')
       .then(function (res) {
         me.assetData = res.data;
+        me.assetCodes = me.assetData.map((item) => item.code);
       })
       .catch(function (err) {
         console.log(err);
@@ -522,6 +524,7 @@ export default {
       isLoading: false,
       isDialogShow: false, //Hiển thị form hay không
       assetData: [], //dữ liệu lấy về từ api
+      assetCodes: null, //Danh sách mã tài sản
       partUseData: [],
       typeData: [],
       typeSearch: '',
