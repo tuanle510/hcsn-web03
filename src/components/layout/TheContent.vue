@@ -169,17 +169,17 @@
     ></MISADialog>
 
     <MISAAlert
-      v-if="this.alert.isShow"
+      v-if="alert.isShow"
       :isEditing="isEditing"
-      :alertTitle="this.alert.title"
-      :alertType="this.alert.type"
+      :alertTitle="alert.title"
+      :alertType="alert.type"
       @onSubmit="onSubmit"
       @removeAsset="removeAsset"
       @dialogShow="dialogShow"
       @alertShow="alertShow"
     >
     </MISAAlert>
-    <MISAToast v-if="this.toast.isShow" :title="this.toast.title"> </MISAToast>
+    <MISAToast v-if="toast.isShow" :title="toast.title"> </MISAToast>
   </div>
 </template>
 <script>
@@ -221,7 +221,7 @@ export default {
      */
     quantityTotal: function () {
       const quantityTotal = this.assetData.reduce((currentValue, item) => {
-        return currentValue + item.quantity;
+        return currentValue + Number(item.quantity);
       }, 0);
 
       return quantityTotal;
