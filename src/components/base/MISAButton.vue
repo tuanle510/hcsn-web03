@@ -1,12 +1,12 @@
 <template>
-  <button class="m-button" :class="type">
+  <button :disabled="disabled" class="m-button" :class="type">
     {{ buttonTitle }}
   </button>
 </template>
 <script>
 export default {
   name: 'the-button',
-  props: ['buttonTitle', 'type'],
+  props: ['buttonTitle', 'type', 'disabled'],
 };
 </script>
 <style></style>

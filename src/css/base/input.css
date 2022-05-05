@@ -4,6 +4,7 @@ input:disabled {
 }
 
 input.m-input {
+  position: relative;
   height: 36px;
   border: none;
   width: 100%;
@@ -32,7 +33,7 @@ input.number-input {
 
 .number-input-icon {
   text-align: right;
-  padding-right: 30px;
+  padding-right: 25px;
 }
 
 input::-webkit-outer-spin-button,
@@ -43,4 +44,10 @@ input::-webkit-inner-spin-button {
 
 input {
   font-size: 14px;
+}
+
+.m-error {
+  position: absolute;
+  color: #ec4b4b;
+  font-size: 12px;
 }

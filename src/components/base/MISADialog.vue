@@ -9,24 +9,27 @@
       <div class="m-modal-centent">
         <div class="modal-field">
           <label for="assetCode">Mã tài sản <span>*</span></label>
-          <input
-            :class="{ 'm-input-error': this.error.assetCode }"
-            class="m-input"
-            ref="firstInput"
+          <MISAInput
+            @setIsValid="setIsValid"
+            ref="assetCode"
             type="text"
             maxlength="20"
+            :required="true"
+            errorMsg="Vui lòng nhập mã tài sản"
             placeholder="Nhập mã tài sản"
             v-model="asset.code"
-          />
+          ></MISAInput>
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên tài sản <span>*</span></label>
-          <input
-            :class="{ 'm-input-error': this.error.assetName }"
-            class="m-input"
+          <MISAInput
+            @setIsValid="setIsValid"
+            :required="true"
+            errorMsg="Vui lòng nhập mã tài sản"
             placeholder="Nhập tên tài sản"
             v-model="asset.name"
-          />
+          >
+          </MISAInput>
         </div>
         <div class="modal-field">
           <label for="input">Mã bộ phận sử dụng <span>*</span></label>
@@ -36,9 +39,7 @@
             placeholder="Chọn mã bộ phận sử dụng"
             v-model="asset.partUseCode"
           ></ejs-combobox> -->
-          <!-- :class="{ 'm-input-error': this.error.partUseCode }" -->
           <MISACombobox
-            @blur="asset.partUseCode ? (error = true) : (error = false)"
             :class="{ 'm-input-error': error }"
             :optionList="partUseData"
             filterby="partUseCode"
@@ -48,7 +49,12 @@
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên bộ phận sử dụng</label>
-          <input class="m-input" disabled v-model="asset.partUseName" />
+          <MISAInput
+            @setIsValid="setIsValid"
+            disabled
+            v-model="asset.partUseName"
+          >
+          </MISAInput>
         </div>
         <div class="modal-field">
           <label for="input">Mã loại tài sản <span>*</span></label>
@@ -67,24 +73,27 @@
         </div>
         <div class="modal-field modal-field-long">
           <label for="input">Tên loại tài sản</label>
-          <input
-            ref="typeName"
-            class="m-input"
+          <MISAInput
+            @setIsValid="setIsValid"
             disabled
             v-model="asset.typeName"
-          />
+          ></MISAInput>
         </div>
         <div class="modal-field">
           <label for="input">Số lượng<span>*</span></label>
-          <input
+          <MISAInput
+            @setIsValid="setIsValid"
             class="m-input number-input-icon"
-            v-model="asset.quantity"
+            :required="true"
+            errorMsg="Vui lòng nhập số lượng tài sản"
             @keypress="onlyNumber"
             @keydown.down="
               asset.quantity == 0 ? (asset.quantity = 0) : asset.quantity--
             "
             @keydown.up="asset.quantity++"
-          />
+            v-model="asset.quantity"
+          ></MISAInput>
+
           <div class="spin-button-container">
             <div class="up" @click="asset.quantity++"></div>
             <div
@@ -97,25 +106,30 @@
         </div>
         <div class="modal-field">
           <label for="input">Nguyên giá <span>*</span></label>
-          <input
+          <MISAInput
+            @setIsValid="setIsValid"
+            :required="true"
+            errorMsg="Vui lòng nhập giá trị tài sản"
             class="m-input number-input"
-            v-model="asset.price"
             @keypress="onlyNumber"
-          />
+            v-model="asset.price"
+          ></MISAInput>
         </div>
         <div class="modal-field">
           <label for="input">Số năm sử dụng <span>*</span></label>
-          <input
-            class="m-input number-input"
+          <MISAInput
+            @setIsValid="setIsValid"
+            class="number-input"
             v-model="asset.year"
             @keypress="onlyNumber"
-          />
+          ></MISAInput>
         </div>
         <div class="modal-field">
           <label for="input">Tỉ lệ hao mòn(%)<span>*</span></label>
-          <input
-            class="m-input number-input-icon"
+          <MISAInput
+            class="number-input-icon"
             v-model="asset.depreciationRate"
+            @setIsValid="setIsValid"
             @keypress="onlyNumber"
             @keydown.down="
               asset.depreciationRate == 0
@@ -123,7 +137,8 @@
                 : asset.depreciationRate--
             "
             @keydown.up="asset.depreciationRate++"
-          />
+          ></MISAInput>
+
           <div class="spin-button-container">
             <div class="up" @click="asset.depreciationRate++"></div>
             <div
@@ -138,14 +153,18 @@
         </div>
         <div class="modal-field">
           <label for="input">Giá trị hao mòm năm <span>*</span></label>
-          <input
+          <MISAInput
             class="m-input number-input"
             v-model="annualDepreciationRate"
-          />
+          ></MISAInput>
         </div>
         <div class="modal-field">
           <label for="input">Năm theo dõi</label>
-          <input class="m-input number-input" disabled :value="newYear" />
+          <MISAInput
+            class="m-input number-input"
+            disabled
+            :value="newYear"
+          ></MISAInput>
         </div>
         <div class="modal-field">
           <label for="input">Ngày mua <span>*</span></label>
@@ -180,23 +199,28 @@
           @click="onCancel"
           buttonTitle="Hủy"
         ></MISAButton>
-        <MISAButton @click="onSubmit" buttonTitle="Lưu"></MISAButton>
+        <MISAButton
+          :disabled="!setIsValid ? false : true"
+          :class="[!setIsValid ? '' : 'm-button-disabled']"
+          @click="onSubmit($event)"
+          buttonTitle="Lưu"
+        ></MISAButton>
         <div tabindex="-1"></div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
-  name: "the-dialog",
+  name: 'the-dialog',
   props: [
-    "assetSelected",
-    "dialogTitle",
-    "isEditing",
-    "partUseData",
-    "typeData",
-    "assetCodes",
+    'assetSelected',
+    'dialogTitle',
+    'isEditing',
+    'partUseData',
+    'typeData',
+    'assetCodes',
   ],
 
   mounted() {
@@ -204,7 +228,7 @@ export default {
     this.asset = this.assetSelected;
 
     // Focus vào ô input đầu
-    this.$refs.firstInput.focus();
+    this.$refs.assetCode.setFocus();
 
     // Tạo ra obj đầu vào để so sánh
     this.assetCopy = Object.assign({}, this.asset);
@@ -241,23 +265,23 @@ export default {
    * Created date: 00:43 03/05/2022
    */
   watch: {
-    "asset.typeCode"(newValue) {
+    'asset.typeCode'(newValue) {
       let chosedType = this.typeData.find((item) => item.typeCode == newValue);
       if (chosedType) {
         this.asset.typeName = chosedType.typeName;
       } else {
-        this.asset.typeName = "";
+        this.asset.typeName = '';
       }
     },
 
-    "asset.partUseCode"(newValue) {
+    'asset.partUseCode'(newValue) {
       let chosedUsePart = this.partUseData.find(
         (item) => item.partUseCode == newValue
       );
       if (chosedUsePart) {
         this.asset.partUseName = chosedUsePart.partUseName;
       } else {
-        this.asset.partUseName = "";
+        this.asset.partUseName = '';
       }
     },
   },
@@ -271,7 +295,7 @@ export default {
      * Created date: 00:35 03/05/2022
      */
     formatSalary(value) {
-      var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -299,15 +323,15 @@ export default {
     async onCreateAsset() {
       try {
         const res = await axios.post(
-          "https://62616774327d3896e27b58d2.mockapi.io/api/asset",
+          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
           this.asset
         );
-        this.$emit("alertShow", false);
-        this.$emit("dialogShow", false);
-        if (res.statusText == "Created") {
-          this.$emit("toastShow", true, "Lưu dữ liệu thành công");
+        this.$emit('alertShow', false);
+        this.$emit('dialogShow', false);
+        if (res.statusText == 'Created') {
+          this.$emit('toastShow', true, 'Lưu dữ liệu thành công');
           setTimeout(() => {
-            this.$emit("toastShow", false);
+            this.$emit('toastShow', false);
           }, 2300);
         }
       } catch (error) {
@@ -328,12 +352,12 @@ export default {
           `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.asset.id}`,
           this.asset
         );
-        this.$emit("alertShow", false);
-        this.$emit("dialogShow", false);
-        if (res.statusText == "OK") {
-          this.$emit("toastShow", true, "Sửa dữ liệu thành công");
+        this.$emit('alertShow', false);
+        this.$emit('dialogShow', false);
+        if (res.statusText == 'OK') {
+          this.$emit('toastShow', true, 'Sửa dữ liệu thành công');
           setTimeout(() => {
-            this.$emit("toastShow", false);
+            this.$emit('toastShow', false);
           }, 2300);
         }
       } catch (error) {
@@ -351,34 +375,31 @@ export default {
     onCancel() {
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
         this.$emit(
-          "alertShow",
+          'alertShow',
           true,
-          "Bạn có muốn hủy bỏ khai báo này?",
-          "cancel"
+          'Bạn có muốn hủy bỏ khai báo này?',
+          'cancel'
         );
       } else {
         this.$emit(
-          "alertShow",
+          'alertShow',
           true,
-          "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?",
-          "cancelChange"
+          'Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?',
+          'cancelChange'
         );
       }
     },
 
     /**
-     * Mô tả : blur check trống cho input
+     * Mô tả : Kiểm tra xem đã được validate hết chưa
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 14:48 05/05/2022
+     * Created date: 20:22 05/05/2022
      */
-    checkRequired($event) {
-      if ($event.target.value == "") {
-        $event.target.classList.add("m-input-error");
-      } else {
-        $event.target.classList.remove("m-input-error");
-      }
+    setIsValid(value) {
+      this.isValid = value;
+      console.log(this.isValid);
     },
 
     /**
@@ -388,15 +409,17 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 22:40 28/04/2022
      */
-    onSubmit() {
+    onSubmit($event) {
+      console.log('an duoc');
+      console.log($event.target);
       this.isValid = true;
       // Check các ô input bắt buộc phải điền
       // Mã tài sản
       if (!this.asset.code) {
-        this.error.assetCode = "Mã tài sản không được để trống";
+        this.error.assetCode = 'Mã tài sản không được để trống';
         this.isValid = false;
       } else {
-        this.error.assetCode = "";
+        this.error.assetCode = '';
         this.isValid = true;
       }
       // Check trùng mã tài sản
@@ -408,20 +431,20 @@ export default {
         );
         // Kiểm tra có trùng các mã còn lại không
         if (assetCodesEdit.includes(this.asset.code)) {
-          this.error.assetCode = "Mã tài sản đã tồn tại ";
+          this.error.assetCode = 'Mã tài sản đã tồn tại ';
           this.isValid = false;
         }
       } else {
         //2. Nếu là thêm mới thì check trùng toàn bộ
         if (this.assetCodes.includes(this.asset.code)) {
-          this.error.assetCode = "Mã tài sản đã tồn tại ";
+          this.error.assetCode = 'Mã tài sản đã tồn tại ';
           this.isValid = false;
         }
       }
 
       // Tên tài sản
       if (!this.asset.name) {
-        this.error.assetName = "Tên tài sản không được để trống";
+        this.error.assetName = 'Tên tài sản không được để trống';
         this.isValid = false;
       }
 
@@ -429,7 +452,7 @@ export default {
 
       // 2 Nếu không có lỗi gì thì thực hiện thêm hoặc sửa
       if (this.isValid == false) {
-        this.$emit("alertShow", true, "Lỗi rồi");
+        this.$emit('alertShow', true, 'Lỗi rồi');
       } else {
         this.isEditing ? this.onUpdateAsset() : this.onCreateAsset();
       }
@@ -443,18 +466,18 @@ export default {
       newYear: new Date().getFullYear(),
       startDate: new Date(),
       buyDate: new Date(),
-      priceFormat: "",
+      priceFormat: '',
       isValid: true,
       error: {
-        assetCode: "",
-        assetName: "",
-        assetType: "",
-        assetPartUse: "",
-        assetQuantity: "",
-        assetPrice: "",
-        assetDepreciationRate: "",
-        assetDepreciationValue: "",
-        purchase_date: "",
+        code: '',
+        name: '',
+        department: '',
+        category: '',
+        quantity: '',
+        price: '',
+        lifeTime: '',
+        depreciationRate: '',
+        depreciationValue: '',
       },
     };
   },
