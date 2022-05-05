@@ -23,7 +23,6 @@
         @input="onChangeHandler"
         :value="this.modelValue"
       />
-
       <div
         style="position: absolute; right: 20px"
         @click="clearInput"

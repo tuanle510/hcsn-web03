@@ -110,52 +110,50 @@
             </tr>
           </tbody>
         </table>
-        <!-- paging -->
-        <table class="m-table-footer">
-          <tbody>
-            <tr>
-              <td colspan="6">
-                <div class="m-paging-left">
-                  <div class="m-total-number">
-                    Tổng số: <strong>200</strong> bản ghi
-                  </div>
-                  <div class="m-dropdown-paging">
-                    20
-                    <div class="down"></div>
-                  </div>
-                  <div class="m-paging-list">
-                    <button class="m-page-control">
-                      <div class="pre"></div>
-                    </button>
-                    <div class="m-paging-group">
-                      <button class="m-number m-number-selected">1</button>
-                      <button class="m-number">2</button>
-                      <div class="m-number-more">
-                        <div class="more"></div>
-                      </div>
-                      <button class="m-number">10</button>
-                    </div>
-                    <button class="m-page-control">
-                      <div class="next"></div>
-                    </button>
-                  </div>
-                </div>
-              </td>
-              <td class="text-align-right" style="width: 80px">
-                {{ quantityTotal }}
-              </td>
-              <td class="text-align-right" style="width: 130px">
-                {{ currencyFormat(2492284000) }}
-              </td>
-              <td class="text-align-right" style="width: 130px">19.715.000</td>
-              <td class="text-align-right" style="width: 130px">
-                229.2284.000
-              </td>
-              <td style="width: 80px"></td>
-            </tr>
-          </tbody>
-        </table>
       </div>
+      <!-- paging -->
+      <table class="m-table-footer">
+        <tbody>
+          <tr>
+            <td colspan="6">
+              <div class="m-paging-left">
+                <div class="m-total-number">
+                  Tổng số: <strong>200</strong> bản ghi
+                </div>
+                <div class="m-dropdown-paging">
+                  20
+                  <div class="down"></div>
+                </div>
+                <div class="m-paging-list">
+                  <button class="m-page-control">
+                    <div class="pre"></div>
+                  </button>
+                  <div class="m-paging-group">
+                    <button class="m-number m-number-selected">1</button>
+                    <button class="m-number">2</button>
+                    <div class="m-number-more">
+                      <div class="more"></div>
+                    </div>
+                    <button class="m-number">10</button>
+                  </div>
+                  <button class="m-page-control">
+                    <div class="next"></div>
+                  </button>
+                </div>
+              </div>
+            </td>
+            <td class="text-align-right" style="width: 80px">
+              {{ quantityTotal }}
+            </td>
+            <td class="text-align-right" style="width: 130px">
+              {{ currencyFormat(2492284000) }}
+            </td>
+            <td class="text-align-right" style="width: 130px">19.715.000</td>
+            <td class="text-align-right" style="width: 130px">229.2284.000</td>
+            <td style="width: 80px"></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <MISADialog
       ref="dialog"
@@ -187,10 +185,10 @@
 </template>
 <script>
 /* eslint-disable */
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  name: 'the-content',
+  name: "the-content",
 
   computed: {
     /**
@@ -238,7 +236,7 @@ export default {
     // Lấy data
     var me = this;
     await axios
-      .get('https://62616774327d3896e27b58d2.mockapi.io/api/asset')
+      .get("https://62616774327d3896e27b58d2.mockapi.io/api/asset")
       .then(function (res) {
         me.assetData = res.data;
         me.assetCodes = me.assetData.map((item) => item.code);
@@ -249,7 +247,7 @@ export default {
     this.isLoading = false;
 
     /**
-     * Mô tả : Lấy dữ liệu usePart
+     * Mô tả : Lấy dữ liệu Department
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
@@ -257,7 +255,7 @@ export default {
      */
     try {
       const res = await axios.get(
-        'https://62616774327d3896e27b58d2.mockapi.io/api/partUse'
+        "https://62616774327d3896e27b58d2.mockapi.io/api/partUse"
       );
       this.partUseData = res.data;
     } catch (error) {
@@ -273,7 +271,7 @@ export default {
      */
     try {
       const res = await axios.get(
-        'https://62616774327d3896e27b58d2.mockapi.io/api/type'
+        "https://62616774327d3896e27b58d2.mockapi.io/api/type"
       );
       this.typeData = res.data;
     } catch (error) {
@@ -290,8 +288,8 @@ export default {
      * Created date: 09:55 01/05/2022
      */
     currencyFormat(value) {
-      var formatter = new Intl.NumberFormat('vi-VN', {
-        currency: 'VND',
+      var formatter = new Intl.NumberFormat("vi-VN", {
+        currency: "VND",
       });
       return formatter.format(value);
     },
@@ -332,7 +330,7 @@ export default {
     onCheckedAll() {
       //  Kiểm tra xem assetData có dữ liệu không
       if (this.assetData == 0) {
-        this.alertShow(true, 'Không có tài sản trong danh sách');
+        this.alertShow(true, "Không có tài sản trong danh sách");
       } else {
         //kiểm tra xem có tích hết chưa
         // Nếu chưa chưa thì tích hết
@@ -356,12 +354,12 @@ export default {
      */
     onRowClick(product, event) {
       //Nếu ấn vào edit
-      if (event.target.classList.contains('edit')) {
+      if (event.target.classList.contains("edit")) {
         this.showEditDialog(product);
       }
       // Nếu ấn vào copy
-      else if (event.target.classList.contains('copy')) {
-        console.log('Nhận đôi');
+      else if (event.target.classList.contains("copy")) {
+        console.log("Nhận đôi");
       }
       // Nếu ấn vào cả dòng
       else {
@@ -409,11 +407,11 @@ export default {
      */
     btnRemove() {
       if (this.checkedaAssetList.length == 0) {
-        this.alertShow(true, 'Bạn chưa chọn sản phẩm để xóa');
+        this.alertShow(true, "Bạn chưa chọn sản phẩm để xóa");
         // alert("bạn chưa chọn sản phẩm để xóa");
       } else {
         let length = this.checkedaAssetList.length;
-        let title = '';
+        let title = "";
         // hiển thị title cảnh báo
         if (length == 1) {
           title = `Bạn có muốn xóa tài sản ${this.checkedaAssetList[0].code} - ${this.checkedaAssetList[0].name}?`;
@@ -422,7 +420,7 @@ export default {
         } else {
           title = `${length} tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách?`;
         }
-        this.alertShow(true, title, 'remove');
+        this.alertShow(true, title, "remove");
       }
     },
 
@@ -453,7 +451,7 @@ export default {
       }
 
       //  Hiển thị toast xóa thành công
-      this.toastShow(true, 'Xóa dữ liệu thành công');
+      this.toastShow(true, "Xóa dữ liệu thành công");
       setTimeout(() => {
         this.toastShow(false);
       }, 2300);
@@ -511,13 +509,13 @@ export default {
     return {
       isEditing: null,
       toast: {
-        title: '',
+        title: "",
         isShow: false,
       },
       alert: {
-        title: '',
+        title: "",
         isShow: false,
-        type: '',
+        type: "",
       },
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
@@ -527,8 +525,8 @@ export default {
       assetCodes: null, //Danh sách mã tài sản
       partUseData: [],
       typeData: [],
-      typeSearch: '',
-      usePartSearch: '',
+      typeSearch: "",
+      usePartSearch: "",
     };
   },
 };
