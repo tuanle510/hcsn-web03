@@ -3,7 +3,7 @@
     ref="input"
     :type="type"
     class="m-input"
-    :class="[{ 'm-input-error': isEmpty }]"
+    :class="[{ 'm-input-error': isEmpty }, classParent]"
     :maxlength="maxlength"
     :placeholder="placeholder"
     :disabled="disabled"
@@ -15,20 +15,21 @@
 </template>
 <script>
 export default {
-  name: 'the-input',
+  name: "the-input",
 
   props: [
-    'number', //style number chuyền từ component cha
-    'placeholder',
-    'disabled',
-    'type',
-    'modelValue',
-    'required',
-    'maxlength',
-    'errorMsg',
+    "number", //style number chuyền từ component cha
+    "placeholder",
+    "disabled",
+    "classParent",
+    "type",
+    "modelValue",
+    "required",
+    "maxlength",
+    "errorMsg",
   ],
 
-  emits: ['setIsValid', 'update:modelValue', 'keypress', ''],
+  emits: ["setIsValid", "update:modelValue", "keypress", "keydown"],
 
   methods: {
     /**
@@ -43,10 +44,9 @@ export default {
     },
 
     // Nhận thay đổi của component cha
-
     onChangeHandler(e) {
       e.preventDefault();
-      this.$emit('update:modelValue', e.target.value);
+      this.$emit("update:modelValue", e.target.value);
     },
 
     /**
@@ -57,12 +57,16 @@ export default {
      * Created date: 19:29 05/05/2022
      */
     outFocus() {
-      if (this.required && (this.modelValue == '' || this.modelValue == null)) {
+      console.log(this.modelValue);
+      if (
+        this.required &&
+        (this.modelValue === "" || this.modelValue == undefined)
+      ) {
         this.isEmpty = true;
-        this.$emit('setIsValid', false);
+        this.$emit("setIsValid", false);
       } else {
         this.isEmpty = false;
-        this.$emit('setIsValid', true);
+        this.$emit("setIsValid", true);
       }
     },
   },
@@ -70,7 +74,6 @@ export default {
   data() {
     return {
       isEmpty: false,
-      errorList: [],
     };
   },
 };

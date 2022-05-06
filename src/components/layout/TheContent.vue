@@ -60,7 +60,7 @@
               <th class="text-align-left">Tên tài sản</th>
               <th class="text-align-left">Loại tài sản</th>
               <th class="text-align-left">Bộ phận sử dụng</th>
-              <th class="text-align-right" style="width: 80px">Số lượng</th>
+              <th class="text-align-right" style="width: 60px">Số lượng</th>
               <th class="text-align-right" style="width: 130px">Nguyên giá</th>
               <th class="text-align-right" style="width: 130px">
                 HM/KH lũy kế
@@ -142,7 +142,7 @@
                 </div>
               </div>
             </td>
-            <td class="text-align-right" style="width: 80px">
+            <td class="text-align-right" style="width: 60px">
               {{ quantityTotal }}
             </td>
             <td class="text-align-right" style="width: 130px">

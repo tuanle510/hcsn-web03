@@ -5,8 +5,8 @@
 </template>
 <script>
 export default {
-  name: 'the-button',
-  props: ['buttonTitle', 'type', 'disabled'],
+  name: "the-button",
+  props: ["buttonTitle", "type", "disabled", "isValid"],
 };
 </script>
 <style></style>

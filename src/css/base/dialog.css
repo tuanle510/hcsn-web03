@@ -43,12 +43,16 @@
 }
 
 .m-modal-centent {
-  display: flex;
-  flex-wrap: wrap;
   height: 100%;
   overflow: auto;
+  margin-bottom: 62px;
+}
+
+.modal-row {
+  width: 100%;
+  display: flex;
   gap: 16px;
-  margin-bottom: 72px;
+  margin-bottom: 18px;
 }
 
 .m-modal-centent .modal-field {
