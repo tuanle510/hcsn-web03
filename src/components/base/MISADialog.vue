@@ -6,7 +6,7 @@
         <div class="close"></div>
       </div>
 
-      <div class="m-modal-centent">
+      <form class="m-modal-centent" ref="form">
         <div class="modal-row">
           <div class="modal-field">
             <label for="assetCode">Mã tài sản <span>*</span></label>
@@ -14,19 +14,17 @@
               ref="assetCode"
               type="text"
               maxlength="20"
-              :required="true"
-              errorMsg="Vui lòng nhập mã tài sản"
               placeholder="Nhập mã tài sản"
-              @setIsValid="setIsValid"
               v-model="asset.code"
+              name="Mã tài sản"
+              @blur="blurInput($event)"
             ></MISAInput>
           </div>
           <div class="modal-field modal-field-long">
             <label for="input">Tên tài sản <span>*</span></label>
             <MISAInput
-              @setIsValid="setIsValid"
-              :required="true"
-              errorMsg="Vui lòng nhập mã tài sản"
+              :name="'Tên tài sản'"
+              @blur="blurInput($event)"
               placeholder="Nhập tên tài sản"
               v-model="asset.name"
             >
@@ -43,22 +41,20 @@
             placeholder="Chọn mã bộ phận sử dụng"
             v-model="asset.partUseCode"
           ></ejs-combobox> -->
+            <!-- :class="{ 'm-input-error': error }" -->
             <MISACombobox
-              :class="{ 'm-input-error': error }"
+              :required="true"
               :optionList="partUseData"
+              name="Mã bộ phận sử dụng"
               filterby="partUseCode"
               placeholder="Chọm mã bộ phận sử dụng"
+              @blur="blurInput($event)"
               v-model="asset.partUseCode"
             ></MISACombobox>
           </div>
           <div class="modal-field modal-field-long">
             <label for="input">Tên bộ phận sử dụng</label>
-            <MISAInput
-              @setIsValid="setIsValid"
-              disabled
-              v-model="asset.partUseName"
-            >
-            </MISAInput>
+            <MISAInput disabled v-model="asset.partUseName"> </MISAInput>
           </div>
         </div>
 
@@ -72,19 +68,18 @@
             v-model="asset.typeCode"
           ></ejs-combobox> -->
             <MISACombobox
+              :required="true"
               :optionList="typeData"
+              name="Mã loại tài sản"
               filterby="typeCode"
               placeholder="Chọm mã loại tài sản"
+              @blur="blurInput($event)"
               v-model="asset.typeCode"
             ></MISACombobox>
           </div>
           <div class="modal-field modal-field-long">
             <label for="input">Tên loại tài sản</label>
-            <MISAInput
-              @setIsValid="setIsValid"
-              disabled
-              v-model="asset.typeName"
-            ></MISAInput>
+            <MISAInput disabled v-model="asset.typeName"></MISAInput>
           </div>
         </div>
 
@@ -92,10 +87,9 @@
           <div class="modal-field">
             <label for="input">Số lượng<span>*</span></label>
             <MISAInput
-              @setIsValid="setIsValid"
+              name="Số lượng"
+              @blur="blurInput($event)"
               classParent="number-input-icon"
-              :required="true"
-              errorMsg="Vui lòng nhập số lượng tài sản"
               @keypress="onlyNumber"
               @keydown.down="
                 asset.quantity == 0 ? (asset.quantity = 0) : asset.quantity--
@@ -115,11 +109,10 @@
             </div>
           </div>
           <div class="modal-field">
-            <label for="input">Nguyên giá <span>*</span></label>
+            <label for="input"> <span>*</span></label>
             <MISAInput
-              @setIsValid="setIsValid"
-              :required="true"
-              errorMsg="Vui lòng nhập giá trị tài sản"
+              name="Nguyên giá"
+              @blur="blurInput($event)"
               classParent="number-input"
               @keypress="onlyNumber"
               v-model="asset.price"
@@ -128,7 +121,8 @@
           <div class="modal-field">
             <label for="input">Số năm sử dụng <span>*</span></label>
             <MISAInput
-              @setIsValid="setIsValid"
+              name="Số năm sử dụng"
+              @blur="blurInput($event)"
               classParent="number-input"
               v-model="asset.year"
               @keypress="onlyNumber"
@@ -140,9 +134,10 @@
           <div class="modal-field">
             <label for="input">Tỉ lệ hao mòn(%)<span>*</span></label>
             <MISAInput
+              name="Tỉ lệ hao mòn"
+              @blur="blurInput($event)"
               classParent="number-input-icon"
               v-model="asset.depreciationRate"
-              @setIsValid="setIsValid"
               @keypress="onlyNumber"
               @keydown.down="
                 asset.depreciationRate == 0
@@ -167,6 +162,8 @@
           <div class="modal-field">
             <label for="input">Giá trị hao mòm năm <span>*</span></label>
             <MISAInput
+              name="Giá trị hao mòm năm"
+              @blur="blurInput($event)"
               classParent="number-input"
               v-model="annualDepreciationRate"
             ></MISAInput>
@@ -207,7 +204,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </form>
 
       <div class="m-modal-footer">
         <MISAButton
@@ -299,6 +296,24 @@ export default {
   },
 
   methods: {
+    /**
+     * Mô tả : blur input
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 16:05 06/05/2022
+     */
+    blurInput($event) {
+      if ($event.target.value == "") {
+        $event.target.classList.add("m-input-error");
+        this.errorList.push(`Cần phải nhập thông tin ${$event.target.name}`);
+      } else {
+        this.errorList = this.errorList.filter(
+          (item) => item != `Cần phải nhập thông tin ${$event.target.name}`
+        );
+        $event.target.classList.remove("m-input-error");
+      }
+    },
     /**
      * Mô tả : format tiền
      * @param
@@ -420,49 +435,18 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 22:40 28/04/2022
      */
-    onSubmit($event) {
-      console.log($event);
-      this.isValid = true;
-      // Check các ô input bắt buộc phải điền
-      // Mã tài sản
-      if (!this.asset.code) {
-        this.error.assetCode = "Mã tài sản không được để trống";
-        this.isValid = false;
-      } else {
-        this.error.assetCode = "";
-        this.isValid = true;
-      }
-      // Check trùng mã tài sản
-      // 1. Nếu sửa thì không check mã hiện tại
-      if (this.isEditing == true) {
-        // list các mã không bao gồm mã đang sửa
-        var assetCodesEdit = this.assetCodes.filter(
-          (item) => item !== this.assetCopy.code
-        );
-        // Kiểm tra có trùng các mã còn lại không
-        if (assetCodesEdit.includes(this.asset.code)) {
-          this.error.assetCode = "Mã tài sản đã tồn tại ";
-          this.isValid = false;
-        }
-      } else {
-        //2. Nếu là thêm mới thì check trùng toàn bộ
-        if (this.assetCodes.includes(this.asset.code)) {
-          this.error.assetCode = "Mã tài sản đã tồn tại ";
-          this.isValid = false;
-        }
+    onSubmit() {
+      // Check input trống
+      var inputList = ["assetCode", "assetName"];
+      for (const item of inputList) {
+        // console.log(item);
+        let ref = item;
+        console.log(this.$refs.ref);
       }
 
-      // Tên tài sản
-      if (!this.asset.name) {
-        this.error.assetName = "Tên tài sản không được để trống";
-        this.isValid = false;
-      }
-
-      console.log(this.error);
-
-      // 2 Nếu không có lỗi gì thì thực hiện thêm hoặc sửa
-      if (this.isValid == false) {
-        this.$emit("alertShow", true, "Lỗi rồi");
+      // Nếu không có lỗi gì thì thực hiện thêm hoặc sửa
+      if (this.errorList.length != 0) {
+        this.$emit("alertShow", true, this.errorList[0]);
       } else {
         this.isEditing ? this.onUpdateAsset() : this.onCreateAsset();
       }
@@ -482,17 +466,5 @@ export default {
     };
   },
 };
-// // Mã bộ phận sử dụng
-// if (!this.asset.partUseCode) {
-//   this.error.partUseCode = 'Mã bộ phận sử dụng không được để trống';
-// }
-// // Mã loại tài sản
-// if (!this.asset.typeCode) {
-//   this.error.typeCode = 'Mã loại tài sản không được để trống';
-// }
-// // Số lượng
-// if (!this.asset.quantity) {
-//   this.error.assetQuantity = 'Số lượng tài sản không được để trống';
-// }
 </script>
 <style></style>

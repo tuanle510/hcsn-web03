@@ -13,9 +13,10 @@
         ref="input"
         class="combobox-text"
         :class="{ 'input-no-icon': !hasIcon }"
+        :name="name"
         @keydown.tab="this.isOptionShow = false"
         @focus="setFocus"
-        @blur="outFoucs"
+        @blur="outFoucs($event)"
         @keydown.up="up"
         @keydown.down="down"
         @keydown.enter="selectItem"
@@ -33,7 +34,7 @@
       </div>
       <div
         style="position: absolute; right: 0"
-        @click="clickComboBox()"
+        @click="toggleCbb()"
         class="icon-combobox"
       >
         <div v-if="isOptionShow" class="up"></div>
@@ -57,16 +58,24 @@
   </div>
 </template>
 <script>
-import 'clickout-event';
+import "clickout-event";
 export default {
-  name: 'the-combobox',
-  emits: ['blur', 'keydown', 'update:modelValue'],
+  name: "the-combobox",
+  emits: ["blur", "keydown", "update:modelValue"],
 
-  props: ['hasIcon', 'placeholder', 'filterby', 'optionList', 'modelValue'],
+  props: [
+    "hasIcon",
+    "placeholder",
+    "filterby",
+    "optionList",
+    "modelValue",
+    "name",
+    "required",
+  ],
 
   watch: {
     modelValue: function (newValue) {
-      if (newValue == undefined || newValue == '') {
+      if (newValue == undefined || newValue == "") {
         this.hasInput = false;
         this.matches = [...this.optionList];
       } else {
@@ -90,7 +99,7 @@ export default {
      */
     onChangeHandler(e) {
       e.preventDefault();
-      this.$emit('update:modelValue', e.target.value);
+      this.$emit("update:modelValue", e.target.value);
     },
 
     /**
@@ -101,15 +110,38 @@ export default {
      * Created date: 11:23 30/04/2022
      */
     setFocus() {
-      this.$refs.combobox.style.border = '1px solid #22a7ca';
+      this.isFocus = true;
+      this.$refs.combobox.style.border = "1px solid #22a7ca";
       this.isOptionShow = true;
       this.matches = [...this.optionList];
       this.$nextTick(() => {
         this.$refs.optionList.scrollTop = this.selecedIndex * 36;
       });
     },
-    outFoucs() {
-      this.$refs.combobox.style.border = '1px solid #afafaf';
+    outFoucs($event) {
+      this.isFocus = false;
+      this.$refs.combobox.style.border = "1px solid #afafaf";
+      this.validateRequired();
+      this.$emit("blur", $event);
+    },
+
+    /**
+     * Mô tả : Validate required
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 16:54 06/05/2022
+     */
+    validateRequired() {
+      console.log(this.modelValue);
+      if (
+        this.required &&
+        (this.modelValue === "" || this.modelValue == undefined)
+      ) {
+        this.$refs.combobox.style.border = "1px solid #ec4b4b";
+      } else {
+        this.$refs.combobox.style.border = "1px solid #afafaf";
+      }
     },
 
     /**
@@ -120,7 +152,7 @@ export default {
      * Created date: 14:52 28/04/2022
      */
     clearInput() {
-      this.$emit('update:modelValue');
+      this.$emit("update:modelValue");
       this.isOptionShow = false;
       this.selecedIndex = 0;
     },
@@ -135,17 +167,17 @@ export default {
     choseOpton(index) {
       this.selecedIndex = index;
       this.selectItem();
+      this.validateRequired();
     },
 
-    selectItem() {
+    async selectItem() {
       try {
-        this.$emit(
-          'update:modelValue',
+        await this.$emit(
+          "update:modelValue",
           this.matches[this.selecedIndex][this.filterby]
         );
+        this.validateRequired();
         this.isOptionShow = false;
-
-        this.$refs.input.blur();
       } catch (error) {
         console.log(error);
       }
@@ -167,7 +199,7 @@ export default {
       this.scrollToItem();
     },
 
-    clickComboBox() {
+    toggleCbb() {
       this.isOptionShow = !this.isOptionShow;
       this.matches = [...this.optionList];
       if (this.isOptionShow == true) {
@@ -188,6 +220,7 @@ export default {
       matches: [],
       isOptionShow: false,
       hasInput: false,
+      isFocus: false,
     };
   },
 };

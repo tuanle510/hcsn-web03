@@ -3,15 +3,15 @@
     ref="input"
     :type="type"
     class="m-input"
-    :class="[{ 'm-input-error': isEmpty }, classParent]"
+    :class="[classParent]"
     :maxlength="maxlength"
     :placeholder="placeholder"
     :disabled="disabled"
     @input="onChangeHandler"
-    @blur="outFocus"
+    @blur="outFocus($event)"
     :value="this.modelValue"
   />
-  <div v-if="isEmpty" class="m-error">{{ errorMsg }}</div>
+  <!-- <div v-if="isEmpty" class="m-error">{{ errorMsg }}</div> -->
 </template>
 <script>
 export default {
@@ -26,10 +26,16 @@ export default {
     "modelValue",
     "required",
     "maxlength",
-    "errorMsg",
   ],
 
-  emits: ["setIsValid", "update:modelValue", "keypress", "keydown"],
+  emits: [
+    "setIsValid",
+    "update:modelValue",
+    "keypress",
+    "keydown.down",
+    "keydown.up",
+    "blur",
+  ],
 
   methods: {
     /**
@@ -56,25 +62,13 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 19:29 05/05/2022
      */
-    outFocus() {
-      console.log(this.modelValue);
-      if (
-        this.required &&
-        (this.modelValue === "" || this.modelValue == undefined)
-      ) {
-        this.isEmpty = true;
-        this.$emit("setIsValid", false);
-      } else {
-        this.isEmpty = false;
-        this.$emit("setIsValid", true);
-      }
+    outFocus($event) {
+      this.$emit("blur", $event);
     },
   },
 
   data() {
-    return {
-      isEmpty: false,
-    };
+    return {};
   },
 };
 </script>
