@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-on:clickout="this.isOptionShow = false"
-    class="m-combobox"
-    ref="combobox"
-  >
+  <div v-on:clickout="clickOutCbb()" class="m-combobox" ref="combobox">
     <div class="combobox-contaner">
       <div v-if="hasIcon" class="combobox-icon">
         <div class="filter"></div>
@@ -12,6 +8,7 @@
         type="text"
         ref="input"
         class="combobox-text"
+        :required="required"
         :class="{ 'input-no-icon': !hasIcon }"
         :name="name"
         @keydown.tab="this.isOptionShow = false"
@@ -58,24 +55,27 @@
   </div>
 </template>
 <script>
-import "clickout-event";
+import 'clickout-event';
 export default {
-  name: "the-combobox",
-  emits: ["blur", "keydown", "update:modelValue"],
+  name: 'the-combobox',
+  emits: ['blur', 'keydown', 'update:modelValue'],
 
   props: [
-    "hasIcon",
-    "placeholder",
-    "filterby",
-    "optionList",
-    "modelValue",
-    "name",
-    "required",
+    'hasIcon',
+    'placeholder',
+    'filterby',
+    'optionList',
+    'modelValue',
+    'name',
+    'required',
   ],
 
   watch: {
-    modelValue: function (newValue) {
-      if (newValue == undefined || newValue == "") {
+    modelValue: function (newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.isOptionShow = true;
+      }
+      if (newValue == undefined || newValue == '') {
         this.hasInput = false;
         this.matches = [...this.optionList];
       } else {
@@ -87,6 +87,18 @@ export default {
         );
       }
     },
+
+    matches: function (newValue) {
+      if (newValue.length != this.optionList.length) {
+        this.selecedIndex = 0;
+      }
+    },
+  },
+
+  updated() {
+    if (this.$refs.input.classList.contains('m-input-error')) {
+      console.log('đã update');
+    }
   },
 
   methods: {
@@ -99,7 +111,19 @@ export default {
      */
     onChangeHandler(e) {
       e.preventDefault();
-      this.$emit("update:modelValue", e.target.value);
+      //gán lại giá trị
+      this.$emit('update:modelValue', e.target.value);
+    },
+
+    /**
+     * Mô tả : Click out combobox
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 08:40 07/05/2022
+     */
+    clickOutCbb() {
+      this.isOptionShow = false;
     },
 
     /**
@@ -110,19 +134,24 @@ export default {
      * Created date: 11:23 30/04/2022
      */
     setFocus() {
-      this.isFocus = true;
-      this.$refs.combobox.style.border = "1px solid #22a7ca";
+      this.$refs.combobox.style.border = '1px solid #22a7ca';
       this.isOptionShow = true;
       this.matches = [...this.optionList];
       this.$nextTick(() => {
         this.$refs.optionList.scrollTop = this.selecedIndex * 36;
       });
     },
+    /**
+     * Mô tả : thực hiện khi outfocus khỏi input
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 08:58 07/05/2022
+     */
     outFoucs($event) {
-      this.isFocus = false;
-      this.$refs.combobox.style.border = "1px solid #afafaf";
+      this.$refs.combobox.style.border = '1px solid #afafaf';
       this.validateRequired();
-      this.$emit("blur", $event);
+      this.$emit('blur', $event);
     },
 
     /**
@@ -136,11 +165,11 @@ export default {
       console.log(this.modelValue);
       if (
         this.required &&
-        (this.modelValue === "" || this.modelValue == undefined)
+        (this.modelValue === '' || this.modelValue === undefined)
       ) {
-        this.$refs.combobox.style.border = "1px solid #ec4b4b";
+        this.$refs.combobox.style.border = '1px solid #ec4b4b';
       } else {
-        this.$refs.combobox.style.border = "1px solid #afafaf";
+        this.$refs.combobox.style.border = '1px solid #afafaf';
       }
     },
 
@@ -151,10 +180,15 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 14:52 28/04/2022
      */
-    clearInput() {
-      this.$emit("update:modelValue");
-      this.isOptionShow = false;
-      this.selecedIndex = 0;
+    async clearInput() {
+      try {
+        await this.$emit('update:modelValue');
+        this.validateRequired();
+        this.isOptionShow = false;
+        this.selecedIndex = 0;
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     /**
@@ -167,13 +201,12 @@ export default {
     choseOpton(index) {
       this.selecedIndex = index;
       this.selectItem();
-      this.validateRequired();
     },
 
     async selectItem() {
       try {
         await this.$emit(
-          "update:modelValue",
+          'update:modelValue',
           this.matches[this.selecedIndex][this.filterby]
         );
         this.validateRequired();
@@ -220,7 +253,6 @@ export default {
       matches: [],
       isOptionShow: false,
       hasInput: false,
-      isFocus: false,
     };
   },
 };

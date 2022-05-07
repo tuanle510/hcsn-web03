@@ -15,26 +15,25 @@
 </template>
 <script>
 export default {
-  name: "the-input",
+  name: 'the-input',
 
   props: [
-    "number", //style number chuyền từ component cha
-    "placeholder",
-    "disabled",
-    "classParent",
-    "type",
-    "modelValue",
-    "required",
-    "maxlength",
+    'number', //style number chuyền từ component cha
+    'placeholder',
+    'disabled',
+    'classParent',
+    'type',
+    'modelValue',
+    'maxlength',
   ],
 
   emits: [
-    "setIsValid",
-    "update:modelValue",
-    "keypress",
-    "keydown.down",
-    "keydown.up",
-    "blur",
+    'setIsValid',
+    'update:modelValue',
+    'keypress',
+    'keydown.down',
+    'keydown.up',
+    'blur',
   ],
 
   methods: {
@@ -52,7 +51,7 @@ export default {
     // Nhận thay đổi của component cha
     onChangeHandler(e) {
       e.preventDefault();
-      this.$emit("update:modelValue", e.target.value);
+      this.$emit('update:modelValue', e.target.value);
     },
 
     /**
@@ -63,7 +62,7 @@ export default {
      * Created date: 19:29 05/05/2022
      */
     outFocus($event) {
-      this.$emit("blur", $event);
+      this.$emit('blur', $event);
     },
   },
 

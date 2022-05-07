@@ -11,20 +11,22 @@
           <div class="modal-field">
             <label for="assetCode">Mã tài sản <span>*</span></label>
             <MISAInput
+              required
               ref="assetCode"
               type="text"
               maxlength="20"
               placeholder="Nhập mã tài sản"
               v-model="asset.code"
               name="Mã tài sản"
-              @blur="blurInput($event)"
+              @blur="blurValidate($event)"
             ></MISAInput>
           </div>
           <div class="modal-field modal-field-long">
             <label for="input">Tên tài sản <span>*</span></label>
             <MISAInput
+              required
               :name="'Tên tài sản'"
-              @blur="blurInput($event)"
+              @blur="blurValidate($event)"
               placeholder="Nhập tên tài sản"
               v-model="asset.name"
             >
@@ -43,12 +45,12 @@
           ></ejs-combobox> -->
             <!-- :class="{ 'm-input-error': error }" -->
             <MISACombobox
-              :required="true"
+              required
               :optionList="partUseData"
               name="Mã bộ phận sử dụng"
               filterby="partUseCode"
               placeholder="Chọm mã bộ phận sử dụng"
-              @blur="blurInput($event)"
+              @blur="blurValidate($event)"
               v-model="asset.partUseCode"
             ></MISACombobox>
           </div>
@@ -68,12 +70,12 @@
             v-model="asset.typeCode"
           ></ejs-combobox> -->
             <MISACombobox
-              :required="true"
+              required
               :optionList="typeData"
               name="Mã loại tài sản"
               filterby="typeCode"
               placeholder="Chọm mã loại tài sản"
-              @blur="blurInput($event)"
+              @blur="blurValidate($event)"
               v-model="asset.typeCode"
             ></MISACombobox>
           </div>
@@ -87,8 +89,10 @@
           <div class="modal-field">
             <label for="input">Số lượng<span>*</span></label>
             <MISAInput
+              required
+              type="number"
               name="Số lượng"
-              @blur="blurInput($event)"
+              @blur="blurValidate($event)"
               classParent="number-input-icon"
               @keypress="onlyNumber"
               @keydown.down="
@@ -97,7 +101,6 @@
               @keydown.up="asset.quantity++"
               v-model="asset.quantity"
             ></MISAInput>
-
             <div class="spin-button-container">
               <div class="up" @click="asset.quantity++"></div>
               <div
@@ -111,8 +114,10 @@
           <div class="modal-field">
             <label for="input"> <span>*</span></label>
             <MISAInput
+              required
+              type="number"
               name="Nguyên giá"
-              @blur="blurInput($event)"
+              @blur="blurValidate($event)"
               classParent="number-input"
               @keypress="onlyNumber"
               v-model="asset.price"
@@ -121,10 +126,11 @@
           <div class="modal-field">
             <label for="input">Số năm sử dụng <span>*</span></label>
             <MISAInput
+              required
               name="Số năm sử dụng"
-              @blur="blurInput($event)"
               classParent="number-input"
               v-model="asset.year"
+              @blur="blurValidate($event)"
               @keypress="onlyNumber"
             ></MISAInput>
           </div>
@@ -134,8 +140,9 @@
           <div class="modal-field">
             <label for="input">Tỉ lệ hao mòn(%)<span>*</span></label>
             <MISAInput
+              required
               name="Tỉ lệ hao mòn"
-              @blur="blurInput($event)"
+              @blur="blurValidate($event)"
               classParent="number-input-icon"
               v-model="asset.depreciationRate"
               @keypress="onlyNumber"
@@ -159,11 +166,13 @@
               ></div>
             </div>
           </div>
+          <!-- @change="changeValue" -->
           <div class="modal-field">
             <label for="input">Giá trị hao mòm năm <span>*</span></label>
             <MISAInput
+              required
               name="Giá trị hao mòm năm"
-              @blur="blurInput($event)"
+              @blur="blurValidate($event)"
               classParent="number-input"
               v-model="annualDepreciationRate"
             ></MISAInput>
@@ -220,16 +229,16 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
-  name: "the-dialog",
+  name: 'the-dialog',
   props: [
-    "assetSelected",
-    "dialogTitle",
-    "isEditing",
-    "partUseData",
-    "typeData",
-    "assetCodes",
+    'assetSelected',
+    'dialogTitle',
+    'isEditing',
+    'partUseData',
+    'typeData',
+    'assetCodes',
   ],
 
   mounted() {
@@ -274,46 +283,28 @@ export default {
    * Created date: 00:43 03/05/2022
    */
   watch: {
-    "asset.typeCode"(newValue) {
+    'asset.typeCode'(newValue) {
       let chosedType = this.typeData.find((item) => item.typeCode == newValue);
       if (chosedType) {
         this.asset.typeName = chosedType.typeName;
       } else {
-        this.asset.typeName = "";
+        this.asset.typeName = '';
       }
     },
 
-    "asset.partUseCode"(newValue) {
+    'asset.partUseCode'(newValue) {
       let chosedUsePart = this.partUseData.find(
         (item) => item.partUseCode == newValue
       );
       if (chosedUsePart) {
         this.asset.partUseName = chosedUsePart.partUseName;
       } else {
-        this.asset.partUseName = "";
+        this.asset.partUseName = '';
       }
     },
   },
 
   methods: {
-    /**
-     * Mô tả : blur input
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 16:05 06/05/2022
-     */
-    blurInput($event) {
-      if ($event.target.value == "") {
-        $event.target.classList.add("m-input-error");
-        this.errorList.push(`Cần phải nhập thông tin ${$event.target.name}`);
-      } else {
-        this.errorList = this.errorList.filter(
-          (item) => item != `Cần phải nhập thông tin ${$event.target.name}`
-        );
-        $event.target.classList.remove("m-input-error");
-      }
-    },
     /**
      * Mô tả : format tiền
      * @param
@@ -322,7 +313,7 @@ export default {
      * Created date: 00:35 03/05/2022
      */
     formatSalary(value) {
-      var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -350,15 +341,15 @@ export default {
     async onCreateAsset() {
       try {
         const res = await axios.post(
-          "https://62616774327d3896e27b58d2.mockapi.io/api/asset",
+          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
           this.asset
         );
-        this.$emit("alertShow", false);
-        this.$emit("dialogShow", false);
-        if (res.statusText == "Created") {
-          this.$emit("toastShow", true, "Lưu dữ liệu thành công");
+        this.$emit('alertShow', false);
+        this.$emit('dialogShow', false);
+        if (res.statusText == 'Created') {
+          this.$emit('toastShow', true, 'Lưu dữ liệu thành công');
           setTimeout(() => {
-            this.$emit("toastShow", false);
+            this.$emit('toastShow', false);
           }, 2300);
         }
       } catch (error) {
@@ -379,12 +370,12 @@ export default {
           `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.asset.id}`,
           this.asset
         );
-        this.$emit("alertShow", false);
-        this.$emit("dialogShow", false);
-        if (res.statusText == "OK") {
-          this.$emit("toastShow", true, "Sửa dữ liệu thành công");
+        this.$emit('alertShow', false);
+        this.$emit('dialogShow', false);
+        if (res.statusText == 'OK') {
+          this.$emit('toastShow', true, 'Sửa dữ liệu thành công');
           setTimeout(() => {
-            this.$emit("toastShow", false);
+            this.$emit('toastShow', false);
           }, 2300);
         }
       } catch (error) {
@@ -402,30 +393,38 @@ export default {
     onCancel() {
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
         this.$emit(
-          "alertShow",
+          'alertShow',
           true,
-          "Bạn có muốn hủy bỏ khai báo này?",
-          "cancel"
+          'Bạn có muốn hủy bỏ khai báo này?',
+          'cancel'
         );
       } else {
         this.$emit(
-          "alertShow",
+          'alertShow',
           true,
-          "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?",
-          "cancelChange"
+          'Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?',
+          'cancelChange'
         );
       }
     },
 
     /**
-     * Mô tả : Kiểm tra xem đã được validate hết chưa
+     * Mô tả : blur input
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 20:22 05/05/2022
+     * Created date: 16:05 06/05/2022
      */
-    setIsValid(value) {
-      this.isValid = value;
+    blurValidate($event) {
+      if ($event.target.value === '') {
+        $event.target.classList.add('m-input-error');
+        this.errorList.push(`Cần phải nhập thông tin ${$event.target.name}`);
+      } else {
+        this.errorList = this.errorList.filter(
+          (item) => item != `Cần phải nhập thông tin ${$event.target.name}`
+        );
+        $event.target.classList.remove('m-input-error');
+      }
     },
 
     /**
@@ -436,17 +435,17 @@ export default {
      * Created date: 22:40 28/04/2022
      */
     onSubmit() {
-      // Check input trống
-      var inputList = ["assetCode", "assetName"];
-      for (const item of inputList) {
-        // console.log(item);
-        let ref = item;
-        console.log(this.$refs.ref);
-      }
-
+      this.errorList = [];
+      var form = this.$refs.form;
+      Array.from(form.elements).forEach((element) => {
+        if (element.required && (element.value == '' || element.value == '0')) {
+          element.style.border = '1px solid #ec4b4b';
+          this.errorList.push(`Cần phải nhập thông tin ${element.name}`);
+        }
+      });
       // Nếu không có lỗi gì thì thực hiện thêm hoặc sửa
       if (this.errorList.length != 0) {
-        this.$emit("alertShow", true, this.errorList[0]);
+        this.$emit('alertShow', true, this.errorList[0]);
       } else {
         this.isEditing ? this.onUpdateAsset() : this.onCreateAsset();
       }
@@ -460,8 +459,7 @@ export default {
       newYear: new Date().getFullYear(),
       startDate: new Date(),
       buyDate: new Date(),
-      priceFormat: "",
-      isValid: true,
+      priceFormat: '',
       errorList: [],
     };
   },
