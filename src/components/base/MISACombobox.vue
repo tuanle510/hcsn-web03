@@ -1,5 +1,9 @@
 <template>
-  <div v-on:clickout="clickOutCbb()" class="m-combobox" ref="combobox">
+  <div
+    v-on:clickout="this.isOptionShow = false"
+    class="m-combobox"
+    ref="combobox"
+  >
     <div class="combobox-contaner">
       <div v-if="hasIcon" class="combobox-icon">
         <div class="filter"></div>
@@ -11,7 +15,8 @@
         :required="required"
         :class="{ 'input-no-icon': !hasIcon }"
         :name="name"
-        @keydown.tab="this.isOptionShow = false"
+        :title="title"
+        @keydown.tab="tab"
         @focus="setFocus"
         @blur="outFoucs($event)"
         @keydown.up="up"
@@ -68,13 +73,11 @@ export default {
     'modelValue',
     'name',
     'required',
+    'title',
   ],
 
   watch: {
-    modelValue: function (newValue, oldValue) {
-      if (newValue != oldValue) {
-        this.isOptionShow = true;
-      }
+    modelValue: function (newValue) {
       if (newValue == undefined || newValue == '') {
         this.hasInput = false;
         this.matches = [...this.optionList];
@@ -95,12 +98,6 @@ export default {
     },
   },
 
-  updated() {
-    if (this.$refs.input.classList.contains('m-input-error')) {
-      console.log('đã update');
-    }
-  },
-
   methods: {
     /**
      * Mô tả : Lấy giá trị từ v-model bên cha
@@ -116,17 +113,6 @@ export default {
     },
 
     /**
-     * Mô tả : Click out combobox
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 08:40 07/05/2022
-     */
-    clickOutCbb() {
-      this.isOptionShow = false;
-    },
-
-    /**
      * Mô tả : khi focus vào thì hiện out line, blur thì bỏ outline
      * @param
      * @return
@@ -134,7 +120,6 @@ export default {
      * Created date: 11:23 30/04/2022
      */
     setFocus() {
-      this.$refs.combobox.style.border = '1px solid #22a7ca';
       this.isOptionShow = true;
       this.matches = [...this.optionList];
       this.$nextTick(() => {
@@ -149,8 +134,6 @@ export default {
      * Created date: 08:58 07/05/2022
      */
     outFoucs($event) {
-      this.$refs.combobox.style.border = '1px solid #afafaf';
-      this.validateRequired();
       this.$emit('blur', $event);
     },
 
@@ -162,14 +145,13 @@ export default {
      * Created date: 16:54 06/05/2022
      */
     validateRequired() {
-      console.log(this.modelValue);
       if (
         this.required &&
         (this.modelValue === '' || this.modelValue === undefined)
       ) {
-        this.$refs.combobox.style.border = '1px solid #ec4b4b';
+        this.$refs.input.classList.add('m-input-error');
       } else {
-        this.$refs.combobox.style.border = '1px solid #afafaf';
+        this.$refs.input.classList.remove('m-input-error');
       }
     },
 
@@ -183,8 +165,8 @@ export default {
     async clearInput() {
       try {
         await this.$emit('update:modelValue');
-        this.validateRequired();
         this.isOptionShow = false;
+        this.validateRequired();
         this.selecedIndex = 0;
       } catch (error) {
         console.log(error);
@@ -209,7 +191,8 @@ export default {
           'update:modelValue',
           this.matches[this.selecedIndex][this.filterby]
         );
-        this.validateRequired();
+        this.$refs.input.classList.remove('m-input-error');
+        this.$refs.input.blur();
         this.isOptionShow = false;
       } catch (error) {
         console.log(error);
@@ -230,6 +213,11 @@ export default {
       }
       this.selecedIndex += 1;
       this.scrollToItem();
+    },
+
+    tab() {
+      this.isOptionShow = false;
+      this.validateRequired();
     },
 
     toggleCbb() {

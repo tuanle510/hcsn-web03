@@ -11,22 +11,20 @@
           <div class="modal-field">
             <label for="assetCode">Mã tài sản <span>*</span></label>
             <MISAInput
-              required
+              required="true"
               ref="assetCode"
               type="text"
               maxlength="20"
               placeholder="Nhập mã tài sản"
               v-model="asset.code"
               name="Mã tài sản"
-              @blur="blurValidate($event)"
             ></MISAInput>
           </div>
           <div class="modal-field modal-field-long">
             <label for="input">Tên tài sản <span>*</span></label>
             <MISAInput
-              required
+              required="true"
               :name="'Tên tài sản'"
-              @blur="blurValidate($event)"
               placeholder="Nhập tên tài sản"
               v-model="asset.name"
             >
@@ -45,12 +43,11 @@
           ></ejs-combobox> -->
             <!-- :class="{ 'm-input-error': error }" -->
             <MISACombobox
-              required
+              required="true"
               :optionList="partUseData"
               name="Mã bộ phận sử dụng"
               filterby="partUseCode"
               placeholder="Chọm mã bộ phận sử dụng"
-              @blur="blurValidate($event)"
               v-model="asset.partUseCode"
             ></MISACombobox>
           </div>
@@ -70,12 +67,11 @@
             v-model="asset.typeCode"
           ></ejs-combobox> -->
             <MISACombobox
-              required
+              required="true"
               :optionList="typeData"
               name="Mã loại tài sản"
               filterby="typeCode"
               placeholder="Chọm mã loại tài sản"
-              @blur="blurValidate($event)"
               v-model="asset.typeCode"
             ></MISACombobox>
           </div>
@@ -89,10 +85,10 @@
           <div class="modal-field">
             <label for="input">Số lượng<span>*</span></label>
             <MISAInput
-              required
+              required="true"
               type="number"
               name="Số lượng"
-              @blur="blurValidate($event)"
+              min="0"
               classParent="number-input-icon"
               @keypress="onlyNumber"
               @keydown.down="
@@ -112,12 +108,11 @@
             </div>
           </div>
           <div class="modal-field">
-            <label for="input"> <span>*</span></label>
+            <label for="input">Nguyên giá <span>*</span></label>
             <MISAInput
-              required
+              required="true"
               type="number"
               name="Nguyên giá"
-              @blur="blurValidate($event)"
               classParent="number-input"
               @keypress="onlyNumber"
               v-model="asset.price"
@@ -126,11 +121,10 @@
           <div class="modal-field">
             <label for="input">Số năm sử dụng <span>*</span></label>
             <MISAInput
-              required
+              required="true"
               name="Số năm sử dụng"
               classParent="number-input"
               v-model="asset.year"
-              @blur="blurValidate($event)"
               @keypress="onlyNumber"
             ></MISAInput>
           </div>
@@ -140,9 +134,8 @@
           <div class="modal-field">
             <label for="input">Tỉ lệ hao mòn(%)<span>*</span></label>
             <MISAInput
-              required
+              required="true"
               name="Tỉ lệ hao mòn"
-              @blur="blurValidate($event)"
               classParent="number-input-icon"
               v-model="asset.depreciationRate"
               @keypress="onlyNumber"
@@ -170,9 +163,8 @@
           <div class="modal-field">
             <label for="input">Giá trị hao mòm năm <span>*</span></label>
             <MISAInput
-              required
+              required="true"
               name="Giá trị hao mòm năm"
-              @blur="blurValidate($event)"
               classParent="number-input"
               v-model="annualDepreciationRate"
             ></MISAInput>
@@ -391,6 +383,8 @@ export default {
      * Created date: 17:21 26/04/2022
      */
     onCancel() {
+      console.log(this.assetCopy);
+      console.log(this.asset);
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
         this.$emit(
           'alertShow',
@@ -409,25 +403,6 @@ export default {
     },
 
     /**
-     * Mô tả : blur input
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 16:05 06/05/2022
-     */
-    blurValidate($event) {
-      if ($event.target.value === '') {
-        $event.target.classList.add('m-input-error');
-        this.errorList.push(`Cần phải nhập thông tin ${$event.target.name}`);
-      } else {
-        this.errorList = this.errorList.filter(
-          (item) => item != `Cần phải nhập thông tin ${$event.target.name}`
-        );
-        $event.target.classList.remove('m-input-error');
-      }
-    },
-
-    /**
      * Mô tả : Validate()
      * @param
      * @return
@@ -435,11 +410,21 @@ export default {
      * Created date: 22:40 28/04/2022
      */
     onSubmit() {
+      /**
+       * Mô tả : Kiểm tra requỉed
+       * @param
+       * @return
+       * Created by: Lê Thiện Tuấn - MF1118
+       * Created date: 22:53 07/05/2022
+       */
+      // Gắn lại giá trị cho erorr list về rỗng
       this.errorList = [];
       var form = this.$refs.form;
+      // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
+        // Kiểm tra giá trị của input
         if (element.required && (element.value == '' || element.value == '0')) {
-          element.style.border = '1px solid #ec4b4b';
+          element.classList.add('m-input-error');
           this.errorList.push(`Cần phải nhập thông tin ${element.name}`);
         }
       });

@@ -3,10 +3,11 @@
     ref="input"
     :type="type"
     class="m-input"
-    :class="[classParent]"
+    :class="classParent"
     :maxlength="maxlength"
     :placeholder="placeholder"
     :disabled="disabled"
+    :required="required"
     @input="onChangeHandler"
     @blur="outFocus($event)"
     :value="this.modelValue"
@@ -25,6 +26,8 @@ export default {
     'type',
     'modelValue',
     'maxlength',
+    'required',
+    'name',
   ],
 
   emits: [
@@ -37,6 +40,12 @@ export default {
   ],
 
   methods: {
+    // Nhận thay đổi của component cha
+    onChangeHandler(e) {
+      e.preventDefault();
+      this.$emit('update:modelValue', e.target.value);
+    },
+
     /**
      * Mô tả : focus vào ô đầu tiên
      * @param
@@ -48,12 +57,6 @@ export default {
       this.$refs.input.focus();
     },
 
-    // Nhận thay đổi của component cha
-    onChangeHandler(e) {
-      e.preventDefault();
-      this.$emit('update:modelValue', e.target.value);
-    },
-
     /**
      * Mô tả : kiểm tra input có trống không
      * @param
@@ -62,7 +65,21 @@ export default {
      * Created date: 19:29 05/05/2022
      */
     outFocus($event) {
+      this.validateRequired();
       this.$emit('blur', $event);
+    },
+
+    validateRequired() {
+      if (
+        this.required &&
+        (this.modelValue === '' ||
+          this.modelValue === undefined ||
+          this.modelValue == '0')
+      ) {
+        this.$refs.input.classList.add('m-input-error');
+      } else {
+        this.$refs.input.classList.remove('m-input-error');
+      }
     },
   },
 
