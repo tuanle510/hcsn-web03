@@ -81,6 +81,7 @@
           </div>
         </div>
 
+        <!-- @keypress="onlyNumber" -->
         <div class="modal-row">
           <div class="modal-field">
             <label for="input">Số lượng<span>*</span></label>
@@ -90,7 +91,6 @@
               name="Số lượng"
               min="0"
               classParent="number-input-icon"
-              @keypress="onlyNumber"
               @keydown.down="
                 asset.quantity == 0 ? (asset.quantity = 0) : asset.quantity--
               "
@@ -316,12 +316,12 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 23:44 02/05/2022
      */
-    onlyNumber($event) {
-      let keyCode = $event.keyCode ? $event.keyCode : $event.which;
-      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-        $event.preventDefault();
-      }
-    },
+    // onlyNumber($event) {
+    //   let keyCode = $event.keyCode ? $event.keyCode : $event.which;
+    //   if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
+    //     $event.preventDefault();
+    //   }
+    // },
 
     /**
      * Mô tả : Thêm asset mới

@@ -8,6 +8,7 @@
     :placeholder="placeholder"
     :disabled="disabled"
     :required="required"
+    @keypress="onlyNumber"
     @input="onChangeHandler"
     @blur="outFocus($event)"
     :value="this.modelValue"
@@ -44,6 +45,22 @@ export default {
     onChangeHandler(e) {
       e.preventDefault();
       this.$emit('update:modelValue', e.target.value);
+    },
+
+    /**
+     * Mô tả : Chỉ nhận input
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 23:44 02/05/2022
+     */
+    onlyNumber($event) {
+      if ($event.target.type == 'number') {
+        let keyCode = $event.keyCode ? $event.keyCode : $event.which;
+        if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
+          $event.preventDefault();
+        }
+      }
     },
 
     /**
