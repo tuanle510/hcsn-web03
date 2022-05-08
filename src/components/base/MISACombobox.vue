@@ -1,5 +1,9 @@
 <template>
-  <div v-on:clickout="tab" class="m-combobox" ref="combobox">
+  <div
+    v-on:clickout="this.isOptionShow = false"
+    class="m-combobox"
+    ref="combobox"
+  >
     <div class="combobox-contaner">
       <div v-if="hasIcon" class="combobox-icon">
         <div class="filter"></div>
