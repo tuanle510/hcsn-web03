@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-on:clickout="this.isOptionShow = false"
-    class="m-combobox"
-    ref="combobox"
-  >
+  <div v-on:clickout="tab" class="m-combobox" ref="combobox">
     <div class="combobox-contaner">
       <div v-if="hasIcon" class="combobox-icon">
         <div class="filter"></div>
@@ -11,14 +7,12 @@
       <input
         type="text"
         ref="input"
-        class="combobox-text"
         :required="required"
-        :class="{ 'input-no-icon': !hasIcon }"
+        :class="!hasIcon ? 'input-no-icon' : 'input-icon'"
         :name="name"
         :title="title"
         @keydown.tab="tab"
         @focus="setFocus"
-        @blur="outFoucs($event)"
         @keydown.up="up"
         @keydown.down="down"
         @keydown.enter="selectItem"
@@ -75,24 +69,9 @@ export default {
     'required',
     'title',
   ],
-
   watch: {
-    modelValue: function (newValue) {
-      if (newValue == undefined || newValue == '') {
-        this.hasInput = false;
-        this.matches = [...this.optionList];
-      } else {
-        this.hasInput = true;
-        this.matches = this.optionList.filter((item) =>
-          item[this.filterby]
-            .toLowerCase()
-            .includes(this.modelValue.toLowerCase())
-        );
-      }
-    },
-
-    matches: function (newValue) {
-      if (newValue.length != this.optionList.length) {
+    matches: function (newValue, oldValue) {
+      if (newValue.length != oldValue.length) {
         this.selecedIndex = 0;
       }
     },
@@ -106,10 +85,23 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 00:00 02/05/2022
      */
-    onChangeHandler(e) {
+    async onChangeHandler(e) {
       e.preventDefault();
       //gán lại giá trị
-      this.$emit('update:modelValue', e.target.value);
+      await this.$emit('update:modelValue', e.target.value);
+      // Kiểm tra giá trị để lọc lại optionList
+      if (this.modelValue == undefined || this.modelValue == '') {
+        this.hasInput = false;
+        this.matches = [...this.optionList];
+      } else {
+        this.hasInput = true;
+        this.isOptionShow = true;
+        this.matches = this.optionList.filter((item) =>
+          item[this.filterby]
+            .toLowerCase()
+            .includes(this.modelValue.toLowerCase())
+        );
+      }
     },
 
     /**
@@ -125,16 +117,6 @@ export default {
       this.$nextTick(() => {
         this.$refs.optionList.scrollTop = this.selecedIndex * 36;
       });
-    },
-    /**
-     * Mô tả : thực hiện khi outfocus khỏi input
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 08:58 07/05/2022
-     */
-    outFoucs($event) {
-      this.$emit('blur', $event);
     },
 
     /**
@@ -165,6 +147,7 @@ export default {
     async clearInput() {
       try {
         await this.$emit('update:modelValue');
+        this.hasInput = false;
         this.isOptionShow = false;
         this.validateRequired();
         this.selecedIndex = 0;
@@ -192,7 +175,8 @@ export default {
           this.matches[this.selecedIndex][this.filterby]
         );
         this.$refs.input.classList.remove('m-input-error');
-        this.$refs.input.blur();
+        this.hasInput = true;
+        // this.$refs.input.blur();
         this.isOptionShow = false;
       } catch (error) {
         console.log(error);
@@ -220,6 +204,13 @@ export default {
       this.validateRequired();
     },
 
+    /**
+     * Mô tả : Ấn vào nút mũi tên hiển thị/ tắt optionList
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:21 08/05/2022
+     */
     toggleCbb() {
       this.isOptionShow = !this.isOptionShow;
       this.matches = [...this.optionList];

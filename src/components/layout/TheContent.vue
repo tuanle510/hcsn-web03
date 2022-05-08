@@ -6,25 +6,25 @@
           <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
         </div>
         <div class="toolbar-field">
-          <ejs-combobox placeholder="Loại tài sản"></ejs-combobox>
-          <!-- <MISACombobox
+          <!-- <ejs-combobox placeholder="Loại tài sản"></ejs-combobox> -->
+          <MISACombobox
             :hasIcon="true"
             :optionList="typeData"
             filterby="typeName"
             placeholder="Loại tài sản"
             v-model="typeSearch"
-          ></MISACombobox> -->
+          ></MISACombobox>
         </div>
 
         <div class="toolbar-field">
-          <ejs-combobox placeholder="Bộ phận sử dụng"></ejs-combobox>
-          <!-- <MISACombobox
+          <!-- <ejs-combobox placeholder="Bộ phận sử dụng"></ejs-combobox> -->
+          <MISACombobox
             :hasIcon="true"
             :optionList="partUseData"
             filterby="partUseName"
             placeholder="Bộ phận sử dụng"
             v-model="usePartSearch"
-          ></MISACombobox> -->
+          ></MISACombobox>
         </div>
       </div>
       <div class="m-toolbar-right">
@@ -164,6 +164,7 @@
       :assetSelected="assetSelected"
       :partUseData="partUseData"
       :typeData="typeData"
+      @getAssetData="getAssetData"
       @toastShow="toastShow"
       @dialogShow="dialogShow"
       @alertShow="alertShow"
@@ -224,27 +225,9 @@ export default {
     },
   },
 
-  /**
-   * Mô tả : lấy data từ api
-   * @param
-   * @return
-   * Created by: Lê Thiện Tuấn - MF1118
-   * Created date: 15/04/2022
-   */
   async beforeMount() {
-    // Lấy data
-    this.isLoading = true;
-    var me = this;
-    await axios
-      .get('https://62616774327d3896e27b58d2.mockapi.io/api/asset')
-      .then(function (res) {
-        me.assetData = res.data;
-        me.assetCodes = me.assetData.map((item) => item.code);
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-    this.isLoading = false;
+    // lấy asset data từ api
+    this.getAssetData();
 
     /**
      * Mô tả : Lấy dữ liệu Department
@@ -280,6 +263,26 @@ export default {
   },
 
   methods: {
+    /**
+     * Mô tả : lấy danh sách asset Data từ api
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:02 08/05/2022
+     */
+    async getAssetData() {
+      this.isLoading = true;
+      try {
+        const res = await axios.get(
+          'https://62616774327d3896e27b58d2.mockapi.io/api/asset'
+        );
+        this.assetData = res.data;
+        this.isLoading = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     /**
      * Mô tả : format tiền ttrong bảng
      * @param
@@ -352,13 +355,13 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1108
      * Created date: 17:14 23/04/2022
      */
-    onRowClick(product, event) {
+    onRowClick(product, $event) {
       //Nếu ấn vào edit
-      if (event.target.classList.contains('edit')) {
+      if ($event.target.classList.contains('edit')) {
         this.showEditDialog(product);
       }
       // Nếu ấn vào copy
-      else if (event.target.classList.contains('copy')) {
+      else if ($event.target.classList.contains('copy')) {
         console.log('Nhận đôi');
       }
       // Nếu ấn vào cả dòng
@@ -393,7 +396,6 @@ export default {
       } catch (error) {
         console.error(error);
       }
-      // this.assetSelected = product;
       //Hiểm thị form
       this.dialogShow(true);
     },
@@ -478,7 +480,6 @@ export default {
      * @param {Boolean} alert
      * @param {String} title
      * @param {String} type kiểu của button alert
-     * hàm
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 16:08 26/04/2022
@@ -500,8 +501,6 @@ export default {
     toastShow(isShow, title) {
       this.toast.isShow = isShow;
       this.toast.title = title;
-      // this.isToastShow = toast;
-      // this.toastTitle = title;
     },
   },
 

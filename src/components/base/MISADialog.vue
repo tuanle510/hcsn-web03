@@ -347,6 +347,8 @@ export default {
       } catch (error) {
         console.log(error);
       }
+      // Cập nhật lại bảng
+      this.$emit('getAssetData');
     },
 
     /**
@@ -373,6 +375,8 @@ export default {
       } catch (error) {
         console.log(error);
       }
+      // Cập nhật lại bảng
+      this.$emit('getAssetData');
     },
 
     /**
@@ -384,7 +388,7 @@ export default {
      */
     onCancel() {
       console.log(this.assetCopy);
-      console.log(this.asset);
+      console.log((this.assetgetAssetData = 'getAssetData@'));
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
         this.$emit(
           'alertShow',

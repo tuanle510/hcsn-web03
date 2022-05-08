@@ -31,6 +31,7 @@
 }
 
 .combobox-icon {
+  position: absolute;
   border: none;
   display: flex;
   align-items: center;
@@ -44,8 +45,15 @@
 }
 
 .m-combobox .input-no-icon {
-  width: calc(100%);
-  padding-left: 14px;
+  width: 100%;
+  padding-left: 14px !important;
+  padding-right: 40px;
+}
+
+.m-combobox .input-icon {
+  width: 100%;
+  padding-left: 36px !important;
+  padding-right: 40px;
 }
 
 .m-option-list {
@@ -82,7 +90,7 @@
 }
 
 .m-option-list .m-option-item.m-item-selected {
-  background-color: #c7e0f5;
+  background-color: #96c6ee;
 }
 
 .m-option-list .m-option-item .option-item-box {
