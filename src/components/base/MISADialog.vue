@@ -110,7 +110,8 @@
           <div class="modal-field">
             <label for="input">Số năm sử dụng <span>*</span></label>
             <MISAInput
-              required="true"
+              :required="true"
+              :isNumber="true"
               name="Số năm sử dụng"
               classParent="number-input"
               v-model="asset.year"
@@ -209,16 +210,16 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'the-dialog',
+  name: "the-dialog",
   props: [
-    'assetSelected',
-    'dialogTitle',
-    'isEditing',
-    'partUseData',
-    'typeData',
-    'assetCodes',
+    "assetSelected",
+    "dialogTitle",
+    "isEditing",
+    "partUseData",
+    "typeData",
+    "assetCodes",
   ],
 
   beforeMount() {
@@ -252,7 +253,7 @@ export default {
         return this.formatSalary(this.asset.price.toString());
       },
       set(newValue) {
-        newValue = newValue.replaceAll('.', '');
+        newValue = newValue.replaceAll(".", "");
         this.asset.price = newValue;
       },
     },
@@ -266,23 +267,23 @@ export default {
    * Created date: 00:43 03/05/2022
    */
   watch: {
-    'asset.typeCode'(newValue) {
+    "asset.typeCode"(newValue) {
       let chosedType = this.typeData.find((item) => item.typeCode == newValue);
       if (chosedType) {
         this.asset.typeName = chosedType.typeName;
       } else {
-        this.asset.typeName = '';
+        this.asset.typeName = "";
       }
     },
 
-    'asset.partUseCode'(newValue) {
+    "asset.partUseCode"(newValue) {
       let chosedUsePart = this.partUseData.find(
         (item) => item.partUseCode == newValue
       );
       if (chosedUsePart) {
         this.asset.partUseName = chosedUsePart.partUseName;
       } else {
-        this.asset.partUseName = '';
+        this.asset.partUseName = "";
       }
     },
   },
@@ -296,7 +297,7 @@ export default {
      * Created date: 00:35 03/05/2022
      */
     formatSalary(value) {
-      var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
       // var formatter = new Intl.NumberFormat('vi-VN', {
       //   currency: 'VND',
@@ -314,22 +315,22 @@ export default {
     async onCreateAsset() {
       try {
         const res = await axios.post(
-          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
+          "https://62616774327d3896e27b58d2.mockapi.io/api/asset",
           this.asset
         );
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'Created') {
-          this.$emit('toastShow', true, 'Lưu dữ liệu thành công');
+        this.$emit("alertShow", false);
+        this.$emit("dialogShow", false);
+        if (res.statusText == "Created") {
+          this.$emit("toastShow", true, "Lưu dữ liệu thành công");
           setTimeout(() => {
-            this.$emit('toastShow', false);
+            this.$emit("toastShow", false);
           }, 2300);
         }
       } catch (error) {
         console.log(error);
       }
       // Cập nhật lại bảng
-      this.$emit('getAssetData');
+      this.$emit("getAssetData");
     },
 
     /**
@@ -345,19 +346,19 @@ export default {
           `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.asset.id}`,
           this.asset
         );
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'OK') {
-          this.$emit('toastShow', true, 'Sửa dữ liệu thành công');
+        this.$emit("alertShow", false);
+        this.$emit("dialogShow", false);
+        if (res.statusText == "OK") {
+          this.$emit("toastShow", true, "Sửa dữ liệu thành công");
           setTimeout(() => {
-            this.$emit('toastShow', false);
+            this.$emit("toastShow", false);
           }, 2300);
         }
       } catch (error) {
         console.log(error);
       }
       // Cập nhật lại bảng
-      this.$emit('getAssetData');
+      this.$emit("getAssetData");
     },
 
     /**
@@ -370,17 +371,17 @@ export default {
     onCancel() {
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
         this.$emit(
-          'alertShow',
+          "alertShow",
           true,
-          'Bạn có muốn hủy bỏ khai báo này?',
-          'cancel'
+          "Bạn có muốn hủy bỏ khai báo này?",
+          "cancel"
         );
       } else {
         this.$emit(
-          'alertShow',
+          "alertShow",
           true,
-          'Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?',
-          'cancelChange'
+          "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu nhũng thay đổi này?",
+          "cancelChange"
         );
       }
     },
@@ -406,14 +407,14 @@ export default {
       // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
         // Kiểm tra giá trị của input
-        if (element.required && (element.value == '' || element.value == '0')) {
-          element.classList.add('m-input-error');
+        if (element.required && (element.value == "" || element.value == "0")) {
+          element.classList.add("m-input-error");
           this.errorList.push(`Cần phải nhập thông tin ${element.name}`);
         }
       });
       // Nếu không có lỗi gì thì thực hiện thêm hoặc sửa
       if (this.errorList.length != 0) {
-        this.$emit('alertShow', true, this.errorList[0]);
+        this.$emit("alertShow", true, this.errorList[0]);
       } else {
         this.isEditing ? this.onUpdateAsset() : this.onCreateAsset();
       }
@@ -427,7 +428,7 @@ export default {
       newYear: new Date().getFullYear(),
       startDate: new Date(),
       buyDate: new Date(),
-      priceFormat: '',
+      priceFormat: "",
       errorList: [],
     };
   },
