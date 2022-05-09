@@ -58,24 +58,24 @@
   </div>
 </template>
 <script>
-import "clickout-event";
+import 'clickout-event';
 export default {
-  name: "the-combobox",
-  emits: ["blur", "keydown", "update:modelValue"],
+  name: 'the-combobox',
+  emits: ['blur', 'keydown', 'update:modelValue'],
 
   props: [
-    "hasIcon",
-    "placeholder",
-    "filterby",
-    "optionList",
-    "modelValue",
-    "name",
-    "required",
-    "title",
+    'hasIcon',
+    'placeholder',
+    'filterby',
+    'optionList',
+    'modelValue',
+    'name',
+    'required',
+    'title',
   ],
 
   mounted() {
-    if (this.modelValue == "" || this.modelValue == undefined) {
+    if (this.modelValue == '' || this.modelValue == undefined) {
       this.hasInput = false;
     } else {
       this.hasInput = true;
@@ -91,7 +91,7 @@ export default {
 
     // Theo dõi giá trị mới của input để hiển thị optionList
     modelValue: function (newValue) {
-      if (newValue == undefined || newValue == "") {
+      if (newValue == undefined || newValue == '') {
         this.hasInput = false;
         this.matches = [...this.optionList];
       } else {
@@ -116,7 +116,7 @@ export default {
     onChangeHandler(e) {
       e.preventDefault();
       //gán lại giá trị
-      this.$emit("update:modelValue", e.target.value);
+      this.$emit('update:modelValue', e.target.value);
     },
 
     /**
@@ -144,11 +144,11 @@ export default {
     validateRequired() {
       if (
         this.required &&
-        (this.modelValue === "" || this.modelValue === undefined)
+        (this.modelValue === '' || this.modelValue === undefined)
       ) {
-        this.$refs.input.classList.add("m-input-error");
+        this.$refs.input.classList.add('m-input-error');
       } else {
-        this.$refs.input.classList.remove("m-input-error");
+        this.$refs.input.classList.remove('m-input-error');
       }
     },
 
@@ -161,7 +161,7 @@ export default {
      */
     async clearInput() {
       try {
-        await this.$emit("update:modelValue");
+        await this.$emit('update:modelValue');
         this.hasInput = false;
         this.isOptionShow = false;
         this.validateRequired();
@@ -186,10 +186,10 @@ export default {
     async selectItem() {
       try {
         await this.$emit(
-          "update:modelValue",
+          'update:modelValue',
           this.matches[this.selecedIndex][this.filterby]
         );
-        this.$refs.input.classList.remove("m-input-error");
+        this.$refs.input.classList.remove('m-input-error');
         this.hasInput = true;
         // this.$refs.input.blur();
         this.isOptionShow = false;
