@@ -95,7 +95,7 @@
               </td>
               <td class="text-align-right">{{ product.accumulate }}</td>
               <td class="text-align-right">
-                {{ product.price - product.accumulate }}
+                {{ currencyFormat(product.price - product.accumulate) }}
               </td>
               <td style="width: 80px">
                 <div class="m-function-box" style="display: none">
@@ -146,9 +146,9 @@
               {{ quantityTotal }}
             </td>
             <td class="text-align-right" style="width: 130px">
-              {{ currencyFormat(2492284000) }}
+              {{ currencyFormat(priceTotal) }}
             </td>
-            <td class="text-align-right" style="width: 130px">19.715.000</td>
+            <td class="text-align-right" style="width: 130px"></td>
             <td class="text-align-right" style="width: 130px">229.2284.000</td>
             <td style="width: 80px"></td>
           </tr>
@@ -220,9 +220,20 @@ export default {
       const quantityTotal = this.assetData.reduce((currentValue, item) => {
         return currentValue + Number(item.quantity);
       }, 0);
-
       return quantityTotal;
     },
+    priceTotal: function () {
+      const priceTotal = this.assetData.reduce((currentValue, item) => {
+        return currentValue + Number(item.price);
+      }, 0);
+      return priceTotal;
+    },
+    // quantityTotal: function () {
+    //   const quantityTotal = this.assetData.reduce((currentValue, item) => {
+    //     return currentValue + Number(item.quantity);
+    //   }, 0);
+    //   return quantityTotal;
+    // },
   },
 
   async beforeMount() {
@@ -451,6 +462,8 @@ export default {
         // Xóa theo index splice(start, deleteCount)
         this.assetData.splice(prdIndex, 1);
       }
+
+      this.getAssetData();
 
       //  Hiển thị toast xóa thành công
       this.toastShow(true, 'Xóa dữ liệu thành công');

@@ -73,6 +73,15 @@ export default {
     'required',
     'title',
   ],
+
+  mounted() {
+    if (this.modelValue == '' || this.modelValue == undefined) {
+      this.hasInput = false;
+    } else {
+      this.hasInput = true;
+    }
+  },
+
   watch: {
     matches: function (newValue, oldValue) {
       if (newValue.length != oldValue.length) {
@@ -192,6 +201,7 @@ export default {
         return;
       }
       this.selecedIndex -= 1;
+
       this.scrollToItem();
     },
 
@@ -226,7 +236,9 @@ export default {
     },
 
     scrollToItem() {
-      this.$refs.optionList.scrollTop = this.selecedIndex * 36;
+      if (this.isOptionShow == true) {
+        this.$refs.optionList.scrollTop = this.selecedIndex * 36;
+      }
     },
   },
 

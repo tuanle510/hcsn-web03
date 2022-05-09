@@ -6,12 +6,12 @@
         <div class="close"></div>
       </div>
 
-      <form class="m-modal-centent" ref="form">
+      <form class="m-modal-centent" ref="form" autocomplete="off">
         <div class="modal-row">
           <div class="modal-field">
             <label for="assetCode">Mã tài sản <span>*</span></label>
             <MISAInput
-              required="true"
+              :required="true"
               ref="assetCode"
               type="text"
               maxlength="20"
@@ -23,7 +23,7 @@
           <div class="modal-field modal-field-long">
             <label for="input">Tên tài sản <span>*</span></label>
             <MISAInput
-              required="true"
+              :required="true"
               :name="'Tên tài sản'"
               placeholder="Nhập tên tài sản"
               v-model="asset.name"
@@ -35,15 +35,9 @@
         <div class="modal-row">
           <div class="modal-field">
             <label for="input">Mã bộ phận sử dụng <span>*</span></label>
-            <!-- <ejs-combobox
-            :dataSource="partUseData"
-            :fields="{ value: 'partUseCode' }"
-            placeholder="Chọn mã bộ phận sử dụng"
-            v-model="asset.partUseCode"
-          ></ejs-combobox> -->
-            <!-- :class="{ 'm-input-error': error }" -->
+
             <MISACombobox
-              required="true"
+              :required="true"
               :optionList="partUseData"
               name="Mã bộ phận sử dụng"
               filterby="partUseCode"
@@ -60,12 +54,7 @@
         <div class="modal-row">
           <div class="modal-field">
             <label for="input">Mã loại tài sản <span>*</span></label>
-            <!-- <ejs-combobox
-            :dataSource="typeData"
-            :fields="{ value: 'typeCode' }"
-            placeholder="Chọn mã loại tài sản"
-            v-model="asset.typeCode"
-          ></ejs-combobox> -->
+
             <MISACombobox
               required="true"
               :optionList="typeData"
@@ -81,11 +70,11 @@
           </div>
         </div>
 
-        <!-- @keypress="onlyNumber" -->
         <div class="modal-row">
           <div class="modal-field">
             <label for="input">Số lượng<span>*</span></label>
             <MISAInput
+              ref="quantity"
               required="true"
               type="number"
               name="Số lượng"
@@ -107,15 +96,15 @@
               ></div>
             </div>
           </div>
+          <!-- type="number" -->
           <div class="modal-field">
             <label for="input">Nguyên giá <span>*</span></label>
             <MISAInput
-              required="true"
-              type="number"
+              :required="true"
+              :isNumber="true"
               name="Nguyên giá"
               classParent="number-input"
-              @keypress="onlyNumber"
-              v-model="asset.price"
+              v-model="changeFormatPrice"
             ></MISAInput>
           </div>
           <div class="modal-field">
@@ -125,7 +114,6 @@
               name="Số năm sử dụng"
               classParent="number-input"
               v-model="asset.year"
-              @keypress="onlyNumber"
             ></MISAInput>
           </div>
         </div>
@@ -138,7 +126,6 @@
               name="Tỉ lệ hao mòn"
               classParent="number-input-icon"
               v-model="asset.depreciationRate"
-              @keypress="onlyNumber"
               @keydown.down="
                 asset.depreciationRate == 0
                   ? (asset.depreciationRate = 0)
@@ -163,7 +150,8 @@
           <div class="modal-field">
             <label for="input">Giá trị hao mòm năm <span>*</span></label>
             <MISAInput
-              required="true"
+              :required="true"
+              :isNumber="true"
               name="Giá trị hao mòm năm"
               classParent="number-input"
               v-model="annualDepreciationRate"
@@ -197,7 +185,7 @@
             <div class="datepicker-container">
               <Datepicker
                 class="mt-input input-datepicker"
-                v-model="startDate"
+                v-model="asset.useDate"
                 format="dd/MM/yyyy"
                 :maxDate="new Date()"
               ></Datepicker>
@@ -233,10 +221,12 @@ export default {
     'assetCodes',
   ],
 
-  mounted() {
+  beforeMount() {
     // mounted mới gắn dữ liệu
     this.asset = this.assetSelected;
+  },
 
+  mounted() {
     // Focus vào ô input đầu
     this.$refs.assetCode.setFocus();
 
@@ -246,7 +236,9 @@ export default {
 
   computed: {
     annualDepreciationRate: function () {
-      return this.asset.price * (this.asset.depreciationRate / 100);
+      return this.formatSalary(
+        (this.asset.price * (this.asset.depreciationRate / 100)).toString()
+      );
     },
     /**
      * Mô tả : format tiền
@@ -255,16 +247,15 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 10:26 01/05/2022
      */
-    // changeFormatPrice: {
-    //   get() {
-    //     return this.formatSalary(this.asset.price);
-    //   },
-    //   set(newValue) {
-    //     newValue = newValue.replaceAll(".", "");
-    //     this.asset.price = this.formatSalary(newValue);
-    //     this.formatPrice = newValue;
-    //   },
-    // },
+    changeFormatPrice: {
+      get() {
+        return this.formatSalary(this.asset.price.toString());
+      },
+      set(newValue) {
+        newValue = newValue.replaceAll('.', '');
+        this.asset.price = newValue;
+      },
+    },
   },
 
   /**
@@ -307,21 +298,11 @@ export default {
     formatSalary(value) {
       var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
+      // var formatter = new Intl.NumberFormat('vi-VN', {
+      //   currency: 'VND',
+      // });
+      // return formatter.format(value);
     },
-
-    /**
-     * Mô tả : Chỉ nhận input
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 23:44 02/05/2022
-     */
-    // onlyNumber($event) {
-    //   let keyCode = $event.keyCode ? $event.keyCode : $event.which;
-    //   if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
-    //     $event.preventDefault();
-    //   }
-    // },
 
     /**
      * Mô tả : Thêm asset mới
@@ -387,8 +368,6 @@ export default {
      * Created date: 17:21 26/04/2022
      */
     onCancel() {
-      console.log(this.assetCopy);
-      console.log((this.assetgetAssetData = 'getAssetData@'));
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
         this.$emit(
           'alertShow',

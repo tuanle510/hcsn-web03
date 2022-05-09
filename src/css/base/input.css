@@ -3,6 +3,12 @@ input:disabled {
   color: black;
 }
 
+.input-container {
+  position: relative;
+  border: none;
+  outline: none;
+}
+
 input.m-input {
   position: relative;
   height: 36px;

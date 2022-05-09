@@ -1,13 +1,16 @@
 <template>
   <input
     ref="input"
-    :type="type"
     class="m-input"
+    title=""
+    :type="type"
+    :name="name"
     :class="classParent"
     :maxlength="maxlength"
     :placeholder="placeholder"
     :disabled="disabled"
     :required="required"
+    :isNumber="isNumber"
     @keypress="onlyNumber"
     @input="onChangeHandler"
     @blur="outFocus($event)"
@@ -29,6 +32,7 @@ export default {
     'maxlength',
     'required',
     'name',
+    'isNumber',
   ],
 
   emits: [
@@ -39,6 +43,10 @@ export default {
     'keydown.up',
     'blur',
   ],
+
+  updated() {
+    this.validateRequired();
+  },
 
   methods: {
     // Nhận thay đổi của component cha
@@ -55,7 +63,7 @@ export default {
      * Created date: 23:44 02/05/2022
      */
     onlyNumber($event) {
-      if ($event.target.type == 'number') {
+      if (this.isNumber == true) {
         let keyCode = $event.keyCode ? $event.keyCode : $event.which;
         if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) {
           $event.preventDefault();
