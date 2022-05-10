@@ -210,18 +210,22 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
-import { cancel_msg, toast_msg } from '../../assets/resource/ResourceMsg';
+import axios from "axios";
+import {
+  cancel_msg,
+  error_msg,
+  toast_msg,
+} from "../../assets/resource/ResourceMsg";
 
 export default {
-  name: 'the-dialog',
+  name: "the-dialog",
   props: [
-    'assetSelected',
-    'dialogTitle',
-    'isEditing',
-    'partUseData',
-    'typeData',
-    'assetCodes',
+    "assetSelected",
+    "dialogTitle",
+    "isEditing",
+    "partUseData",
+    "typeData",
+    "assetCodes",
   ],
 
   beforeMount() {
@@ -255,7 +259,7 @@ export default {
         return this.formatSalary(this.asset.price.toString());
       },
       set(newValue) {
-        newValue = newValue.replaceAll('.', '');
+        newValue = newValue.replaceAll(".", "");
         this.asset.price = newValue;
       },
     },
@@ -269,23 +273,23 @@ export default {
    * Created date: 00:43 03/05/2022
    */
   watch: {
-    'asset.typeCode'(newValue) {
+    "asset.typeCode"(newValue) {
       let chosedType = this.typeData.find((item) => item.typeCode == newValue);
       if (chosedType) {
         this.asset.typeName = chosedType.typeName;
       } else {
-        this.asset.typeName = '';
+        this.asset.typeName = "";
       }
     },
 
-    'asset.partUseCode'(newValue) {
+    "asset.partUseCode"(newValue) {
       let chosedUsePart = this.partUseData.find(
         (item) => item.partUseCode == newValue
       );
       if (chosedUsePart) {
         this.asset.partUseName = chosedUsePart.partUseName;
       } else {
-        this.asset.partUseName = '';
+        this.asset.partUseName = "";
       }
     },
   },
@@ -299,7 +303,7 @@ export default {
      * Created date: 00:35 03/05/2022
      */
     formatSalary(value) {
-      var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
       // var formatter = new Intl.NumberFormat('vi-VN', {
       //   currency: 'VND',
@@ -317,22 +321,22 @@ export default {
     async onCreateAsset() {
       try {
         const res = await axios.post(
-          'https://62616774327d3896e27b58d2.mockapi.io/api/asset',
+          "https://62616774327d3896e27b58d2.mockapi.io/api/asset",
           this.asset
         );
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'Created') {
-          this.$emit('toastShow', true, toast_msg.CREATE_SUCCESS);
+        this.$emit("alertShow", false);
+        this.$emit("dialogShow", false);
+        if (res.statusText == "Created") {
+          this.$emit("toastShow", true, toast_msg.CREATE_SUCCESS);
           setTimeout(() => {
-            this.$emit('toastShow', false);
+            this.$emit("toastShow", false);
           }, 2300);
         }
       } catch (error) {
         console.log(error);
       }
       // Cập nhật lại bảng
-      this.$emit('getAssetData');
+      this.$emit("getAssetData");
     },
 
     /**
@@ -348,19 +352,19 @@ export default {
           `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.asset.id}`,
           this.asset
         );
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'OK') {
-          this.$emit('toastShow', true, toast_msg.SAVE_SUCESS);
+        this.$emit("alertShow", false);
+        this.$emit("dialogShow", false);
+        if (res.statusText == "OK") {
+          this.$emit("toastShow", true, toast_msg.SAVE_SUCESS);
           setTimeout(() => {
-            this.$emit('toastShow', false);
+            this.$emit("toastShow", false);
           }, 2300);
         }
       } catch (error) {
         console.log(error);
       }
       // Cập nhật lại bảng
-      this.$emit('getAssetData');
+      this.$emit("getAssetData");
     },
 
     /**
@@ -372,9 +376,9 @@ export default {
      */
     onCancel() {
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
-        this.$emit('alertShow', true, cancel_msg.CANCEL, 'cancel');
+        this.$emit("alertShow", true, cancel_msg.CANCEL, "cancel");
       } else {
-        this.$emit('alertShow', true, cancel_msg.CANCEL_CHANGE, 'cancelChange');
+        this.$emit("alertShow", true, cancel_msg.CANCEL_CHANGE, "cancelChange");
       }
     },
 
@@ -399,14 +403,14 @@ export default {
       // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
         // Kiểm tra giá trị của input
-        if (element.required && (element.value == '' || element.value == '0')) {
-          element.classList.add('m-input-error');
-          this.errorList.push(`Cần phải nhập thông tin ${element.name}`);
+        if (element.required && (element.value == "" || element.value == "0")) {
+          element.classList.add("m-input-error");
+          this.errorList.push(`${error_msg.EMPTY_VALUE}${element.name}`);
         }
       });
       // Nếu không có lỗi gì thì thực hiện thêm hoặc sửa
       if (this.errorList.length != 0) {
-        this.$emit('alertShow', true, this.errorList[0]);
+        this.$emit("alertShow", true, this.errorList[0]);
       } else {
         this.isEditing ? this.onUpdateAsset() : this.onCreateAsset();
       }
@@ -420,7 +424,7 @@ export default {
       newYear: new Date().getFullYear(),
       startDate: new Date(),
       buyDate: new Date(),
-      priceFormat: '',
+      priceFormat: "",
       errorList: [],
     };
   },

@@ -16,3 +16,7 @@ export const toast_msg = {
   SAVE_SUCESS: 'Sửa dữ liệu thành công',
   REMOVE_SUCESS: 'Xóa dữ liệu thành công',
 };
+
+export const error_msg ={
+  EMPTY_VALUE: 'Cần phải nhập thông tin '
+}

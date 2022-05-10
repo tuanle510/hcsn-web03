@@ -58,24 +58,24 @@
   </div>
 </template>
 <script>
-import 'clickout-event';
+import "clickout-event";
 export default {
-  name: 'the-combobox',
-  emits: ['blur', 'keydown', 'update:modelValue'],
+  name: "the-combobox",
+  emits: ["blur", "keydown", "update:modelValue"],
 
   props: [
-    'hasIcon',
-    'placeholder',
-    'filterby',
-    'optionList',
-    'modelValue',
-    'name',
-    'required',
-    'title',
+    "hasIcon",
+    "placeholder",
+    "filterby",
+    "optionList",
+    "modelValue",
+    "name",
+    "required",
+    "title",
   ],
 
   mounted() {
-    if (this.modelValue == '' || this.modelValue == undefined) {
+    if (this.modelValue == "" || this.modelValue == undefined) {
       this.hasInput = false;
     } else {
       this.hasInput = true;
@@ -91,11 +91,13 @@ export default {
 
     // Theo dõi giá trị mới của input để hiển thị optionList
     modelValue: function (newValue) {
-      if (newValue == undefined || newValue == '') {
+      this.validateRequired();
+      if (newValue == undefined || newValue == "") {
         this.hasInput = false;
         this.matches = [...this.optionList];
       } else {
         this.hasInput = true;
+
         this.matches = this.optionList.filter((item) =>
           item[this.filterby]
             .toLowerCase()
@@ -116,7 +118,7 @@ export default {
     onChangeHandler(e) {
       e.preventDefault();
       //gán lại giá trị
-      this.$emit('update:modelValue', e.target.value);
+      this.$emit("update:modelValue", e.target.value);
     },
 
     /**
@@ -144,11 +146,11 @@ export default {
     validateRequired() {
       if (
         this.required &&
-        (this.modelValue === '' || this.modelValue === undefined)
+        (this.modelValue === "" || this.modelValue === undefined)
       ) {
-        this.$refs.input.classList.add('m-input-error');
+        this.$refs.input.classList.add("m-input-error");
       } else {
-        this.$refs.input.classList.remove('m-input-error');
+        this.$refs.input.classList.remove("m-input-error");
       }
     },
 
@@ -159,16 +161,12 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 14:52 28/04/2022
      */
-    async clearInput() {
-      try {
-        await this.$emit('update:modelValue');
-        this.hasInput = false;
-        this.isOptionShow = false;
-        this.validateRequired();
-        this.selecedIndex = 0;
-      } catch (error) {
-        console.log(error);
-      }
+    clearInput() {
+      this.$emit("update:modelValue");
+      this.hasInput = false;
+      this.isOptionShow = false;
+      // this.validateRequired();
+      this.selecedIndex = 0;
     },
 
     /**
@@ -183,19 +181,14 @@ export default {
       this.selectItem();
     },
 
-    async selectItem() {
-      try {
-        await this.$emit(
-          'update:modelValue',
-          this.matches[this.selecedIndex][this.filterby]
-        );
-        this.$refs.input.classList.remove('m-input-error');
-        this.hasInput = true;
-        // this.$refs.input.blur();
-        this.isOptionShow = false;
-      } catch (error) {
-        console.log(error);
-      }
+    selectItem() {
+      this.$emit(
+        "update:modelValue",
+        this.matches[this.selecedIndex][this.filterby]
+      );
+      this.$refs.input.blur();
+      this.hasInput = true;
+      this.isOptionShow = false;
     },
 
     up() {
@@ -230,11 +223,6 @@ export default {
     toggleCbb() {
       this.isOptionShow = !this.isOptionShow;
       this.matches = [...this.optionList];
-      if (this.isOptionShow == true) {
-        this.$nextTick(() => {
-          this.$refs.optionList.scrollTop = this.selecedIndex * 36;
-        });
-      }
     },
 
     scrollToItem() {
