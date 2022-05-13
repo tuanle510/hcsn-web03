@@ -9,8 +9,8 @@
           <!-- <ejs-combobox placeholder="Loại tài sản"></ejs-combobox> -->
           <MISACombobox
             :hasIcon="true"
-            :optionList="typeData"
-            filterby="typeName"
+            :optionList="categoryData"
+            filterby="fixed_asset_category_name"
             placeholder="Loại tài sản"
             v-model="typeSearch"
           ></MISACombobox>
@@ -20,8 +20,8 @@
           <!-- <ejs-combobox placeholder="Bộ phận sử dụng"></ejs-combobox> -->
           <MISACombobox
             :hasIcon="true"
-            :optionList="partUseData"
-            filterby="partUseName"
+            :optionList="departmentData"
+            filterby="department_name"
             placeholder="Bộ phận sử dụng"
             v-model="usePartSearch"
           ></MISACombobox>
@@ -56,10 +56,12 @@
                 ></MISACheckbox>
               </th>
               <th class="text-align-left" style="width: 40px">STT</th>
-              <th class="text-align-left" style="width: 80px">Mã tài sản</th>
-              <th class="text-align-left">Tên tài sản</th>
-              <th class="text-align-left">Loại tài sản</th>
-              <th class="text-align-left">Bộ phận sử dụng</th>
+              <th class="text-align-left" style="width: 130px">Mã tài sản</th>
+              <th class="text-align-left" style="width: 130px">Tên tài sản</th>
+              <th class="text-align-left" style="width: 130px">Loại tài sản</th>
+              <th class="text-align-left" style="width: 130px">
+                Bộ phận sử dụng
+              </th>
               <th class="text-align-right" style="width: 60px">Số lượng</th>
               <th class="text-align-right" style="width: 130px">Nguyên giá</th>
               <th class="text-align-right" style="width: 130px">
@@ -73,35 +75,57 @@
           </thead>
           <tbody>
             <tr
-              @dblclick="showEditDialog(product)"
-              @click="onRowClick(product, $event)"
-              v-for="(product, index) in assetData"
+              @dblclick="showEditDialog(asset)"
+              @click="onRowClick(asset, $event)"
+              v-for="(asset, index) in assetData"
               :key="index"
               class="m-tr"
             >
               <td style="width: 50px; padding-left: 16px">
                 <MISACheckbox
-                  :checked="checkedaAssetList.includes(product)"
+                  :checked="checkedaAssetList.includes(asset)"
                 ></MISACheckbox>
               </td>
               <td class="text-align-left">{{ index + 1 }}</td>
-              <td class="text-align-left">{{ product.code }}</td>
-              <td class="text-align-left text-limit" :title="product.name">
-                {{ product.name }}
+              <td class="text-align-left text-limit">
+                {{ asset.fixed_asset_code }}
               </td>
-              <td class="text-align-left text-limit" :title="product.name">
-                {{ product.typeName }}
+              <td
+                class="text-align-left text-limit"
+                :title="asset.fixed_asset_name"
+              >
+                {{ asset.fixed_asset_name }}
               </td>
-              <td class="text-align-left text-limit" :title="product.name">
-                {{ product.partUseName }}
+              <td
+                class="text-align-left text-limit"
+                :title="asset.fixed_asset_category_name"
+              >
+                {{ asset.fixed_asset_category_name }}
               </td>
-              <td class="text-align-right">{{ product.quantity }}</td>
+              <td
+                class="text-align-left text-limit"
+                :title="asset.department_name"
+              >
+                {{ asset.department_name }}
+              </td>
+              <td class="text-align-right">{{ asset.quantity }}</td>
               <td class="text-align-right">
-                {{ currencyFormat(product.price) }}
+                {{ currencyFormat(asset.cost) }}
               </td>
-              <td class="text-align-right">{{ product.accumulate }}</td>
               <td class="text-align-right">
-                {{ currencyFormat(product.price - product.accumulate) }}
+                {{
+                  currencyFormat(
+                    asset.cost * asset.depreciation_rate * asset.life_time
+                  )
+                }}
+              </td>
+              <td class="text-align-right">
+                {{
+                  currencyFormat(
+                    asset.cost -
+                      asset.cost * asset.depreciation_rate * asset.life_time
+                  )
+                }}
               </td>
               <td style="width: 80px">
                 <div class="m-function-box" style="display: none">
@@ -152,10 +176,14 @@
               {{ quantityTotal }}
             </td>
             <td class="text-align-right" style="width: 130px">
-              {{ currencyFormat(priceTotal) }}
+              {{ currencyFormat(costTotal) }}
             </td>
-            <td class="text-align-right" style="width: 130px"></td>
-            <td class="text-align-right" style="width: 130px">229.2284.000</td>
+            <td class="text-align-right" style="width: 130px">
+              {{ currencyFormat(accumulatedTotal) }}
+            </td>
+            <td class="text-align-right" style="width: 130px">
+              {{ currencyFormat(costTotal - accumulatedTotal) }}
+            </td>
             <td style="width: 80px"></td>
           </tr>
         </tbody>
@@ -168,8 +196,8 @@
       v-if="isDialogShow"
       :assetCodes="assetCodes"
       :assetSelected="assetSelected"
-      :partUseData="partUseData"
-      :typeData="typeData"
+      :departmentData="departmentData"
+      :categoryData="categoryData"
       @getAssetData="getAssetData"
       @toastShow="toastShow"
       @dialogShow="dialogShow"
@@ -229,18 +257,21 @@ export default {
       }, 0);
       return quantityTotal;
     },
-    priceTotal: function () {
-      const priceTotal = this.assetData.reduce((currentValue, item) => {
-        return currentValue + Number(item.price);
+    costTotal: function () {
+      const costTotal = this.assetData.reduce((currentValue, item) => {
+        return currentValue + Number(item.cost);
       }, 0);
-      return priceTotal;
+      return costTotal;
     },
-    // quantityTotal: function () {
-    //   const quantityTotal = this.assetData.reduce((currentValue, item) => {
-    //     return currentValue + Number(item.quantity);
-    //   }, 0);
-    //   return quantityTotal;
-    // },
+    accumulatedTotal: function () {
+      const accumulatedTotal = this.assetData.reduce((currentValue, item) => {
+        return (
+          currentValue +
+          Number(item.cost * item.depreciation_rate * item.life_time)
+        );
+      }, 0);
+      return accumulatedTotal;
+    },
   },
 
   async beforeMount() {
@@ -255,23 +286,14 @@ export default {
      * Created date: 22:01 27/04/2022
      */
     try {
-      const res = await axios.get(
-        "https://62616774327d3896e27b58d2.mockapi.io/api/partUse"
-      );
-      this.partUseData = res.data;
+      const res = await axios.get("http://localhost:5234/api/Department");
+      this.departmentData = res.data;
     } catch (error) {
       console.log(error);
     }
 
-    // try {
-    //   const res = await axios.get("http://localhost:5235/api/v1/FixedAssets/");
-    //   console.log(res.data);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-
     /**
-     * Mô tả : Lấy dữ liệu type
+     * Mô tả : Lấy dữ liệu Category
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
@@ -279,9 +301,9 @@ export default {
      */
     try {
       const res = await axios.get(
-        "https://62616774327d3896e27b58d2.mockapi.io/api/type"
+        "http://localhost:5234/api/FixedAssetCategory"
       );
-      this.typeData = res.data;
+      this.categoryData = res.data;
     } catch (error) {
       console.log(error);
     }
@@ -298,9 +320,7 @@ export default {
     async getAssetData() {
       this.isLoading = true;
       try {
-        const res = await axios.get(
-          "https://62616774327d3896e27b58d2.mockapi.io/api/asset"
-        );
+        const res = await axios.get("http://localhost:5234/api/v1/FixedAsset");
         this.assetData = res.data;
         this.isLoading = false;
       } catch (error) {
@@ -321,16 +341,40 @@ export default {
       });
       return formatter.format(value);
     },
+
+    /**
+     * Mô tả :  Lấy mã mới
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 16:52 13/05/2022
+     */
+    async getNewAssetCode() {
+      try {
+        var res = await axios.get(
+          "http://localhost:5234/api/v1/FixedAsset/NewFixedAssetCode"
+        );
+        this.newAssetCode = res.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     /**
      * Bật dialog thêm sản phẩm mới
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
      * CREATED BY: LTTUAN(19.04.2022)
      */
-    showAddDialog() {
+    async showAddDialog() {
+      await this.getNewAssetCode();
       this.assetSelected = {
-        price: 0,
-        annualDepreciationRate: 0,
-        depreciationRate: 0,
+        fixed_asset_code: this.newAssetCode,
+        cost: 0,
+        depreciation_rate: 0,
         quantity: 0,
+        purchase_date: new Date(),
       };
       this.isEditing = false;
       this.dialogShow(true);
@@ -380,10 +424,10 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1108
      * Created date: 17:14 23/04/2022
      */
-    onRowClick(product, $event) {
+    onRowClick(asset, $event) {
       //Nếu ấn vào edit
       if ($event.target.classList.contains("edit")) {
-        this.showEditDialog(product);
+        this.showEditDialog(asset);
       }
       // Nếu ấn vào copy
       else if ($event.target.classList.contains("copy")) {
@@ -392,17 +436,17 @@ export default {
       // Nếu ấn vào cả dòng
       else {
         // Kiểm tra xem đã tích sản phẩm trước đó chưa
-        if (this.checkedaAssetList.includes(product)) {
+        if (this.checkedaAssetList.includes(asset)) {
           // Nếu tích r thì bỏ tích
           // Lấy index của sản phẩm được chọn
           const selecedIndex = this.checkedaAssetList.findIndex(
-            (prd) => prd.id == product.id
+            (prd) => prd.fixed_asset_id == asset.fixed_asset_id
           );
           // Xóa theo index splice(start, deleteCount)
           this.checkedaAssetList.splice(selecedIndex, 1);
         } else {
           // Nếu chưa thì add vào list
-          this.checkedaAssetList.push(product);
+          this.checkedaAssetList.push(asset);
         }
       }
     },
@@ -411,11 +455,11 @@ export default {
      * Gắn dữ liệu từ component Table vào để truyền vào Dialog khi doubleclick
      * CREATED BY: LTTUAN(18.04.2022)
      */
-    async showEditDialog(product) {
+    async showEditDialog(asset) {
       this.isEditing = true;
       try {
         const res = await axios.get(
-          `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${product.id}`
+          `http://localhost:5234/api/v1/FixedAsset/${asset.fixed_asset_id}`
         );
         this.assetSelected = res.data;
       } catch (error) {
@@ -441,7 +485,7 @@ export default {
         let title = "";
         // hiển thị title cảnh báo
         if (length == 1) {
-          title = `${remove_msg.ASSET_REMOVE} ${this.checkedaAssetList[0].code} - ${this.checkedaAssetList[0].name}?`;
+          title = `${remove_msg.ASSET_REMOVE} ${this.checkedaAssetList[0].fixed_asset_code} - ${this.checkedaAssetList[0].fixed_asset_name}?`;
         } else if (length > 1 && length < 10) {
           title = `0${length} ${remove_msg.ASSETS_REMOVE}`;
         } else {
@@ -464,17 +508,11 @@ export default {
         // xóa trên api
         try {
           const res = await axios.delete(
-            `https://62616774327d3896e27b58d2.mockapi.io/api/asset/${this.checkedaAssetList[i].id}`
+            `http://localhost:5234/api/v1/FixedAsset/${this.checkedaAssetList[i].fixed_asset_id}`
           );
         } catch (error) {
           console.log(error);
         }
-        // xóa trên giao diện
-        const prdIndex = this.assetData.findIndex(
-          (prd) => prd.id === this.checkedaAssetList[i].id
-        );
-        // Xóa theo index splice(start, deleteCount)
-        this.assetData.splice(prdIndex, 1);
       }
 
       this.getAssetData();
@@ -530,7 +568,7 @@ export default {
       this.toast.title = title;
     },
   },
-  
+
   data() {
     return {
       isEditing: null,
@@ -549,10 +587,11 @@ export default {
       isDialogShow: false, //Hiển thị form hay không
       assetData: [], //dữ liệu lấy về từ api
       assetCodes: null, //Danh sách mã tài sản
-      partUseData: [],
-      typeData: [],
+      departmentData: [],
+      categoryData: [],
       typeSearch: "",
       usePartSearch: "",
+      newAssetCode: "",
     };
   },
 };

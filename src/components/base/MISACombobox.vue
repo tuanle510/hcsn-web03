@@ -24,14 +24,7 @@
         @input="onChangeHandler"
         :value="this.modelValue"
       />
-      <div
-        style="position: absolute; right: 20px"
-        @click="clearInput"
-        v-if="hasInput"
-        class="icon-combobox"
-      >
-        <div class="clear"></div>
-      </div>
+
       <div
         style="position: absolute; right: 0"
         @click="toggleCbb()"
@@ -74,14 +67,6 @@ export default {
     "title",
   ],
 
-  mounted() {
-    if (this.modelValue == "" || this.modelValue == undefined) {
-      this.hasInput = false;
-    } else {
-      this.hasInput = true;
-    }
-  },
-
   watch: {
     matches: function (newValue, oldValue) {
       if (newValue.length != oldValue.length) {
@@ -93,11 +78,8 @@ export default {
     modelValue: function (newValue) {
       this.validateRequired();
       if (newValue == undefined || newValue == "") {
-        this.hasInput = false;
         this.matches = [...this.optionList];
       } else {
-        this.hasInput = true;
-
         this.matches = this.optionList.filter((item) =>
           item[this.filterby]
             .toLowerCase()
@@ -155,19 +137,18 @@ export default {
     },
 
     /**
-     * Mô tả : clear input
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 14:52 28/04/2022
-     */
-    clearInput() {
-      this.$emit("update:modelValue");
-      this.hasInput = false;
-      this.isOptionShow = false;
-      // this.validateRequired();
-      this.selecedIndex = 0;
-    },
+    //  * Mô tả : clear input
+    //  * @param
+    //  * @return
+    //  * Created by: Lê Thiện Tuấn - MF1118
+    //  * Created date: 14:52 28/04/2022
+    //  */
+    // clearInput() {
+    //   this.$emit("update:modelValue");
+    //   this.isOptionShow = false;
+    //   // this.validateRequired();
+    //   this.selecedIndex = 0;
+    // },
 
     /**
      * Mô tả : Chọn option
@@ -187,7 +168,6 @@ export default {
         this.matches[this.selecedIndex][this.filterby]
       );
       this.$refs.input.blur();
-      this.hasInput = true;
       this.isOptionShow = false;
     },
 
@@ -237,7 +217,6 @@ export default {
       selecedIndex: 0,
       matches: [],
       isOptionShow: false,
-      hasInput: false,
     };
   },
 };
