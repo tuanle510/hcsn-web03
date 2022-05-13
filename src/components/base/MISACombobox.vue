@@ -15,12 +15,13 @@
         :class="!hasIcon ? 'input-no-icon' : 'input-icon'"
         :name="name"
         :title="title"
+        :placeholder="placeholder"
         @keydown.tab="tab"
         @focus="setFocus"
+        @blur="outFocus"
         @keydown.up="up"
         @keydown.down="down"
         @keydown.enter="selectItem"
-        :placeholder="placeholder"
         @input="onChangeHandler"
         :value="this.modelValue"
       />
@@ -51,20 +52,20 @@
   </div>
 </template>
 <script>
-import "clickout-event";
+import 'clickout-event';
 export default {
-  name: "the-combobox",
-  emits: ["blur", "keydown", "update:modelValue"],
+  name: 'the-combobox',
+  emits: ['blur', 'keydown', 'update:modelValue'],
 
   props: [
-    "hasIcon",
-    "placeholder",
-    "filterby",
-    "optionList",
-    "modelValue",
-    "name",
-    "required",
-    "title",
+    'hasIcon',
+    'placeholder',
+    'filterby',
+    'optionList',
+    'modelValue',
+    'name',
+    'required',
+    'title',
   ],
 
   watch: {
@@ -100,7 +101,7 @@ export default {
     onChangeHandler(e) {
       e.preventDefault();
       //gán lại giá trị
-      this.$emit("update:modelValue", e.target.value);
+      this.$emit('update:modelValue', e.target.value);
     },
 
     /**
@@ -119,6 +120,16 @@ export default {
     },
 
     /**
+     * Mô tả : Xử lí sự kiệm blur
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 21:02 10/05/2022
+     */
+    outFocus() {
+      this.validateRequired();
+    },
+    /**
      * Mô tả : Validate required
      * @param
      * @return
@@ -128,11 +139,11 @@ export default {
     validateRequired() {
       if (
         this.required &&
-        (this.modelValue === "" || this.modelValue === undefined)
+        (this.modelValue === '' || this.modelValue === undefined)
       ) {
-        this.$refs.input.classList.add("m-input-error");
+        this.$refs.input.classList.add('m-input-error');
       } else {
-        this.$refs.input.classList.remove("m-input-error");
+        this.$refs.input.classList.remove('m-input-error');
       }
     },
 
@@ -164,7 +175,7 @@ export default {
 
     selectItem() {
       this.$emit(
-        "update:modelValue",
+        'update:modelValue',
         this.matches[this.selecedIndex][this.filterby]
       );
       this.$refs.input.blur();
@@ -190,7 +201,6 @@ export default {
 
     tab() {
       this.isOptionShow = false;
-      this.validateRequired();
     },
 
     /**
