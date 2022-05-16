@@ -90,13 +90,13 @@
               </td>
               <td class="text-align-left">{{ index + 1 }}</td>
               <td class="text-align-left text-limit">
-                {{ asset.fixed_asset_code }}
+                {{ asset.FixedAssetCode }}
               </td>
               <td
                 class="text-align-left text-limit"
-                :title="asset.fixed_asset_name"
+                :title="asset.FixedAssetName"
               >
-                {{ asset.fixed_asset_name }}
+                {{ asset.FixedAssetName }}
               </td>
               <td
                 class="text-align-left text-limit"
@@ -142,54 +142,56 @@
             </tr>
           </tbody>
         </table>
-      </div>
-      <!-- paging -->
-      <table class="m-table-footer">
-        <tbody>
-          <tr>
-            <td colspan="6">
-              <div class="m-paging-left">
-                <div class="m-total-number">
-                  Tổng số: <strong>200</strong> bản ghi
-                </div>
-                <div class="m-dropdown-paging">
-                  20
-                  <div class="down"></div>
-                </div>
-                <div class="m-paging-list">
-                  <button class="m-page-control">
-                    <div class="pre"></div>
-                  </button>
-                  <div class="m-paging-group">
-                    <button class="m-number m-number-selected">1</button>
-                    <button class="m-number">2</button>
-                    <div class="m-number-more">
-                      <div class="more"></div>
-                    </div>
-                    <button class="m-number">10</button>
+
+        <!-- paging -->
+
+        <table class="m-table-footer">
+          <tbody>
+            <tr>
+              <td style="width: 610px">
+                <div class="m-paging-left">
+                  <div class="m-total-number">
+                    Tổng số: <strong>200</strong> bản ghi
                   </div>
-                  <button class="m-page-control">
-                    <div class="next"></div>
-                  </button>
+                  <div class="m-dropdown-paging">
+                    20
+                    <div class="down"></div>
+                  </div>
+                  <div class="m-paging-list">
+                    <button class="m-page-control">
+                      <div class="pre"></div>
+                    </button>
+                    <div class="m-paging-group">
+                      <button class="m-number m-number-selected">1</button>
+                      <button class="m-number">2</button>
+                      <div class="m-number-more">
+                        <div class="more"></div>
+                      </div>
+                      <button class="m-number">10</button>
+                    </div>
+                    <button class="m-page-control">
+                      <div class="next"></div>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td class="text-align-right" style="width: 60px">
-              {{ quantityTotal }}
-            </td>
-            <td class="text-align-right" style="width: 130px">
-              {{ currencyFormat(costTotal) }}
-            </td>
-            <td class="text-align-right" style="width: 130px">
-              {{ currencyFormat(accumulatedTotal) }}
-            </td>
-            <td class="text-align-right" style="width: 130px">
-              {{ currencyFormat(costTotal - accumulatedTotal) }}
-            </td>
-            <td style="width: 80px"></td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+              <td class="text-align-right" style="width: 60px">
+                {{ quantityTotal }}
+              </td>
+              <td class="text-align-right" style="width: 130px">
+                {{ currencyFormat(costTotal) }}
+              </td>
+              <td class="text-align-right" style="width: 130px">
+                {{ currencyFormat(accumulatedTotal) }}
+              </td>
+              <td class="text-align-right" style="width: 130px">
+                {{ currencyFormat(costTotal - accumulatedTotal) }}
+              </td>
+              <td style="width: 80px"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <MISADialog
       ref="dialog"
@@ -222,11 +224,11 @@
 </template>
 <script>
 /* eslint-disable */
-import axios from 'axios';
-import { remove_msg, toast_msg } from '../../assets/resource/ResourceMsg';
+import axios from "axios";
+import { remove_msg, toast_msg } from "../../assets/resource/ResourceMsg";
 
 export default {
-  name: 'the-content',
+  name: "the-content",
 
   computed: {
     /**
@@ -288,7 +290,7 @@ export default {
      * Created date: 22:01 27/04/2022
      */
     try {
-      const res = await axios.get('http://localhost:5234/api/Department');
+      const res = await axios.get("http://localhost:5234/api/Department");
       this.departmentData = res.data;
     } catch (error) {
       console.log(error);
@@ -303,7 +305,7 @@ export default {
      */
     try {
       const res = await axios.get(
-        'http://localhost:5234/api/FixedAssetCategory'
+        "http://localhost:5234/api/FixedAssetCategory"
       );
       this.categoryData = res.data;
     } catch (error) {
@@ -322,7 +324,7 @@ export default {
     async getAssetData() {
       this.isLoading = true;
       try {
-        const res = await axios.get('http://localhost:5234/api/v1/FixedAsset');
+        const res = await axios.get("http://localhost:5234/api/v1/FixedAsset");
         this.assetData = res.data;
         this.isLoading = false;
       } catch (error) {
@@ -338,8 +340,8 @@ export default {
      * Created date: 09:55 01/05/2022
      */
     currencyFormat(value) {
-      var formatter = new Intl.NumberFormat('vi-VN', {
-        currency: 'VND',
+      var formatter = new Intl.NumberFormat("vi-VN", {
+        currency: "VND",
       });
       return formatter.format(value);
     },
@@ -354,7 +356,7 @@ export default {
     async getNewAssetCode() {
       try {
         var res = await axios.get(
-          'http://localhost:5234/api/v1/FixedAsset/NewFixedAssetCode'
+          "http://localhost:5234/api/v1/FixedAsset/NewFixedAssetCode"
         );
         // Gán dữ liệu trả về vào asset Code mới
         this.newAssetCode = res.data;
@@ -373,7 +375,7 @@ export default {
     async showAddDialog() {
       await this.getNewAssetCode();
       this.assetSelected = {
-        fixed_asset_code: this.newAssetCode,
+        FixedAssetCode: this.newAssetCode,
         cost: 0,
         depreciation_rate: 0,
         quantity: 0,
@@ -405,7 +407,7 @@ export default {
     onCheckedAll() {
       //  Kiểm tra xem assetData có dữ liệu không
       if (this.assetData == 0) {
-        this.alertShow(true, 'Không có tài sản trong danh sách');
+        this.alertShow(true, "Không có tài sản trong danh sách");
       } else {
         //kiểm tra xem có tích hết chưa
         // Nếu chưa chưa thì tích hết
@@ -429,12 +431,12 @@ export default {
      */
     onRowClick(asset, $event) {
       //Nếu ấn vào edit
-      if ($event.target.classList.contains('edit')) {
+      if ($event.target.classList.contains("edit")) {
         this.showEditDialog(asset);
       }
       // Nếu ấn vào copy
-      else if ($event.target.classList.contains('copy')) {
-        console.log('Nhận đôi');
+      else if ($event.target.classList.contains("copy")) {
+        console.log("Nhận đôi");
       }
       // Nếu ấn vào cả dòng
       else {
@@ -485,16 +487,16 @@ export default {
         // alert("bạn chưa chọn sản phẩm để xóa");
       } else {
         var length = this.checkedaAssetList.length;
-        var title = '';
+        var title = "";
         // hiển thị title cảnh báo
         if (length == 1) {
-          title = `${remove_msg.ASSET_REMOVE} ${this.checkedaAssetList[0].fixed_asset_code} - ${this.checkedaAssetList[0].fixed_asset_name}?`;
+          title = `${remove_msg.ASSET_REMOVE} ${this.checkedaAssetList[0].FixedAssetCode} - ${this.checkedaAssetList[0].FixedAssetName}?`;
         } else if (length > 1 && length < 10) {
           title = `0${length} ${remove_msg.ASSETS_REMOVE}`;
         } else {
           title = `${length} ${remove_msg.ASSETS_REMOVE}`;
         }
-        this.alertShow(true, title, 'remove');
+        this.alertShow(true, title, "remove");
       }
     },
 
@@ -577,13 +579,13 @@ export default {
     return {
       isEditing: null,
       toast: {
-        title: '',
+        title: "",
         isShow: false,
       },
       alert: {
-        title: '',
+        title: "",
         isShow: false,
-        type: '',
+        type: "",
       },
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
@@ -593,9 +595,9 @@ export default {
       assetCodes: null, //Danh sách mã tài sản
       departmentData: [], //Dữ liệu bộ phận sử dụng
       categoryData: [], // Dữ liệu loại tài sản
-      searchCategory: '',
-      searchDepartment: '',
-      newAssetCode: '',
+      searchCategory: "",
+      searchDepartment: "",
+      newAssetCode: "",
     };
   },
 };
