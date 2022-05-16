@@ -12,7 +12,7 @@
             :optionList="categoryData"
             filterby="fixed_asset_category_name"
             placeholder="Loại tài sản"
-            v-model="typeSearch"
+            v-model="searchCategory"
           ></MISACombobox>
         </div>
 
@@ -23,7 +23,7 @@
             :optionList="departmentData"
             filterby="department_name"
             placeholder="Bộ phận sử dụng"
-            v-model="usePartSearch"
+            v-model="searchDepartment"
           ></MISACombobox>
         </div>
       </div>
@@ -41,10 +41,9 @@
         </div>
       </div>
     </div>
-    <!-- Loading -->
-    <p style="height: calc(100% - 46px)" v-if="isLoading">Loading...</p>
+
     <!-- Table -->
-    <div v-else class="m-grip">
+    <div class="m-grip">
       <div class="m-table-container">
         <table class="m-table">
           <thead>
@@ -73,7 +72,10 @@
               <th class="text-align-center" style="width: 80px">Chức năng</th>
             </tr>
           </thead>
-          <tbody>
+          <!-- Loading -->
+          <p style="height: 100%" v-if="isLoading">Loading...</p>
+          <!-- Data -->
+          <tbody v-else>
             <tr
               @dblclick="showEditDialog(asset)"
               @click="onRowClick(asset, $event)"
@@ -220,11 +222,11 @@
 </template>
 <script>
 /* eslint-disable */
-import axios from "axios";
-import { remove_msg, toast_msg } from "../../assets/resource/ResourceMsg";
+import axios from 'axios';
+import { remove_msg, toast_msg } from '../../assets/resource/ResourceMsg';
 
 export default {
-  name: "the-content",
+  name: 'the-content',
 
   computed: {
     /**
@@ -286,7 +288,7 @@ export default {
      * Created date: 22:01 27/04/2022
      */
     try {
-      const res = await axios.get("http://localhost:5234/api/Department");
+      const res = await axios.get('http://localhost:5234/api/Department');
       this.departmentData = res.data;
     } catch (error) {
       console.log(error);
@@ -301,7 +303,7 @@ export default {
      */
     try {
       const res = await axios.get(
-        "http://localhost:5234/api/FixedAssetCategory"
+        'http://localhost:5234/api/FixedAssetCategory'
       );
       this.categoryData = res.data;
     } catch (error) {
@@ -320,7 +322,7 @@ export default {
     async getAssetData() {
       this.isLoading = true;
       try {
-        const res = await axios.get("http://localhost:5234/api/v1/FixedAsset");
+        const res = await axios.get('http://localhost:5234/api/v1/FixedAsset');
         this.assetData = res.data;
         this.isLoading = false;
       } catch (error) {
@@ -336,8 +338,8 @@ export default {
      * Created date: 09:55 01/05/2022
      */
     currencyFormat(value) {
-      var formatter = new Intl.NumberFormat("vi-VN", {
-        currency: "VND",
+      var formatter = new Intl.NumberFormat('vi-VN', {
+        currency: 'VND',
       });
       return formatter.format(value);
     },
@@ -352,8 +354,9 @@ export default {
     async getNewAssetCode() {
       try {
         var res = await axios.get(
-          "http://localhost:5234/api/v1/FixedAsset/NewFixedAssetCode"
+          'http://localhost:5234/api/v1/FixedAsset/NewFixedAssetCode'
         );
+        // Gán dữ liệu trả về vào asset Code mới
         this.newAssetCode = res.data;
       } catch (error) {
         console.log(error);
@@ -402,7 +405,7 @@ export default {
     onCheckedAll() {
       //  Kiểm tra xem assetData có dữ liệu không
       if (this.assetData == 0) {
-        this.alertShow(true, "Không có tài sản trong danh sách");
+        this.alertShow(true, 'Không có tài sản trong danh sách');
       } else {
         //kiểm tra xem có tích hết chưa
         // Nếu chưa chưa thì tích hết
@@ -426,12 +429,12 @@ export default {
      */
     onRowClick(asset, $event) {
       //Nếu ấn vào edit
-      if ($event.target.classList.contains("edit")) {
+      if ($event.target.classList.contains('edit')) {
         this.showEditDialog(asset);
       }
       // Nếu ấn vào copy
-      else if ($event.target.classList.contains("copy")) {
-        console.log("Nhận đôi");
+      else if ($event.target.classList.contains('copy')) {
+        console.log('Nhận đôi');
       }
       // Nếu ấn vào cả dòng
       else {
@@ -481,8 +484,8 @@ export default {
         this.alertShow(true, remove_msg.ASSET_REMOVE_EMPTY);
         // alert("bạn chưa chọn sản phẩm để xóa");
       } else {
-        let length = this.checkedaAssetList.length;
-        let title = "";
+        var length = this.checkedaAssetList.length;
+        var title = '';
         // hiển thị title cảnh báo
         if (length == 1) {
           title = `${remove_msg.ASSET_REMOVE} ${this.checkedaAssetList[0].fixed_asset_code} - ${this.checkedaAssetList[0].fixed_asset_name}?`;
@@ -491,7 +494,7 @@ export default {
         } else {
           title = `${length} ${remove_msg.ASSETS_REMOVE}`;
         }
-        this.alertShow(true, title, "remove");
+        this.alertShow(true, title, 'remove');
       }
     },
 
@@ -505,28 +508,29 @@ export default {
     async removeAsset() {
       // vòng lặp danh sách lưu tạm đã được chọn và xóa
       for (let i = 0; i < this.checkedaAssetList.length; i++) {
-        // xóa trên api
         try {
           const res = await axios.delete(
             `http://localhost:5234/api/v1/FixedAsset/${this.checkedaAssetList[i].fixed_asset_id}`
           );
+
+          // Load lại bảng
+          this.getAssetData();
+
+          //  Hiển thị toast xóa thành công
+          this.toastShow(true, toast_msg.REMOVE_SUCESS);
+          setTimeout(() => {
+            this.toastShow(false);
+          }, 2300);
+
+          // gán lại giá trị cho list tạm thời về rỗng
+          this.checkedaAssetList = [];
+
+          // Tắt alert
+          this.alertShow(false);
         } catch (error) {
           console.log(error);
         }
       }
-
-      this.getAssetData();
-
-      //  Hiển thị toast xóa thành công
-      this.toastShow(true, toast_msg.REMOVE_SUCESS);
-      setTimeout(() => {
-        this.toastShow(false);
-      }, 2300);
-
-      // gán lại giá trị cho list tạm thời
-      this.checkedaAssetList = [];
-
-      this.alertShow(false);
     },
 
     /**
@@ -573,13 +577,13 @@ export default {
     return {
       isEditing: null,
       toast: {
-        title: "",
+        title: '',
         isShow: false,
       },
       alert: {
-        title: "",
+        title: '',
         isShow: false,
-        type: "",
+        type: '',
       },
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
@@ -587,11 +591,11 @@ export default {
       isDialogShow: false, //Hiển thị form hay không
       assetData: [], //dữ liệu lấy về từ api
       assetCodes: null, //Danh sách mã tài sản
-      departmentData: [],
-      categoryData: [],
-      typeSearch: "",
-      usePartSearch: "",
-      newAssetCode: "",
+      departmentData: [], //Dữ liệu bộ phận sử dụng
+      categoryData: [], // Dữ liệu loại tài sản
+      searchCategory: '',
+      searchDepartment: '',
+      newAssetCode: '',
     };
   },
 };
