@@ -10,7 +10,7 @@
           <MISACombobox
             :hasIcon="true"
             :optionList="categoryData"
-            filterby="fixed_asset_category_name"
+            filterby="FixedAssetCategoryName"
             placeholder="Loại tài sản"
             v-model="searchCategory"
           ></MISACombobox>
@@ -21,7 +21,7 @@
           <MISACombobox
             :hasIcon="true"
             :optionList="departmentData"
-            filterby="department_name"
+            filterby="DepartmentName"
             placeholder="Bộ phận sử dụng"
             v-model="searchDepartment"
           ></MISACombobox>
@@ -73,9 +73,10 @@
             </tr>
           </thead>
           <!-- Loading -->
-          <p style="height: 100%" v-if="isLoading">Loading...</p>
+          <!-- <p style="height: 100%" v-if="isLoading">Loading...</p> -->
+          <!-- <MISALoading v-if="isLoading"></MISALoading> -->
           <!-- Data -->
-          <tbody v-else>
+          <tbody>
             <tr
               @dblclick="showEditDialog(asset)"
               @click="onRowClick(asset, $event)"
@@ -100,32 +101,32 @@
               </td>
               <td
                 class="text-align-left text-limit"
-                :title="asset.fixed_asset_category_name"
+                :title="asset.FixedAssetCategoryName"
               >
-                {{ asset.fixed_asset_category_name }}
+                {{ asset.FixedAssetCategoryName }}
               </td>
               <td
                 class="text-align-left text-limit"
-                :title="asset.department_name"
+                :title="asset.DepartmentName"
               >
-                {{ asset.department_name }}
+                {{ asset.DepartmentName }}
               </td>
-              <td class="text-align-right">{{ asset.quantity }}</td>
+              <td class="text-align-right">{{ asset.Quantity }}</td>
               <td class="text-align-right">
-                {{ currencyFormat(asset.cost) }}
+                {{ currencyFormat(asset.Cost) }}
               </td>
               <td class="text-align-right">
                 {{
                   currencyFormat(
-                    asset.cost * asset.depreciation_rate * asset.life_time
+                    asset.Cost * asset.DepreciationRate * asset.LifeTime
                   )
                 }}
               </td>
               <td class="text-align-right">
                 {{
                   currencyFormat(
-                    asset.cost -
-                      asset.cost * asset.depreciation_rate * asset.life_time
+                    asset.Cost -
+                      asset.Cost * asset.DepreciationRate * asset.LifeTime
                   )
                 }}
               </td>
@@ -141,57 +142,82 @@
               </td>
             </tr>
           </tbody>
-        </table>
 
-        <!-- paging -->
-
-        <table class="m-table-footer">
-          <tbody>
+          <tfoot>
             <tr>
-              <td style="width: 610px">
-                <div class="m-paging-left">
-                  <div class="m-total-number">
-                    Tổng số: <strong>200</strong> bản ghi
-                  </div>
-                  <div class="m-dropdown-paging">
-                    20
-                    <div class="down"></div>
-                  </div>
-                  <div class="m-paging-list">
-                    <button class="m-page-control">
-                      <div class="pre"></div>
-                    </button>
-                    <div class="m-paging-group">
-                      <button class="m-number m-number-selected">1</button>
-                      <button class="m-number">2</button>
-                      <div class="m-number-more">
-                        <div class="more"></div>
-                      </div>
-                      <button class="m-number">10</button>
-                    </div>
-                    <button class="m-page-control">
-                      <div class="next"></div>
-                    </button>
-                  </div>
-                </div>
+              <td style="width: 50px; padding-left: 16px">
+                <MISACheckbox
+                  @click="onCheckedAll"
+                  :checked="checked"
+                ></MISACheckbox>
               </td>
-              <td class="text-align-right" style="width: 60px">
-                {{ quantityTotal }}
+              <td class="text-align-left" style="width: 40px">STT</td>
+              <td class="text-align-left" style="width: 130px">Mã tài sản</td>
+              <td class="text-align-left" style="width: 130px">Tên tài sản</td>
+              <td class="text-align-left" style="width: 130px">Loại tài sản</td>
+              <td class="text-align-left" style="width: 130px">
+                Bộ phận sử dụng
+              </td>
+              <td class="text-align-right" style="width: 60px">Số lượng</td>
+              <td class="text-align-right" style="width: 130px">Nguyên giá</td>
+              <td class="text-align-right" style="width: 130px">
+                HM/KH lũy kế
               </td>
               <td class="text-align-right" style="width: 130px">
-                {{ currencyFormat(costTotal) }}
+                Giá trị còn lại
               </td>
-              <td class="text-align-right" style="width: 130px">
-                {{ currencyFormat(accumulatedTotal) }}
-              </td>
-              <td class="text-align-right" style="width: 130px">
-                {{ currencyFormat(costTotal - accumulatedTotal) }}
-              </td>
-              <td style="width: 80px"></td>
+              <td class="text-align-center" style="width: 80px">Chức năng</td>
             </tr>
-          </tbody>
+          </tfoot>
         </table>
       </div>
+      <!-- paging -->
+      <!-- <table class="m-table-footer">
+        <tbody>
+          <tr>
+            <td style="width: 610px">
+              <div class="m-paging-left">
+                <div class="m-total-number">
+                  Tổng số: <strong>200</strong> bản ghi
+                </div>
+                <div class="m-dropdown-paging">
+                  20
+                  <div class="down"></div>
+                </div>
+                <div class="m-paging-list">
+                  <button class="m-page-control">
+                    <div class="pre"></div>
+                  </button>
+                  <div class="m-paging-group">
+                    <button class="m-number m-number-selected">1</button>
+                    <button class="m-number">2</button>
+                    <div class="m-number-more">
+                      <div class="more"></div>
+                    </div>
+                    <button class="m-number">10</button>
+                  </div>
+                  <button class="m-page-control">
+                    <div class="next"></div>
+                  </button>
+                </div>
+              </div>
+            </td>
+            <td class="text-align-right" style="width: 60px">
+              {{ quantityTotal }}
+            </td>
+            <td class="text-align-right" style="width: 130px">
+              {{ currencyFormat(costTotal) }}
+            </td>
+            <td class="text-align-right" style="width: 130px">
+              {{ currencyFormat(accumulatedTotal) }}
+            </td>
+            <td class="text-align-right" style="width: 130px">
+              {{ currencyFormat(costTotal - accumulatedTotal) }}
+            </td>
+            <td style="width: 80px"></td>
+          </tr>
+        </tbody>
+      </table> -->
     </div>
     <MISADialog
       ref="dialog"
@@ -257,13 +283,13 @@ export default {
      */
     quantityTotal: function () {
       const quantityTotal = this.assetData.reduce((currentValue, item) => {
-        return currentValue + Number(item.quantity);
+        return currentValue + Number(item.Quantity);
       }, 0);
       return quantityTotal;
     },
     costTotal: function () {
       const costTotal = this.assetData.reduce((currentValue, item) => {
-        return currentValue + Number(item.cost);
+        return currentValue + Number(item.Cost);
       }, 0);
       return costTotal;
     },
@@ -271,7 +297,7 @@ export default {
       const accumulatedTotal = this.assetData.reduce((currentValue, item) => {
         return (
           currentValue +
-          Number(item.cost * item.depreciation_rate * item.life_time)
+          Number(item.Cost * item.DepreciationRate * item.LifeTime)
         );
       }, 0);
       return accumulatedTotal;
@@ -290,7 +316,7 @@ export default {
      * Created date: 22:01 27/04/2022
      */
     try {
-      const res = await axios.get("http://localhost:5234/api/Department");
+      const res = await axios.get("http://localhost:5234/api/v1/Departments");
       this.departmentData = res.data;
     } catch (error) {
       console.log(error);
@@ -305,7 +331,7 @@ export default {
      */
     try {
       const res = await axios.get(
-        "http://localhost:5234/api/FixedAssetCategory"
+        "http://localhost:5234/api/v1/FixedAssetCategories"
       );
       this.categoryData = res.data;
     } catch (error) {
@@ -324,7 +350,7 @@ export default {
     async getAssetData() {
       this.isLoading = true;
       try {
-        const res = await axios.get("http://localhost:5234/api/v1/FixedAsset");
+        const res = await axios.get("http://localhost:5234/api/v1/FixedAssets");
         this.assetData = res.data;
         this.isLoading = false;
       } catch (error) {
@@ -356,7 +382,7 @@ export default {
     async getNewAssetCode() {
       try {
         var res = await axios.get(
-          "http://localhost:5234/api/v1/FixedAsset/NewFixedAssetCode"
+          "http://localhost:5234/api/v1/FixedAssets/NewFixedAssetCode"
         );
         // Gán dữ liệu trả về vào asset Code mới
         this.newAssetCode = res.data;
@@ -376,10 +402,10 @@ export default {
       await this.getNewAssetCode();
       this.assetSelected = {
         FixedAssetCode: this.newAssetCode,
-        cost: 0,
-        depreciation_rate: 0,
-        quantity: 0,
-        purchase_date: new Date(),
+        Cost: 0,
+        DepreciationRate: 0,
+        Quantity: 0,
+        PurchaseDate: new Date(),
       };
       this.isEditing = false;
       this.dialogShow(true);
@@ -445,7 +471,7 @@ export default {
           // Nếu tích r thì bỏ tích
           // Lấy index của sản phẩm được chọn
           const selecedIndex = this.checkedaAssetList.findIndex(
-            (prd) => prd.fixed_asset_id == asset.fixed_asset_id
+            (prd) => prd.FixedAssetId == asset.FixedAssetId
           );
           // Xóa theo index splice(start, deleteCount)
           this.checkedaAssetList.splice(selecedIndex, 1);
@@ -464,7 +490,7 @@ export default {
       this.isEditing = true;
       try {
         const res = await axios.get(
-          `http://localhost:5234/api/v1/FixedAsset/${asset.fixed_asset_id}`
+          `http://localhost:5234/api/v1/FixedAssets/${asset.FixedAssetId}`
         );
         this.assetSelected = res.data;
       } catch (error) {
@@ -512,7 +538,7 @@ export default {
       for (let i = 0; i < this.checkedaAssetList.length; i++) {
         try {
           const res = await axios.delete(
-            `http://localhost:5234/api/v1/FixedAsset/${this.checkedaAssetList[i].fixed_asset_id}`
+            `http://localhost:5234/api/v1/FixedAssets/${this.checkedaAssetList[i].FixedAssetId}`
           );
 
           // Load lại bảng

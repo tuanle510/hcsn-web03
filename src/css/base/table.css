@@ -9,7 +9,7 @@
 
 /* table */
 .m-grip .m-table-container {
-  height: 100%;
+  height: calc(100% - 40px);
   width: 100%;
   overflow: auto;
   border-radius: 3px;
@@ -78,7 +78,7 @@
 
 /* tfoot */
 .m-table-footer {
-  position: absolute;
+  position: sticky;
   bottom: 0px;
   background-color: #fff;
   width: 100%;
