@@ -141,38 +141,203 @@
                 </div>
               </td>
             </tr>
-          </tbody>
-
-          <tfoot>
-            <tr>
+            <tr
+              @dblclick="showEditDialog(asset)"
+              @click="onRowClick(asset, $event)"
+              v-for="(asset, index) in assetData"
+              :key="index"
+              class="m-tr"
+            >
               <td style="width: 50px; padding-left: 16px">
                 <MISACheckbox
-                  @click="onCheckedAll"
-                  :checked="checked"
+                  :checked="checkedaAssetList.includes(asset)"
                 ></MISACheckbox>
               </td>
-              <td class="text-align-left" style="width: 40px">STT</td>
-              <td class="text-align-left" style="width: 130px">Mã tài sản</td>
-              <td class="text-align-left" style="width: 130px">Tên tài sản</td>
-              <td class="text-align-left" style="width: 130px">Loại tài sản</td>
-              <td class="text-align-left" style="width: 130px">
-                Bộ phận sử dụng
+              <td class="text-align-left">{{ index + 1 }}</td>
+              <td class="text-align-left text-limit">
+                {{ asset.FixedAssetCode }}
               </td>
-              <td class="text-align-right" style="width: 60px">Số lượng</td>
-              <td class="text-align-right" style="width: 130px">Nguyên giá</td>
-              <td class="text-align-right" style="width: 130px">
-                HM/KH lũy kế
+              <td
+                class="text-align-left text-limit"
+                :title="asset.FixedAssetName"
+              >
+                {{ asset.FixedAssetName }}
               </td>
-              <td class="text-align-right" style="width: 130px">
-                Giá trị còn lại
+              <td
+                class="text-align-left text-limit"
+                :title="asset.FixedAssetCategoryName"
+              >
+                {{ asset.FixedAssetCategoryName }}
               </td>
-              <td class="text-align-center" style="width: 80px">Chức năng</td>
+              <td
+                class="text-align-left text-limit"
+                :title="asset.DepartmentName"
+              >
+                {{ asset.DepartmentName }}
+              </td>
+              <td class="text-align-right">{{ asset.Quantity }}</td>
+              <td class="text-align-right">
+                {{ currencyFormat(asset.Cost) }}
+              </td>
+              <td class="text-align-right">
+                {{
+                  currencyFormat(
+                    asset.Cost * asset.DepreciationRate * asset.LifeTime
+                  )
+                }}
+              </td>
+              <td class="text-align-right">
+                {{
+                  currencyFormat(
+                    asset.Cost -
+                      asset.Cost * asset.DepreciationRate * asset.LifeTime
+                  )
+                }}
+              </td>
+              <td style="width: 80px">
+                <div class="m-function-box" style="display: none">
+                  <div class="icon-box edit">
+                    <div class="table-icon edit"></div>
+                  </div>
+                  <div class="icon-box copy">
+                    <div class="table-icon copy"></div>
+                  </div>
+                </div>
+              </td>
             </tr>
-          </tfoot>
+            <tr
+              @dblclick="showEditDialog(asset)"
+              @click="onRowClick(asset, $event)"
+              v-for="(asset, index) in assetData"
+              :key="index"
+              class="m-tr"
+            >
+              <td style="width: 50px; padding-left: 16px">
+                <MISACheckbox
+                  :checked="checkedaAssetList.includes(asset)"
+                ></MISACheckbox>
+              </td>
+              <td class="text-align-left">{{ index + 1 }}</td>
+              <td class="text-align-left text-limit">
+                {{ asset.FixedAssetCode }}
+              </td>
+              <td
+                class="text-align-left text-limit"
+                :title="asset.FixedAssetName"
+              >
+                {{ asset.FixedAssetName }}
+              </td>
+              <td
+                class="text-align-left text-limit"
+                :title="asset.FixedAssetCategoryName"
+              >
+                {{ asset.FixedAssetCategoryName }}
+              </td>
+              <td
+                class="text-align-left text-limit"
+                :title="asset.DepartmentName"
+              >
+                {{ asset.DepartmentName }}
+              </td>
+              <td class="text-align-right">{{ asset.Quantity }}</td>
+              <td class="text-align-right">
+                {{ currencyFormat(asset.Cost) }}
+              </td>
+              <td class="text-align-right">
+                {{
+                  currencyFormat(
+                    asset.Cost * asset.DepreciationRate * asset.LifeTime
+                  )
+                }}
+              </td>
+              <td class="text-align-right">
+                {{
+                  currencyFormat(
+                    asset.Cost -
+                      asset.Cost * asset.DepreciationRate * asset.LifeTime
+                  )
+                }}
+              </td>
+              <td style="width: 80px">
+                <div class="m-function-box" style="display: none">
+                  <div class="icon-box edit">
+                    <div class="table-icon edit"></div>
+                  </div>
+                  <div class="icon-box copy">
+                    <div class="table-icon copy"></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr
+              @dblclick="showEditDialog(asset)"
+              @click="onRowClick(asset, $event)"
+              v-for="(asset, index) in assetData"
+              :key="index"
+              class="m-tr"
+            >
+              <td style="width: 50px; padding-left: 16px">
+                <MISACheckbox
+                  :checked="checkedaAssetList.includes(asset)"
+                ></MISACheckbox>
+              </td>
+              <td class="text-align-left">{{ index + 1 }}</td>
+              <td class="text-align-left text-limit">
+                {{ asset.FixedAssetCode }}
+              </td>
+              <td
+                class="text-align-left text-limit"
+                :title="asset.FixedAssetName"
+              >
+                {{ asset.FixedAssetName }}
+              </td>
+              <td
+                class="text-align-left text-limit"
+                :title="asset.FixedAssetCategoryName"
+              >
+                {{ asset.FixedAssetCategoryName }}
+              </td>
+              <td
+                class="text-align-left text-limit"
+                :title="asset.DepartmentName"
+              >
+                {{ asset.DepartmentName }}
+              </td>
+              <td class="text-align-right">{{ asset.Quantity }}</td>
+              <td class="text-align-right">
+                {{ currencyFormat(asset.Cost) }}
+              </td>
+              <td class="text-align-right">
+                {{
+                  currencyFormat(
+                    asset.Cost * asset.DepreciationRate * asset.LifeTime
+                  )
+                }}
+              </td>
+              <td class="text-align-right">
+                {{
+                  currencyFormat(
+                    asset.Cost -
+                      asset.Cost * asset.DepreciationRate * asset.LifeTime
+                  )
+                }}
+              </td>
+              <td style="width: 80px">
+                <div class="m-function-box" style="display: none">
+                  <div class="icon-box edit">
+                    <div class="table-icon edit"></div>
+                  </div>
+                  <div class="icon-box copy">
+                    <div class="table-icon copy"></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
       <!-- paging -->
-      <!-- <table class="m-table-footer">
+      <table class="m-table-footer">
         <tbody>
           <tr>
             <td style="width: 610px">
@@ -217,7 +382,7 @@
             <td style="width: 80px"></td>
           </tr>
         </tbody>
-      </table> -->
+      </table>
     </div>
     <MISADialog
       ref="dialog"
