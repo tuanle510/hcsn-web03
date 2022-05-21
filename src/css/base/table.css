@@ -11,7 +11,7 @@
 .m-grip .m-table-container {
   height: calc(100% - 40px);
   width: 100%;
-  overflow: auto;
+  overflow-y: scroll;
   border-radius: 3px;
   position: relative;
 }
@@ -20,9 +20,7 @@
   background-color: #fff;
   border-radius: 3px;
   border-collapse: collapse;
-  position: relative;
   width: 100%;
-  table-layout: fixed;
 }
 
 .m-grip .m-table thead {
@@ -81,13 +79,18 @@
   position: sticky;
   bottom: 0px;
   background-color: #fff;
-  width: 100%;
+  width: calc(100% - 2px);
   height: 40px;
   border-radius: 3px;
   border-collapse: collapse;
   border-top: 1px solid rgba(175, 175, 175, 0.6);
-  table-layout: fixed;
-  overflow: scroll;
+}
+.m-table-footer thead th {
+  height: 0px !important;
+}
+
+.m-table-footer tbody td:not(:first-child) {
+  font-weight: bold;
 }
 
 .m-paging-left {
@@ -158,8 +161,8 @@
 }
 
 .m-table-container::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 2px;
+  height: 2px;
 }
 
 .m-table-container::-webkit-scrollbar-track {

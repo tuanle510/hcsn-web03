@@ -2,8 +2,15 @@
   <div class="m-content">
     <div class="m-toolbar">
       <div class="m-toolbar-left">
-        <div class="toolbar-field">
-          <MISASearchbox placeholder="Tìm kiếm tài sản"></MISASearchbox>
+        <div class="toolbar-field search-field">
+          <input
+            placeholder="Tìm kiếm tài sản"
+            class="m-search"
+            @input="searchFixedAsset($event)"
+          />
+          <div class="search-icon">
+            <div class="search"></div>
+          </div>
         </div>
         <div class="toolbar-field">
           <!-- <ejs-combobox placeholder="Loại tài sản"></ejs-combobox> -->
@@ -51,32 +58,37 @@
               <th style="width: 50px; padding-left: 16px">
                 <MISACheckbox
                   @click="onCheckedAll"
-                  :checked="checked"
+                  :checked="checkedAll"
                 ></MISACheckbox>
               </th>
               <th class="text-align-left" style="width: 40px">STT</th>
-              <th class="text-align-left" style="width: 130px">Mã tài sản</th>
-              <th class="text-align-left" style="width: 130px">Tên tài sản</th>
-              <th class="text-align-left" style="width: 130px">Loại tài sản</th>
-              <th class="text-align-left" style="width: 130px">
+              <th class="text-align-left" style="min-width: 130px">
+                Mã tài sản
+              </th>
+              <th class="text-align-left" style="min-width: 130px">
+                Tên tài sản
+              </th>
+              <th class="text-align-left" style="min-width: 130px">
+                Loại tài sản
+              </th>
+              <th class="text-align-left" style="min-width: 130px">
                 Bộ phận sử dụng
               </th>
-              <th class="text-align-right" style="width: 60px">Số lượng</th>
-              <th class="text-align-right" style="width: 130px">Nguyên giá</th>
-              <th class="text-align-right" style="width: 130px">
+              <th class="text-align-right" style="min-width: 60px">Số lượng</th>
+              <th class="text-align-right" style="min-width: 130px">
+                Nguyên giá
+              </th>
+              <th class="text-align-right" style="min-width: 130px">
                 HM/KH lũy kế
               </th>
-              <th class="text-align-right" style="width: 130px">
+              <th class="text-align-right" style="min-width: 130px">
                 Giá trị còn lại
               </th>
-              <th class="text-align-center" style="width: 80px">Chức năng</th>
+              <th class="text-align-center" style="width: 100px">Chức năng</th>
             </tr>
           </thead>
-          <!-- Loading -->
-          <!-- <p style="height: 100%" v-if="isLoading">Loading...</p> -->
-          <!-- <MISALoading v-if="isLoading"></MISALoading> -->
-          <!-- Data -->
-          <tbody>
+          <MISALoading v-if="isLoading"></MISALoading>
+          <tbody v-else>
             <tr
               @dblclick="showEditDialog(asset)"
               @click="onRowClick(asset, $event)"
@@ -116,213 +128,12 @@
                 {{ currencyFormat(asset.Cost) }}
               </td>
               <td class="text-align-right">
-                {{
-                  currencyFormat(
-                    asset.Cost * asset.DepreciationRate * asset.LifeTime
-                  )
-                }}
+                {{ currencyFormat(asset.Accumulated) }}
               </td>
               <td class="text-align-right">
-                {{
-                  currencyFormat(
-                    asset.Cost -
-                      asset.Cost * asset.DepreciationRate * asset.LifeTime
-                  )
-                }}
+                {{ currencyFormat(asset.Cost - asset.Accumulated) }}
               </td>
-              <td style="width: 80px">
-                <div class="m-function-box" style="display: none">
-                  <div class="icon-box edit">
-                    <div class="table-icon edit"></div>
-                  </div>
-                  <div class="icon-box copy">
-                    <div class="table-icon copy"></div>
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr
-              @dblclick="showEditDialog(asset)"
-              @click="onRowClick(asset, $event)"
-              v-for="(asset, index) in assetData"
-              :key="index"
-              class="m-tr"
-            >
-              <td style="width: 50px; padding-left: 16px">
-                <MISACheckbox
-                  :checked="checkedaAssetList.includes(asset)"
-                ></MISACheckbox>
-              </td>
-              <td class="text-align-left">{{ index + 1 }}</td>
-              <td class="text-align-left text-limit">
-                {{ asset.FixedAssetCode }}
-              </td>
-              <td
-                class="text-align-left text-limit"
-                :title="asset.FixedAssetName"
-              >
-                {{ asset.FixedAssetName }}
-              </td>
-              <td
-                class="text-align-left text-limit"
-                :title="asset.FixedAssetCategoryName"
-              >
-                {{ asset.FixedAssetCategoryName }}
-              </td>
-              <td
-                class="text-align-left text-limit"
-                :title="asset.DepartmentName"
-              >
-                {{ asset.DepartmentName }}
-              </td>
-              <td class="text-align-right">{{ asset.Quantity }}</td>
-              <td class="text-align-right">
-                {{ currencyFormat(asset.Cost) }}
-              </td>
-              <td class="text-align-right">
-                {{
-                  currencyFormat(
-                    asset.Cost * asset.DepreciationRate * asset.LifeTime
-                  )
-                }}
-              </td>
-              <td class="text-align-right">
-                {{
-                  currencyFormat(
-                    asset.Cost -
-                      asset.Cost * asset.DepreciationRate * asset.LifeTime
-                  )
-                }}
-              </td>
-              <td style="width: 80px">
-                <div class="m-function-box" style="display: none">
-                  <div class="icon-box edit">
-                    <div class="table-icon edit"></div>
-                  </div>
-                  <div class="icon-box copy">
-                    <div class="table-icon copy"></div>
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr
-              @dblclick="showEditDialog(asset)"
-              @click="onRowClick(asset, $event)"
-              v-for="(asset, index) in assetData"
-              :key="index"
-              class="m-tr"
-            >
-              <td style="width: 50px; padding-left: 16px">
-                <MISACheckbox
-                  :checked="checkedaAssetList.includes(asset)"
-                ></MISACheckbox>
-              </td>
-              <td class="text-align-left">{{ index + 1 }}</td>
-              <td class="text-align-left text-limit">
-                {{ asset.FixedAssetCode }}
-              </td>
-              <td
-                class="text-align-left text-limit"
-                :title="asset.FixedAssetName"
-              >
-                {{ asset.FixedAssetName }}
-              </td>
-              <td
-                class="text-align-left text-limit"
-                :title="asset.FixedAssetCategoryName"
-              >
-                {{ asset.FixedAssetCategoryName }}
-              </td>
-              <td
-                class="text-align-left text-limit"
-                :title="asset.DepartmentName"
-              >
-                {{ asset.DepartmentName }}
-              </td>
-              <td class="text-align-right">{{ asset.Quantity }}</td>
-              <td class="text-align-right">
-                {{ currencyFormat(asset.Cost) }}
-              </td>
-              <td class="text-align-right">
-                {{
-                  currencyFormat(
-                    asset.Cost * asset.DepreciationRate * asset.LifeTime
-                  )
-                }}
-              </td>
-              <td class="text-align-right">
-                {{
-                  currencyFormat(
-                    asset.Cost -
-                      asset.Cost * asset.DepreciationRate * asset.LifeTime
-                  )
-                }}
-              </td>
-              <td style="width: 80px">
-                <div class="m-function-box" style="display: none">
-                  <div class="icon-box edit">
-                    <div class="table-icon edit"></div>
-                  </div>
-                  <div class="icon-box copy">
-                    <div class="table-icon copy"></div>
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr
-              @dblclick="showEditDialog(asset)"
-              @click="onRowClick(asset, $event)"
-              v-for="(asset, index) in assetData"
-              :key="index"
-              class="m-tr"
-            >
-              <td style="width: 50px; padding-left: 16px">
-                <MISACheckbox
-                  :checked="checkedaAssetList.includes(asset)"
-                ></MISACheckbox>
-              </td>
-              <td class="text-align-left">{{ index + 1 }}</td>
-              <td class="text-align-left text-limit">
-                {{ asset.FixedAssetCode }}
-              </td>
-              <td
-                class="text-align-left text-limit"
-                :title="asset.FixedAssetName"
-              >
-                {{ asset.FixedAssetName }}
-              </td>
-              <td
-                class="text-align-left text-limit"
-                :title="asset.FixedAssetCategoryName"
-              >
-                {{ asset.FixedAssetCategoryName }}
-              </td>
-              <td
-                class="text-align-left text-limit"
-                :title="asset.DepartmentName"
-              >
-                {{ asset.DepartmentName }}
-              </td>
-              <td class="text-align-right">{{ asset.Quantity }}</td>
-              <td class="text-align-right">
-                {{ currencyFormat(asset.Cost) }}
-              </td>
-              <td class="text-align-right">
-                {{
-                  currencyFormat(
-                    asset.Cost * asset.DepreciationRate * asset.LifeTime
-                  )
-                }}
-              </td>
-              <td class="text-align-right">
-                {{
-                  currencyFormat(
-                    asset.Cost -
-                      asset.Cost * asset.DepreciationRate * asset.LifeTime
-                  )
-                }}
-              </td>
-              <td style="width: 80px">
+              <td>
                 <div class="m-function-box" style="display: none">
                   <div class="icon-box edit">
                     <div class="table-icon edit"></div>
@@ -338,9 +149,24 @@
       </div>
       <!-- paging -->
       <table class="m-table-footer">
+        <thead>
+          <tr>
+            <th style="width: 50px"></th>
+            <th style="width: 40px"></th>
+            <th style="min-width: 130px"></th>
+            <th style="min-width: 130px"></th>
+            <th style="min-width: 130px"></th>
+            <th style="min-width: 130px"></th>
+            <th style="min-width: 60px"></th>
+            <th style="min-width: 130px"></th>
+            <th style="min-width: 130px"></th>
+            <th style="min-width: 130px"></th>
+            <th style="width: 100px"></th>
+          </tr>
+        </thead>
         <tbody>
           <tr>
-            <td style="width: 610px">
+            <td colspan="6">
               <div class="m-paging-left">
                 <div class="m-total-number">
                   Tổng số: <strong>200</strong> bản ghi
@@ -349,7 +175,7 @@
                   20
                   <div class="down"></div>
                 </div>
-                <div class="m-paging-list">
+                <!-- <div class="m-paging-list">
                   <button class="m-page-control">
                     <div class="pre"></div>
                   </button>
@@ -364,31 +190,35 @@
                   <button class="m-page-control">
                     <div class="next"></div>
                   </button>
-                </div>
+                </div> -->
               </div>
             </td>
-            <td class="text-align-right" style="width: 60px">
+            <td class="text-align-right">
               {{ quantityTotal }}
             </td>
-            <td class="text-align-right" style="width: 130px">
+            <td class="text-align-right">
               {{ currencyFormat(costTotal) }}
             </td>
-            <td class="text-align-right" style="width: 130px">
+            <td class="text-align-right">
               {{ currencyFormat(accumulatedTotal) }}
             </td>
-            <td class="text-align-right" style="width: 130px">
+            <td class="text-align-right">
               {{ currencyFormat(costTotal - accumulatedTotal) }}
             </td>
-            <td style="width: 80px"></td>
+            <td></td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div v-if="isDialogLoading" class="m-dialog">
+      <MISALoading></MISALoading>
     </div>
     <MISADialog
       ref="dialog"
       :dialogTitle="isEditing ? 'Sửa sản phẩm' : 'Thêm sản phẩm'"
       :isEditing="isEditing"
-      v-if="isDialogShow"
+      v-if="isDialogShow && !isDialogLoading"
       :assetCodes="assetCodes"
       :assetSelected="assetSelected"
       :departmentData="departmentData"
@@ -429,7 +259,7 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 11:17 29/04/2022
      */
-    checked: function () {
+    checkedAll: function () {
       if (
         this.assetData.length == this.checkedaAssetList.length &&
         this.checkedaAssetList != 0
@@ -452,18 +282,31 @@ export default {
       }, 0);
       return quantityTotal;
     },
+
+    /**
+     * Mô tả : Tính tổng giá tiền
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:56 19/05/2022
+     */
     costTotal: function () {
       const costTotal = this.assetData.reduce((currentValue, item) => {
         return currentValue + Number(item.Cost);
       }, 0);
       return costTotal;
     },
+
+    /**
+     * Mô tả : Tính giá trị lũy kế
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:56 19/05/2022
+     */
     accumulatedTotal: function () {
       const accumulatedTotal = this.assetData.reduce((currentValue, item) => {
-        return (
-          currentValue +
-          Number(item.Cost * item.DepreciationRate * item.LifeTime)
-        );
+        return currentValue + Number(item.Accumulated);
       }, 0);
       return accumulatedTotal;
     },
@@ -506,6 +349,35 @@ export default {
 
   methods: {
     /**
+     * Mô tả : Debounce để search
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:32 21/05/2022
+     */
+    searchFixedAsset($event) {
+      // Lấy giá trị input
+      var searchInput = $event.target.value;
+      // Hàm thực hiện search
+      const search = async () => {
+        try {
+          var res = await axios.get(
+            "http://localhost:5234/api/v1/FixedAssets/Filter",
+            {
+              params: {
+                FixedAssetFilter: searchInput,
+                FixedAssetCategoryName: this.searchCategory,
+                DepartmentName: this.searchDepartment,
+              },
+            }
+          );
+          console.log(res.data);
+        } catch (error) {}
+      };
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(search, 1000);
+    },
+    /**
      * Mô tả : lấy danh sách asset Data từ api
      * @param
      * @return
@@ -517,6 +389,7 @@ export default {
       try {
         const res = await axios.get("http://localhost:5234/api/v1/FixedAssets");
         this.assetData = res.data;
+        console.log(this.assetData.length);
         this.isLoading = false;
       } catch (error) {
         console.log(error);
@@ -545,6 +418,7 @@ export default {
      * Created date: 16:52 13/05/2022
      */
     async getNewAssetCode() {
+      this.isDialogLoading = true;
       try {
         var res = await axios.get(
           "http://localhost:5234/api/v1/FixedAssets/NewFixedAssetCode"
@@ -571,9 +445,10 @@ export default {
         DepreciationRate: 0,
         Quantity: 0,
         PurchaseDate: new Date(),
+        UseDate: new Date(),
       };
-      this.isEditing = false;
       this.dialogShow(true);
+      this.isEditing = false;
     },
 
     /**
@@ -627,10 +502,11 @@ export default {
       }
       // Nếu ấn vào copy
       else if ($event.target.classList.contains("copy")) {
-        console.log("Nhận đôi");
+        this.showCloneDialog(asset.FixedAssetId);
       }
       // Nếu ấn vào cả dòng
       else {
+        // const rowClick = () => {
         // Kiểm tra xem đã tích sản phẩm trước đó chưa
         if (this.checkedaAssetList.includes(asset)) {
           // Nếu tích r thì bỏ tích
@@ -644,6 +520,49 @@ export default {
           // Nếu chưa thì add vào list
           this.checkedaAssetList.push(asset);
         }
+        // };
+
+        // debount 0.5 giây mới thực hiện ( Tránh trường hợp dbCLick )
+        // clearTimeout(this.clickTimeout);
+        // this.clickTimeout = setTimeout(rowClick, 200);
+      }
+    },
+
+    /**
+     * Mô tả : Hiển thị bảng nhân bản
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 13:03 19/05/2022
+     */
+    async showCloneDialog(assetId) {
+      // Lấy mã mới
+      await this.getNewAssetCode();
+      // Lấy dữ liệu theo Id
+      await this.getAssetById(assetId);
+      // Gán newcode vào dữ liệu của dòng đã chọn
+      this.assetSelected.FixedAssetCode = this.newAssetCode;
+      // Hiện thị dialog
+      this.isEditing = false;
+      this.dialogShow(true);
+    },
+
+    /**
+     * Mô tả : Lấy dữ liệu theo Id
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 13:39 19/05/2022
+     */
+    async getAssetById(assetId) {
+      this.isDialogLoading = true;
+      try {
+        const res = await axios.get(
+          `http://localhost:5234/api/v1/FixedAssets/${assetId}`
+        );
+        this.assetSelected = res.data;
+      } catch (error) {
+        console.error(error);
       }
     },
 
@@ -652,15 +571,9 @@ export default {
      * CREATED BY: LTTUAN(18.04.2022)
      */
     async showEditDialog(asset) {
+      // clearTimeout(this.clickTimeout);
       this.isEditing = true;
-      try {
-        const res = await axios.get(
-          `http://localhost:5234/api/v1/FixedAssets/${asset.FixedAssetId}`
-        );
-        this.assetSelected = res.data;
-      } catch (error) {
-        console.error(error);
-      }
+      await this.getAssetById(asset.FixedAssetId);
       //Hiểm thị form
       this.dialogShow(true);
     },
@@ -699,30 +612,36 @@ export default {
      * Created date: 00:23 24/04/2022
      */
     async removeAsset() {
-      // vòng lặp danh sách lưu tạm đã được chọn và xóa
-      for (let i = 0; i < this.checkedaAssetList.length; i++) {
-        try {
-          const res = await axios.delete(
-            `http://localhost:5234/api/v1/FixedAssets/${this.checkedaAssetList[i].FixedAssetId}`
-          );
-
-          // Load lại bảng
-          this.getAssetData();
-
-          //  Hiển thị toast xóa thành công
-          this.toastShow(true, toast_msg.REMOVE_SUCESS);
-          setTimeout(() => {
-            this.toastShow(false);
-          }, 2300);
-
-          // gán lại giá trị cho list tạm thời về rỗng
-          this.checkedaAssetList = [];
-
-          // Tắt alert
-          this.alertShow(false);
-        } catch (error) {
-          console.log(error);
-        }
+      // Khởi tạo mảng id cần xóa
+      var idList = [];
+      // Thêm id vào mảng
+      this.checkedaAssetList.forEach((element) => {
+        idList.push(element.FixedAssetId);
+      });
+      // Gửi lên API
+      try {
+        const res = await axios.delete(
+          `http://localhost:5234/api/v1/FixedAssets/DeleteMulti`,
+          {
+            data: JSON.stringify(idList),
+            headers: {
+              "content-type": "application/json",
+            },
+          }
+        );
+        // Load lại bảng
+        this.getAssetData();
+        //  Hiển thị toast xóa thành công
+        this.toastShow(true, toast_msg.REMOVE_SUCESS);
+        setTimeout(() => {
+          this.toastShow(false);
+        }, 2300);
+        // gán lại giá trị cho list tạm thời về rỗng
+        this.checkedaAssetList = [];
+        // Tắt alert
+        this.alertShow(false);
+      } catch (error) {
+        console.log(error);
       }
     },
 
@@ -735,6 +654,7 @@ export default {
      */
     dialogShow(isShow) {
       this.isDialogShow = isShow;
+      this.isDialogLoading = false;
     },
 
     /**
@@ -768,6 +688,7 @@ export default {
 
   data() {
     return {
+      isDialogLoading: false,
       isEditing: null,
       toast: {
         title: "",
@@ -788,7 +709,10 @@ export default {
       categoryData: [], // Dữ liệu loại tài sản
       searchCategory: "",
       searchDepartment: "",
+      searchBox: "",
       newAssetCode: "",
+      searchTimeout: null,
+      clickTimeout: null,
     };
   },
 };

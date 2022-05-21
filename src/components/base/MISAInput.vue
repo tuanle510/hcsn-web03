@@ -12,8 +12,8 @@
     :required="required"
     :isNumber="isNumber"
     @keypress="onlyNumber"
-    @input="onChangeHandler"
     @blur="outFocus($event)"
+    @input="onChangeHandler"
     :value="this.modelValue"
   />
   <!-- <div v-if="isEmpty" class="m-error">{{ errorMsg }}</div> -->

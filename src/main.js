@@ -10,16 +10,8 @@ import Input from "./components/base/MISAInput.vue";
 import Toast from "./components/base/MISAToast.vue";
 import Loading from "./components/base/MISALoading.vue";
 import Datepicker from "@vuepic/vue-datepicker";
-import { ComboBoxComponent } from "@syncfusion/ej2-vue-dropdowns";
-import { registerLicense } from "@syncfusion/ej2-base";
-
-// Registering Syncfusion license key
-registerLicense(
-  "ORg4AjUWIQA/Gnt2VVhhQlFaclhJWHxKf0x0RWFbb19wfldCalhWVAciSV9jS3xTc0ViWH9ad3BQQGReVQ=="
-);
 
 const app = createApp(App);
-/* eslint-disable */
 app.component("MISAButton", Button);
 app.component("MISADialog", Dialog);
 app.component("MISACombobox", Combobox);
@@ -29,7 +21,5 @@ app.component("MISAAlert", Alert);
 app.component("MISAInput", Input);
 app.component("MISAToast", Toast);
 app.component("MISALoading", Loading);
-app.component("Datepicker", Datepicker);
-app.component("ejs-combobox", ComboBoxComponent);
-// app.use(SimpleTypeahead);
+app.component("MISADatepicker", Datepicker);
 app.mount("#app");

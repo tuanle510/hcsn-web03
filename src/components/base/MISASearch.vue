@@ -1,25 +1,19 @@
 <template>
-  <div class="m-search-box" :class="{ 'm-search-box-focus': isFocus }">
-    <div class="search-icon">
-      <div class="search"></div>
-    </div>
-    <input
-      @focus="this.isFocus = true"
-      @blur="this.isFocus = false"
-      class="m-search"
-      type="text"
-      :placeholder="placeholder"
-    />
-  </div>
+  <input class="m-search" :placeholder="placeholder" />
+  <!-- @input="onChangeHandler"
+    :value="this.modelValue" -->
 </template>
 <script>
 export default {
-  name: 'seach-box',
-  props: ['placeholder'],
+  name: "seach-box",
+  props: ["placeholder"],
   methods: {
-    inputFocus() {
-      this.isFocus = true;
-    },
+    // Nhận thay đổi của component cha
+    // onChangeHandler(e) {
+    //   e.preventDefault();
+    //   this.$emit("update:modelValue", e.target.value);
+    // },
+    
   },
 
   data() {
@@ -29,6 +23,4 @@ export default {
   },
 };
 </script>
-<style>
-@import url(/src/css/base/search.css);
-</style>
+<style></style>

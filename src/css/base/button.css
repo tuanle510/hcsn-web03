@@ -18,8 +18,8 @@
 
 .m-button-disabled {
   cursor: no-drop;
-  /* background-color: #8cd1e3; */
-  background-color: red;
+  background-color: #8cd1e3;
+  /* background-color: red; */
 }
 
 .m-button:focus,

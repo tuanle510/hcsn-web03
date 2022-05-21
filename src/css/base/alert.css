@@ -35,6 +35,9 @@
   align-items: center;
   justify-content: center;
 }
+.m-alert .m-alert-container .alert-content .content-right {
+  word-break: break-word;
+}
 
 .m-alert .m-alert-container .alert-button {
   display: flex;
