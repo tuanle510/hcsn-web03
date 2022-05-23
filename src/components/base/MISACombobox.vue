@@ -18,7 +18,7 @@
         :maxlength="maxlength"
         :placeholder="placeholder"
         @keydown.tab="tab"
-        @focus="setFocus"
+        @focus="setFocus($event)"
         @blur="outFocus"
         @keydown.up="up"
         @keydown.down="down"
@@ -40,11 +40,11 @@
       <li
         v-for="(option, index) in matches"
         :key="index"
-        class="m-option-item"
+        class="m-option-item text-limit"
         @keydown.down="down"
         @keydown.up="up"
         @keydown.enter="selectItem"
-        @click="choseOpton(index)"
+        @click="choseOption(index)"
         :class="{ 'm-item-selected': this.selecedIndex == index }"
       >
         {{ option[this.filterby] }}
@@ -56,7 +56,7 @@
 import "clickout-event";
 export default {
   name: "the-combobox",
-  emits: ["blur", "keydown", "update:modelValue"],
+  emits: ["blur", "keydown", "update:modelValue", "onClickOption"],
 
   props: [
     "hasIcon",
@@ -113,12 +113,14 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 11:23 30/04/2022
      */
-    setFocus() {
+    setFocus($event) {
       this.isOptionShow = true;
       this.matches = [...this.optionList];
       this.$nextTick(() => {
         this.$refs.optionList.scrollTop = this.selecedIndex * 36;
       });
+      // khi focus vào thì chọn bôi xanh text
+      $event.target.select();
     },
 
     /**
@@ -164,22 +166,36 @@ export default {
     // },
 
     /**
-     * Mô tả : Chọn option
+     * Mô tả : xử lí sự kiện onClick vào optionList
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 15:31 28/04/2022
      */
-    choseOpton(index) {
+    choseOption(index) {
       this.selecedIndex = index;
       this.selectItem();
     },
 
-    selectItem() {
-      this.$emit(
+    /**
+     * Mô tả : Chọn item
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 12:32 22/05/2022
+     */
+    async selectItem() {
+      await this.$emit(
         "update:modelValue",
         this.matches[this.selecedIndex][this.filterby]
       );
+      // Lầy giá trị của obj đã được chọn
+      this.selecedItem = this.optionList.filter(
+        (item) =>
+          item[this.filterby] == this.matches[this.selecedIndex][this.filterby]
+      );
+      //  truyền cả obj lên cho component cha
+      this.$emit("onClickOption", this.selecedItem);
       this.$refs.input.blur();
       this.isOptionShow = false;
     },
@@ -229,6 +245,7 @@ export default {
       selecedIndex: 0,
       matches: [],
       isOptionShow: false,
+      selecedItem: null,
     };
   },
 };

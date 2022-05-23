@@ -5,29 +5,30 @@
         <div class="toolbar-field search-field">
           <input
             placeholder="Tìm kiếm tài sản"
+            ref="searchInput"
             class="m-search"
-            @input="searchFixedAsset($event)"
+            @input="searchInput"
           />
           <div class="search-icon">
             <div class="search"></div>
           </div>
         </div>
-        <div class="toolbar-field">
-          <!-- <ejs-combobox placeholder="Loại tài sản"></ejs-combobox> -->
+        <div class="toolbar-field combobox-field">
           <MISACombobox
             :hasIcon="true"
             :optionList="categoryData"
+            @onClickOption="filterClick"
             filterby="FixedAssetCategoryName"
             placeholder="Loại tài sản"
             v-model="searchCategory"
           ></MISACombobox>
         </div>
 
-        <div class="toolbar-field">
-          <!-- <ejs-combobox placeholder="Bộ phận sử dụng"></ejs-combobox> -->
+        <div class="toolbar-field combobox-field">
           <MISACombobox
             :hasIcon="true"
             :optionList="departmentData"
+            @onClickOption="filterClick"
             filterby="DepartmentName"
             placeholder="Bộ phận sử dụng"
             v-model="searchDepartment"
@@ -49,42 +50,28 @@
       </div>
     </div>
 
-    <!-- Table -->
     <div class="m-grip">
+      <!-- Table -->
       <div class="m-table-container">
         <table class="m-table">
           <thead>
             <tr>
-              <th style="width: 50px; padding-left: 16px">
+              <th style="padding-left: 16px">
                 <MISACheckbox
                   @click="onCheckedAll"
                   :checked="checkedAll"
                 ></MISACheckbox>
               </th>
-              <th class="text-align-left" style="width: 40px">STT</th>
-              <th class="text-align-left" style="min-width: 130px">
-                Mã tài sản
-              </th>
-              <th class="text-align-left" style="min-width: 130px">
-                Tên tài sản
-              </th>
-              <th class="text-align-left" style="min-width: 130px">
-                Loại tài sản
-              </th>
-              <th class="text-align-left" style="min-width: 130px">
-                Bộ phận sử dụng
-              </th>
-              <th class="text-align-right" style="min-width: 60px">Số lượng</th>
-              <th class="text-align-right" style="min-width: 130px">
-                Nguyên giá
-              </th>
-              <th class="text-align-right" style="min-width: 130px">
-                HM/KH lũy kế
-              </th>
-              <th class="text-align-right" style="min-width: 130px">
-                Giá trị còn lại
-              </th>
-              <th class="text-align-center" style="width: 100px">Chức năng</th>
+              <th class="text-align-left">STT</th>
+              <th class="text-align-left">Mã tài sản</th>
+              <th class="text-align-left">Tên tài sản</th>
+              <th class="text-align-left">Loại tài sản</th>
+              <th class="text-align-left">Bộ phận sử dụng</th>
+              <th class="text-align-right">Số lượng</th>
+              <th class="text-align-right">Nguyên giá</th>
+              <th class="text-align-right">HM/KH lũy kế</th>
+              <th class="text-align-right">Giá trị còn lại</th>
+              <th class="text-align-center">Chức năng</th>
             </tr>
           </thead>
           <MISALoading v-if="isLoading"></MISALoading>
@@ -96,7 +83,7 @@
               :key="index"
               class="m-tr"
             >
-              <td style="width: 50px; padding-left: 16px">
+              <td style="padding-left: 16px">
                 <MISACheckbox
                   :checked="checkedaAssetList.includes(asset)"
                 ></MISACheckbox>
@@ -147,21 +134,22 @@
           </tbody>
         </table>
       </div>
+
       <!-- paging -->
       <table class="m-table-footer">
         <thead>
           <tr>
-            <th style="width: 50px"></th>
-            <th style="width: 40px"></th>
-            <th style="min-width: 130px"></th>
-            <th style="min-width: 130px"></th>
-            <th style="min-width: 130px"></th>
-            <th style="min-width: 130px"></th>
-            <th style="min-width: 60px"></th>
-            <th style="min-width: 130px"></th>
-            <th style="min-width: 130px"></th>
-            <th style="min-width: 130px"></th>
-            <th style="width: 100px"></th>
+            <th></th>
+            <th class="text-align-left"></th>
+            <th class="text-align-left"></th>
+            <th class="text-align-left"></th>
+            <th class="text-align-left"></th>
+            <th class="text-align-left"></th>
+            <th class="text-align-right"></th>
+            <th class="text-align-right"></th>
+            <th class="text-align-right"></th>
+            <th class="text-align-right"></th>
+            <th class="text-align-center"></th>
           </tr>
         </thead>
         <tbody>
@@ -169,28 +157,22 @@
             <td colspan="6">
               <div class="m-paging-left">
                 <div class="m-total-number">
-                  Tổng số: <strong>200</strong> bản ghi
+                  Tổng số: <strong>{{ this.assetLength }}</strong> bản ghi
                 </div>
-                <div class="m-dropdown-paging">
-                  20
-                  <div class="down"></div>
-                </div>
-                <!-- <div class="m-paging-list">
-                  <button class="m-page-control">
-                    <div class="pre"></div>
-                  </button>
-                  <div class="m-paging-group">
-                    <button class="m-number m-number-selected">1</button>
-                    <button class="m-number">2</button>
-                    <div class="m-number-more">
-                      <div class="more"></div>
-                    </div>
-                    <button class="m-number">10</button>
-                  </div>
-                  <button class="m-page-control">
-                    <div class="next"></div>
-                  </button>
-                </div> -->
+                <MISADropdown
+                  :defaultValue="this.pageSize"
+                  @onChose="getPageSize"
+                ></MISADropdown>
+                <MISAPaginate
+                  :pageCount="totalPageIndex"
+                  :prev-text="'pre'"
+                  :prev-link-class="'prev-link-class'"
+                  :next-text="'next'"
+                  :next-link-class="'next-link-class'"
+                  :container-class="'m-paging-list'"
+                  :prev-class="'prev-class'"
+                  :click-handler="getPageIndex"
+                ></MISAPaginate>
               </div>
             </td>
             <td class="text-align-right">
@@ -219,7 +201,6 @@
       :dialogTitle="isEditing ? 'Sửa sản phẩm' : 'Thêm sản phẩm'"
       :isEditing="isEditing"
       v-if="isDialogShow && !isDialogLoading"
-      :assetCodes="assetCodes"
       :assetSelected="assetSelected"
       :departmentData="departmentData"
       :categoryData="categoryData"
@@ -252,6 +233,16 @@ export default {
   name: "the-content",
 
   computed: {
+    /**
+     * Mô tả : Tính tổng số trang
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:34 22/05/2022
+     */
+    totalPageIndex: function () {
+      return Math.ceil(this.assetLength / this.pageSize);
+    },
     /**
      * Mô tả : Giá trị ô check all
      * @param
@@ -313,8 +304,12 @@ export default {
   },
 
   async beforeMount() {
-    // lấy asset data từ api
-    this.getAssetData();
+    this.pageSize = 20;
+    // Lấy dữ liệu đã phân trang từ api
+    await this.filterAsset();
+
+    // lấy tổng số lượng asset data từ api
+    await this.getAssetData();
 
     /**
      * Mô tả : Lấy dữ liệu Department
@@ -349,33 +344,78 @@ export default {
 
   methods: {
     /**
+     * Mô tả : Chọn combobox thì gọi lại api để filter
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 15:32 22/05/2022
+     */
+    filterClick() {
+      this.filterAsset();
+    },
+    /**
+     * Mô tả : gán dữ liệu pageSize từ dropdown
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:38 22/05/2022
+     */
+    async getPageSize(option) {
+      this.pageSize = option;
+      await this.filterAsset();
+    },
+    /**
+     * Mô tả : Lấy thông tin trang từ paging
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 23:44 21/05/2022
+     */
+    async getPageIndex(pageNum) {
+      this.pageIndex = pageNum;
+      // thực hiện filter theo pageIndex
+      await this.filterAsset();
+    },
+    /**
      * Mô tả : Debounce để search
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 10:32 21/05/2022
      */
-    searchFixedAsset($event) {
-      // Lấy giá trị input
-      var searchInput = $event.target.value;
-      // Hàm thực hiện search
-      const search = async () => {
-        try {
-          var res = await axios.get(
-            "http://localhost:5234/api/v1/FixedAssets/Filter",
-            {
-              params: {
-                FixedAssetFilter: searchInput,
-                FixedAssetCategoryName: this.searchCategory,
-                DepartmentName: this.searchDepartment,
-              },
-            }
-          );
-          console.log(res.data);
-        } catch (error) {}
-      };
+    async searchInput() {
       clearTimeout(this.searchTimeout);
-      this.searchTimeout = setTimeout(search, 1000);
+      // Lấy giá trị input
+      this.searchBox = this.$refs.searchInput.value;
+      // debount
+      this.searchTimeout = setTimeout(this.filterAsset, 1000);
+    },
+
+    /**
+     * Mô tả : Hàm gửi dữ liệu lên api để search
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 00:06 22/05/2022
+     */
+    async filterAsset() {
+      this.isLoading = true;
+      try {
+        const res = await axios.get(
+          "http://localhost:5234/api/v1/FixedAssets/Filter",
+          {
+            params: {
+              FixedAssetFilter: this.searchBox,
+              FixedAssetCategoryName: this.searchCategory,
+              DepartmentName: this.searchDepartment,
+              pageIndex: this.pageIndex,
+              pageSize: this.pageSize,
+            },
+          }
+        );
+        this.assetData = res.data;
+        this.isLoading = false;
+      } catch (error) {}
     },
     /**
      * Mô tả : lấy danh sách asset Data từ api
@@ -388,8 +428,8 @@ export default {
       this.isLoading = true;
       try {
         const res = await axios.get("http://localhost:5234/api/v1/FixedAssets");
-        this.assetData = res.data;
-        console.log(this.assetData.length);
+        // this.assetData = res.data;
+        this.assetLength = res.data.length;
         this.isLoading = false;
       } catch (error) {
         console.log(error);
@@ -632,10 +672,8 @@ export default {
         // Load lại bảng
         this.getAssetData();
         //  Hiển thị toast xóa thành công
-        this.toastShow(true, toast_msg.REMOVE_SUCESS);
-        setTimeout(() => {
-          this.toastShow(false);
-        }, 2300);
+        this.toastShow(toast_msg.REMOVE_SUCESS);
+
         // gán lại giá trị cho list tạm thời về rỗng
         this.checkedaAssetList = [];
         // Tắt alert
@@ -680,9 +718,12 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 13:56 26/04/2022
      */
-    toastShow(isShow, title) {
-      this.toast.isShow = isShow;
+    toastShow(title) {
+      this.toast.isShow = true;
       this.toast.title = title;
+      setTimeout(() => {
+        this.toast.isShow = false;
+      }, 3000);
     },
   },
 
@@ -704,15 +745,18 @@ export default {
       isLoading: false,
       isDialogShow: false, //Hiển thị form hay không
       assetData: [], //dữ liệu lấy về từ api
-      assetCodes: null, //Danh sách mã tài sản
       departmentData: [], //Dữ liệu bộ phận sử dụng
       categoryData: [], // Dữ liệu loại tài sản
-      searchCategory: "",
-      searchDepartment: "",
-      searchBox: "",
       newAssetCode: "",
       searchTimeout: null,
       clickTimeout: null,
+      assetLength: null,
+      // params chuyền qua queryString
+      searchCategory: null,
+      searchDepartment: null,
+      searchBox: null,
+      pageIndex: null,
+      pageSize: null,
     };
   },
 };

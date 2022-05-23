@@ -9,7 +9,10 @@ import Alert from "./components/base/MISAAlert.vue";
 import Input from "./components/base/MISAInput.vue";
 import Toast from "./components/base/MISAToast.vue";
 import Loading from "./components/base/MISALoading.vue";
+import Dropdown from "./components/base/MISADropdown.vue";
 import Datepicker from "@vuepic/vue-datepicker";
+
+import Paginate from "vuejs-paginate-next";
 
 const app = createApp(App);
 app.component("MISAButton", Button);
@@ -22,4 +25,6 @@ app.component("MISAInput", Input);
 app.component("MISAToast", Toast);
 app.component("MISALoading", Loading);
 app.component("MISADatepicker", Datepicker);
+app.component("MISAPaginate", Paginate);
+app.component("MISADropdown", Dropdown);
 app.mount("#app");

@@ -186,6 +186,7 @@
                 :enableTimePicker="false"
                 :maxDate="new Date()"
                 class="mt-input input-datepicker"
+                textInput
                 v-model="asset.PurchaseDate"
               ></MISADatepicker>
               <div class="datepicker-icon"></div>
@@ -202,6 +203,7 @@
                 :enableTimePicker="false"
                 :maxDate="new Date()"
                 class="mt-input input-datepicker"
+                textInput
                 v-model="asset.UseDate"
               ></MISADatepicker>
               <div class="datepicker-icon"></div>
@@ -277,7 +279,6 @@ export default {
     //   set(newValue) {
     //     newValue = this.formatSalary(newValue.replaceAll(".", "").toString());
     //     console.log(newValue);
-    //     // this.annualDepreciationRate = newValue;
     //     this.asset.DepreciationValue = Number(newValue);
     //   },
     // },
@@ -295,6 +296,10 @@ export default {
       set(newValue) {
         newValue = newValue.replaceAll(".", "");
         this.asset.Cost = Number(newValue);
+        this.DepreciationValue = Math.floor(
+          this.asset.Cost * (this.asset.DepreciationRate / 100)
+        );
+        console.log(this.DepreciationValue);
       },
     },
 
@@ -337,7 +342,6 @@ export default {
         this.asset.LifeTime = "";
       }
     },
-
     /**
      * Mô tả : Theo dõi sự thay đổi của mã bộ phận sử dụng để gán dữ liệu cho các trường input
      * @param
@@ -358,6 +362,17 @@ export default {
   },
 
   methods: {
+    /**
+     * Mô tả : Láy giá trị từ combobox
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:54 22/05/2022
+     */
+    getComboboxData(option) {
+      this.asset = Object.assign({}, this.asset, option[0]);
+      console.log(this.asset);
+    },
     /**
      * Mô tả : format tiền
      * @param
@@ -402,13 +417,10 @@ export default {
           // Cập nhật lại bảng
           this.$emit("getAssetData");
           // Hiên thị toast thành công
-          this.$emit("toastShow", true, toast_msg.CREATE_SUCCESS);
-          setTimeout(() => {
-            this.$emit("toastShow", false);
-          }, 2300);
+          this.$emit("toastShow", toast_msg.CREATE_SUCCESS);
         }
       } catch (error) {
-        console.log(error.response.data.data.data[0]);
+        this.$emit("alertShow", true, error.response.data.data.data[0]);
       }
     },
 
@@ -436,10 +448,7 @@ export default {
           // Cập nhật lại bảng:
           this.$emit("getAssetData");
           // Hiển thị thông báo thành công:
-          this.$emit("toastShow", true, toast_msg.SAVE_SUCESS);
-          setTimeout(() => {
-            this.$emit("toastShow", false);
-          }, 2300);
+          this.$emit("toastShow", toast_msg.SAVE_SUCESS);
         }
       } catch (error) {
         this.$emit("alertShow", true, error.response.data.data.data[0]);
@@ -488,7 +497,11 @@ export default {
 
       // 2. Validate nghiệp vụ:
       // 2.1 Tỉ lệ hao mòn khác 1/số năm sử dụng:
-      if (this.asset.DepreciationRate != 1 / this.asset.LifeTime) {
+      if (
+        this.asset.LifeTime == 0 &&
+        this.asset.DepreciationRate > 0 &&
+        this.asset.DepreciationRate != 1 / this.asset.LifeTime
+      ) {
         this.errorList.push("Tỷ lệ hao mòn năm phải bằng 1/Số năm sử dụng");
       }
 

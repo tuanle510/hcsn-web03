@@ -17,7 +17,10 @@
 
 .m-content .m-toolbar .toolbar-field {
   height: 36px;
-  width: 200px;
+}
+
+.m-content .m-toolbar .toolbar-field.combobox-field {
+  width: 219px;
 }
 
 .m-content .m-toolbar .m-toolbar-left,
