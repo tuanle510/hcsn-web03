@@ -56,25 +56,35 @@
         <table class="m-table">
           <thead>
             <tr>
-              <th style="padding-left: 16px">
+              <th style="padding-left: 16px; width: 50px">
                 <MISACheckbox
                   @click="onCheckedAll"
                   :checked="checkedAll"
                 ></MISACheckbox>
               </th>
-              <th class="text-align-left">STT</th>
+              <th class="text-align-left" style="width: 50px">STT</th>
               <th class="text-align-left">Mã tài sản</th>
               <th class="text-align-left">Tên tài sản</th>
               <th class="text-align-left">Loại tài sản</th>
               <th class="text-align-left">Bộ phận sử dụng</th>
-              <th class="text-align-right">Số lượng</th>
-              <th class="text-align-right">Nguyên giá</th>
-              <th class="text-align-right">HM/KH lũy kế</th>
-              <th class="text-align-right">Giá trị còn lại</th>
-              <th class="text-align-center">Chức năng</th>
+              <th class="text-align-right" style="width: 60px">Số lượng</th>
+              <th class="text-align-right" style="width: 130px">Nguyên giá</th>
+              <th class="text-align-right" style="width: 130px">
+                HM/KH lũy kế
+              </th>
+              <th class="text-align-right" style="width: 130px">
+                Giá trị còn lại
+              </th>
+              <th class="text-align-center" style="width: 90px">Chức năng</th>
             </tr>
           </thead>
-          <MISALoading v-if="isLoading"></MISALoading>
+          <div v-if="isLostConnection" class="table-msg">
+            Không thể tải được dữ liệu
+          </div>
+          <MISALoading v-else-if="isLoading"></MISALoading>
+          <div v-else-if="this.assetData.length == 0" class="table-msg">
+            Không có dữ liệu
+          </div>
           <tbody v-else>
             <tr
               @dblclick="showEditDialog(asset)"
@@ -89,20 +99,23 @@
                 ></MISACheckbox>
               </td>
               <td class="text-align-left">{{ index + 1 }}</td>
-              <td class="text-align-left text-limit">
+              <td class="text-align-left max-w-130">
                 {{ asset.FixedAssetCode }}
               </td>
               <td
-                class="text-align-left text-limit"
+                class="text-align-left max-w-150"
                 :title="asset.FixedAssetName"
               >
                 {{ asset.FixedAssetName }}
               </td>
-              <td class="text-align-left text-limit" :title="asset.FixedAssetCategoryName">
+              <td
+                class="text-align-left max-w-130"
+                :title="asset.FixedAssetCategoryName"
+              >
                 {{ asset.FixedAssetCategoryName }}
               </td>
               <td
-                class="text-align-left text-limit"
+                class="text-align-left max-w-130"
                 :title="asset.DepartmentName"
               >
                 {{ asset.DepartmentName }}
@@ -134,27 +147,13 @@
 
       <!-- paging -->
       <table class="m-table-footer">
-        <thead>
-          <tr>
-            <th></th>
-            <th class="text-align-left"></th>
-            <th class="text-align-left"></th>
-            <th class="text-align-left"></th>
-            <th class="text-align-left"></th>
-            <th class="text-align-left"></th>
-            <th class="text-align-right"></th>
-            <th class="text-align-right"></th>
-            <th class="text-align-right"></th>
-            <th class="text-align-right"></th>
-            <th class="text-align-center"></th>
-          </tr>
-        </thead>
         <tbody>
           <tr>
-            <td colspan="6">
+            <td>
               <div class="m-paging-left">
                 <div class="m-total-number">
-                  Tổng số: <strong>{{ this.assetLength }}</strong> bản ghi
+                  Tổng số: <strong>{{ this.totalAssetListLength }}</strong> bản
+                  ghi
                 </div>
                 <MISADropdown
                   :defaultValue="this.pageSize"
@@ -173,19 +172,19 @@
                 ></MISAPaginate>
               </div>
             </td>
-            <td class="text-align-right">
+            <td class="text-align-right" style="width: 60px">
               {{ quantityTotal }}
             </td>
-            <td class="text-align-right">
+            <td class="text-align-right" style="width: 130px">
               {{ currencyFormat(costTotal) }}
             </td>
-            <td class="text-align-right">
+            <td class="text-align-right" style="width: 130px">
               {{ currencyFormat(accumulatedTotal) }}
             </td>
-            <td class="text-align-right">
+            <td class="text-align-right" style="width: 130px">
               {{ currencyFormat(costTotal - accumulatedTotal) }}
             </td>
-            <td></td>
+            <td style="width: 90px"></td>
           </tr>
         </tbody>
       </table>
@@ -203,6 +202,7 @@
       :departmentData="departmentData"
       :categoryData="categoryData"
       @filterAsset="filterAsset"
+      @getAssetData="getAssetData"
       @toastShow="toastShow"
       @dialogShow="dialogShow"
       @alertShow="alertShow"
@@ -320,8 +320,8 @@ export default {
     // Lấy dữ liệu đã phân trang từ api
     await this.filterAsset();
 
-    // lấy tổng số lượng asset data từ api
-    // await this.getAssetData();
+    // Lấy tổng số bản ghi:
+    await this.getAssetData();
 
     /**
      * Mô tả : Lấy dữ liệu Department
@@ -366,6 +366,7 @@ export default {
       this.pageIndex = 1;
       this.filterAsset();
     },
+
     /**
      * Mô tả : gán dữ liệu pageSize từ dropdown
      * @param
@@ -378,6 +379,7 @@ export default {
       this.pageIndex = 1;
       await this.filterAsset();
     },
+
     /**
      * Mô tả : Lấy thông tin trang từ paging
      * @param
@@ -430,10 +432,13 @@ export default {
         this.assetData = res.data.FilterList;
         this.assetLength = res.data.FilterCount;
         this.isLoading = false;
-      } catch (error) {}
+      } catch (error) {
+        this.isLostConnection = true;
+        this.isLoading = false;
+      }
     },
     /**
-     * Mô tả : lấy danh sách asset Data từ api
+     * Mô tả : lấy danh sách asset Data từ api ( Để lấy tổng số bản ghi )
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
@@ -444,7 +449,8 @@ export default {
       try {
         const res = await axios.get("http://localhost:5234/api/v1/FixedAssets");
         // this.assetData = res.data;
-        this.assetLength = res.data.length;
+        this.totalAssetListLength = res.data.length;
+        console.log(this.totalAssetListLength);
         this.isLoading = false;
       } catch (error) {
         console.log(error);
@@ -528,7 +534,7 @@ export default {
     onCheckedAll() {
       //  Kiểm tra xem assetData có dữ liệu không
       if (this.assetData == 0) {
-        this.alertShow(true, "Không có tài sản trong danh sách");
+        this.alertShow(true, remove_msg.ASSET_LIST_EMPTY);
       } else {
         //kiểm tra xem có tích hết chưa
         // Nếu chưa chưa thì tích hết
@@ -686,6 +692,10 @@ export default {
         );
         // Load lại bảng
         this.filterAsset();
+
+        // Cập nhật lại tổng bản ghi
+        this.getAssetData();
+
         //  Hiển thị toast xóa thành công
         this.toastShow(toast_msg.REMOVE_SUCESS);
 
@@ -766,6 +776,8 @@ export default {
       searchTimeout: null,
       clickTimeout: null,
       assetLength: null,
+      totalAssetListLength: null,
+      isLostConnection: false, // mấy mạng thì trả về true
       // params chuyền qua queryString
       searchCategory: null,
       searchDepartment: null,

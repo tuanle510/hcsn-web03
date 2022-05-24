@@ -65,7 +65,7 @@
               name="Mã loại tài sản"
               filterby="FixedAssetCategoryCode"
               placeholder="Chọm mã loại tài sản"
-              @onClickOption="calculatorValue"
+              @onClickOption="calculatorDepreciationRate"
               v-model="asset.FixedAssetCategoryCode"
             ></MISACombobox>
           </div>
@@ -318,6 +318,8 @@ export default {
       },
       set(newValue) {
         this.asset.DepreciationRate = newValue / 100;
+        this.asset.DepreciationValue =
+          this.asset.DepreciationRate * this.asset.Cost;
       },
     },
   },
@@ -384,7 +386,7 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 16:24 24/05/2022
      */
-    calculatorValue(option) {
+    calculatorDepreciationRate(option) {
       this.asset.DepreciationRate = option.DepreciationRate;
       // Tính giá trị hao mòn năm:
       this.asset.DepreciationValue =
@@ -436,12 +438,13 @@ export default {
         if (res.statusText == "Created") {
           // Cập nhật lại bảng
           this.$emit("filterAsset");
+          // Cập nhật lại tổng bản ghi
+          this.$emit("getAssetData");
           // Hiên thị toast thành công
           this.$emit("toastShow", toast_msg.CREATE_SUCCESS);
         }
       } catch (error) {
-        console.log(error.response);
-        // this.$emit("alertShow", true, error.response.data.data.data[0]);
+        this.$emit("alertShow", true, error.response.data.data.data[0]);
       }
     },
 
@@ -466,12 +469,14 @@ export default {
         if (res.statusText == "OK") {
           // Cập nhật lại bảng:
           this.$emit("filterAsset");
+          // Cập nhật lại tổng bản ghi
+          this.$emit("getAssetData");
           // Hiển thị thông báo thành công:
           this.$emit("toastShow", toast_msg.SAVE_SUCESS);
         }
       } catch (error) {
         console.log(error.response);
-        // this.$emit("alertShow", true, error.response.data.data.data[0]);
+        this.$emit("alertShow", true, error.response.data.data.data[0]);
       }
     },
 

@@ -40,14 +40,16 @@
       <li
         v-for="(option, index) in matches"
         :key="index"
-        class="m-option-item text-limit"
+        class="m-option-item"
         @keydown.down="down"
         @keydown.up="up"
         @keydown.enter="selectItem"
         @click="choseOption(index)"
         :class="{ 'm-item-selected': this.selecedIndex == index }"
       >
-        {{ option[this.filterby] }}
+        <div class="item-text-limit">
+          {{ option[this.filterby] }}
+        </div>
       </li>
     </ul>
   </div>

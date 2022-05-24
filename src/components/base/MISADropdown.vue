@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      optionList: [10, 20, 40, 100],
+      optionList: [20, 30, 40, 100],
       isOptionShow: false,
       optionChose: null,
     };
