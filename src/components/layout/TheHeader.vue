@@ -4,7 +4,14 @@
     <div class="header-right">
       <div class="header-right-title">Sở tài chính</div>
       <!-- option -->
-      <div class="header-icon"></div>
+      <div class="header-year">
+        <div class="header-year-text">Năm</div>
+        <div class="header-year-content">{{ year }}</div>
+        <div class="year-btn-container">
+          <div class="up"></div>
+          <div class="down"></div>
+        </div>
+      </div>
       <!--  -->
       <div class="header-icon">
         <div class="bell"></div>
@@ -33,5 +40,10 @@
 export default {
   name: "the-header",
   components: {},
+  data() {
+    return {
+      year: new Date().getFullYear(),
+    };
+  },
 };
 </script>

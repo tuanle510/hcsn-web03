@@ -80,11 +80,17 @@
   height: 40px;
 }
 
-/* .text-limit {
+.text-limit {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-} */
+  /* -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 40px; */
+}
 
 .m-grip .m-table tbody .m-tr:hover .m-function-box {
   display: flex !important;

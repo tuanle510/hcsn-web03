@@ -143,7 +143,7 @@ export default {
     validateRequired() {
       if (
         this.required &&
-        (this.modelValue === "" || this.modelValue === undefined)
+        (this.modelValue.trim() === "" || this.modelValue === undefined)
       ) {
         this.$refs.input.classList.add("m-input-error");
       } else {
@@ -195,7 +195,7 @@ export default {
           item[this.filterby] == this.matches[this.selecedIndex][this.filterby]
       );
       //  truyền cả obj lên cho component cha
-      this.$emit("onClickOption", this.selecedItem);
+      this.$emit("onClickOption", this.selecedItem[0]);
       this.$refs.input.blur();
       this.isOptionShow = false;
     },

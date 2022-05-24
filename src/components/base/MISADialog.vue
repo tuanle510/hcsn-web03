@@ -24,6 +24,7 @@
             <label for="input">Tên tài sản <span>*</span></label>
             <MISAInput
               :required="true"
+              ref="assetName"
               maxlength="255"
               :name="'Tên tài sản'"
               placeholder="Nhập tên tài sản"
@@ -64,6 +65,7 @@
               name="Mã loại tài sản"
               filterby="FixedAssetCategoryCode"
               placeholder="Chọm mã loại tài sản"
+              @onClickOption="calculatorValue"
               v-model="asset.FixedAssetCategoryCode"
             ></MISACombobox>
           </div>
@@ -81,7 +83,8 @@
             <label for="input">Số lượng<span>*</span></label>
             <MISAInput
               ref="quantity"
-              required="true"
+              :required="true"
+              :isNumber="true"
               name="Số lượng"
               maxlength="11"
               classParent="number-input-icon"
@@ -101,7 +104,6 @@
               ></div>
             </div>
           </div>
-          <!-- type="number" -->
           <div class="modal-field">
             <label for="input">Nguyên giá <span>*</span></label>
             <MISAInput
@@ -110,7 +112,7 @@
               :isNumber="true"
               name="Nguyên giá"
               classParent="number-input"
-              v-model="changeFormatPrice"
+              v-model="Cost"
             ></MISAInput>
           </div>
           <div class="modal-field">
@@ -158,10 +160,11 @@
             <MISAInput
               :required="true"
               :isNumber="true"
+              type="text"
               maxlength="25"
               name="Giá trị hao mòm năm"
               classParent="number-input"
-              v-model="asset.DepreciationValue"
+              v-model="DepreciationValue"
             ></MISAInput>
           </div>
           <div class="modal-field">
@@ -179,12 +182,14 @@
             <label for="input">Ngày mua <span>*</span></label>
             <div class="datepicker-container">
               <MISADatepicker
+                required
                 locale="vi"
                 cancelText="Hủy"
                 selectText="Chọn"
                 format="dd/MM/yyyy"
                 :enableTimePicker="false"
                 :maxDate="new Date()"
+                name="Ngày mua"
                 class="mt-input input-datepicker"
                 textInput
                 v-model="asset.PurchaseDate"
@@ -196,11 +201,13 @@
             <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
             <div class="datepicker-container">
               <MISADatepicker
+                required
                 locale="vi"
                 cancelText="Hủy"
                 selectText="Chọn"
                 format="dd/MM/yyyy"
                 :enableTimePicker="false"
+                name="Ngày bắt đầu sử dụng"
                 :maxDate="new Date()"
                 class="mt-input input-datepicker"
                 textInput
@@ -219,7 +226,7 @@
           @click="onCancel"
           buttonTitle="Hủy"
         ></MISAButton>
-        <!-- @keydown.tab="this.$refs.assetCode.setFocus()" -->
+        <!-- @keydown.tab="tabToFocus($event)" -->
         <MISAButton @click="onSubmit($event)" buttonTitle="Lưu"></MISAButton>
       </div>
     </div>
@@ -227,7 +234,6 @@
 </template>
 <script>
 import axios from "axios";
-// import moment from "moment";
 import {
   cancel_msg,
   error_msg,
@@ -268,20 +274,16 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 22:07 19/05/2022
      */
-    // annualDepreciationRate: {
-    //   get() {
-    //     return this.formatSalary(
-    //       Math.floor(
-    //         this.asset.Cost * (this.asset.DepreciationRate / 100)
-    //       ).toString()
-    //     );
-    //   },
-    //   set(newValue) {
-    //     newValue = this.formatSalary(newValue.replaceAll(".", "").toString());
-    //     console.log(newValue);
-    //     this.asset.DepreciationValue = Number(newValue);
-    //   },
-    // },
+    DepreciationValue: {
+      get() {
+        return this.formatSalary(this.asset.DepreciationValue.toString());
+      },
+      set(newValue) {
+        newValue = newValue.replaceAll(".", "");
+        this.asset.DepreciationValue = newValue;
+      },
+    },
+
     /**
      * Mô tả : format tiền (nguyên giá)
      * @param
@@ -289,17 +291,17 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 10:26 01/05/2022
      */
-    changeFormatPrice: {
+    Cost: {
       get() {
         return this.formatSalary(this.asset.Cost.toString());
       },
       set(newValue) {
         newValue = newValue.replaceAll(".", "");
-        this.asset.Cost = Number(newValue);
-        this.DepreciationValue = Math.floor(
-          this.asset.Cost * (this.asset.DepreciationRate / 100)
+        this.asset.Cost = newValue;
+        // Tính giá trị hao mòn năm
+        this.asset.DepreciationValue = Math.floor(
+          this.asset.Cost * this.asset.DepreciationRate
         );
-        console.log(this.DepreciationValue);
       },
     },
 
@@ -333,10 +335,11 @@ export default {
         (item) => item.FixedAssetCategoryCode == newValue
       );
       if (data) {
+        // Gán các giá trị mặc định lấy từ combobox:
         this.asset.FixedAssetCategoryName = data.FixedAssetCategoryName;
-        this.asset.DepreciationRate = data.DepreciationRate;
         this.asset.LifeTime = data.LifeTime;
       } else {
+        // Nếu không thì trả về rỗng:
         this.asset.FixedAssetCategoryName = "";
         this.asset.DepreciationRate = "";
         this.asset.LifeTime = "";
@@ -363,17 +366,6 @@ export default {
 
   methods: {
     /**
-     * Mô tả : Láy giá trị từ combobox
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 11:54 22/05/2022
-     */
-    getComboboxData(option) {
-      this.asset = Object.assign({}, this.asset, option[0]);
-      console.log(this.asset);
-    },
-    /**
      * Mô tả : format tiền
      * @param
      * @return
@@ -386,6 +378,44 @@ export default {
     },
 
     /**
+     * Mô tả : Tính Giá trị hao mòn khi chọn combobox
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 16:24 24/05/2022
+     */
+    calculatorValue(option) {
+      this.asset.DepreciationRate = option.DepreciationRate;
+      // Tính giá trị hao mòn năm:
+      this.asset.DepreciationValue =
+        this.asset.Cost * this.asset.DepreciationRate;
+    },
+
+    /**
+     * Mô tả : Tính những giá trị còn lại để đẩy lên api
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 09:31 24/05/2022
+     */
+    autoFieldData() {
+      // Ngày tạo
+      if (!this.isEditing) {
+        this.asset.CreatedDate = new Date();
+      }
+      // Ngày sứa
+      this.asset.ModifiedDate = new Date();
+      // Tính Năm sử dụng(Năm hiện tại - năm ngày bắt đầu sử dụng)
+      this.asset.ProductionYear =
+        this.asset.TrackedYear - new Date(this.asset.UseDate).getFullYear();
+      // Tính Lũy kế
+      this.asset.Accumulated =
+        this.asset.Cost *
+        this.asset.DepreciationRate *
+        this.asset.ProductionYear;
+    },
+
+    /**
      * Mô tả : Thêm asset mới
      * @param
      * @return
@@ -393,19 +423,9 @@ export default {
      * Created date: 20:31 26/04/2022
      */
     async onCreateAsset() {
-      this.asset.CreatedDate = new Date();
-      this.asset.ModifiedDate = new Date();
-
-      this.asset.ProductionYear =
-        this.asset.TrackedYear - new Date(this.asset.UseDate).getFullYear();
-
-      console.log(this.asset.ProductionYear);
-      this.asset.Accumulated =
-        this.asset.Cost *
-        this.asset.DepreciationRate *
-        this.asset.ProductionYear;
-
-      console.log(this.asset);
+      // Tính những giá trị cần lưu lên db
+      this.autoFieldData();
+      // Gửi dữ liệu lên api
       try {
         const res = await axios.post(
           "http://localhost:5234/api/v1/FixedAssets",
@@ -415,12 +435,13 @@ export default {
         this.$emit("dialogShow", false);
         if (res.statusText == "Created") {
           // Cập nhật lại bảng
-          this.$emit("getAssetData");
+          this.$emit("filterAsset");
           // Hiên thị toast thành công
           this.$emit("toastShow", toast_msg.CREATE_SUCCESS);
         }
       } catch (error) {
-        this.$emit("alertShow", true, error.response.data.data.data[0]);
+        console.log(error.response);
+        // this.$emit("alertShow", true, error.response.data.data.data[0]);
       }
     },
 
@@ -432,10 +453,9 @@ export default {
      * Created date: 20:46 26/04/2022
      */
     async onUpdateAsset() {
-      this.asset.ModifiedDate = new Date();
-
-      console.log(this.asset);
-
+      // Tính những giá trị cần lưu lên db
+      this.autoFieldData();
+      // Gửi dữ liệu lên api
       try {
         const res = await axios.put(
           `http://localhost:5234/api/v1/FixedAssets/${this.asset.FixedAssetId}`,
@@ -443,15 +463,15 @@ export default {
         );
         this.$emit("alertShow", false);
         this.$emit("dialogShow", false);
-        console.log(res);
         if (res.statusText == "OK") {
           // Cập nhật lại bảng:
-          this.$emit("getAssetData");
+          this.$emit("filterAsset");
           // Hiển thị thông báo thành công:
           this.$emit("toastShow", toast_msg.SAVE_SUCESS);
         }
       } catch (error) {
-        this.$emit("alertShow", true, error.response.data.data.data[0]);
+        console.log(error.response);
+        // this.$emit("alertShow", true, error.response.data.data.data[0]);
       }
     },
 
@@ -489,7 +509,7 @@ export default {
       // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
         // Kiểm tra giá trị của input
-        if (element.required && element.value == "") {
+        if (element.required && element.value.trim() == "") {
           element.classList.add("m-input-error");
           this.errorList.push(`${error_msg.EMPTY_VALUE}${element.name}`);
         }
@@ -506,7 +526,7 @@ export default {
       }
 
       // 2.2 Hao mòn năm nhỏ hơn nguyên giá:
-      if (this.asset.DepreciationValue > this.asset.Cost) {
+      if (Number(this.asset.DepreciationValue) > Number(this.asset.Cost)) {
         this.errorList.push("Hao mòn năm phải nhỏ hơn hoặc bằng nguyên giá");
       }
 

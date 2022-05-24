@@ -98,10 +98,7 @@
               >
                 {{ asset.FixedAssetName }}
               </td>
-              <td
-                class="text-align-left text-limit"
-                :title="asset.FixedAssetCategoryName"
-              >
+              <td class="text-align-left text-limit" :title="asset.FixedAssetCategoryName">
                 {{ asset.FixedAssetCategoryName }}
               </td>
               <td
@@ -164,6 +161,7 @@
                   @onChose="getPageSize"
                 ></MISADropdown>
                 <MISAPaginate
+                  v-model="pageIndex"
                   :pageCount="totalPageIndex"
                   :prev-text="'pre'"
                   :prev-link-class="'prev-link-class'"
@@ -204,7 +202,7 @@
       :assetSelected="assetSelected"
       :departmentData="departmentData"
       :categoryData="categoryData"
-      @getAssetData="getAssetData"
+      @filterAsset="filterAsset"
       @toastShow="toastShow"
       @dialogShow="dialogShow"
       @alertShow="alertShow"
@@ -231,6 +229,20 @@ import { remove_msg, toast_msg } from "../../assets/resource/ResourceMsg";
 
 export default {
   name: "the-content",
+
+  watch: {
+    searchDepartment(newValue) {
+      if (newValue == "" || newValue == null) {
+        this.filterAsset();
+      }
+    },
+
+    searchCategory(newValue) {
+      if (newValue == "" || newValue == null) {
+        this.filterAsset();
+      }
+    },
+  },
 
   computed: {
     /**
@@ -309,7 +321,7 @@ export default {
     await this.filterAsset();
 
     // lấy tổng số lượng asset data từ api
-    await this.getAssetData();
+    // await this.getAssetData();
 
     /**
      * Mô tả : Lấy dữ liệu Department
@@ -351,6 +363,7 @@ export default {
      * Created date: 15:32 22/05/2022
      */
     filterClick() {
+      this.pageIndex = 1;
       this.filterAsset();
     },
     /**
@@ -362,6 +375,7 @@ export default {
      */
     async getPageSize(option) {
       this.pageSize = option;
+      this.pageIndex = 1;
       await this.filterAsset();
     },
     /**
@@ -413,7 +427,8 @@ export default {
             },
           }
         );
-        this.assetData = res.data;
+        this.assetData = res.data.FilterList;
+        this.assetLength = res.data.FilterCount;
         this.isLoading = false;
       } catch (error) {}
     },
@@ -444,10 +459,8 @@ export default {
      * Created date: 09:55 01/05/2022
      */
     currencyFormat(value) {
-      var formatter = new Intl.NumberFormat("vi-VN", {
-        currency: "VND",
-      });
-      return formatter.format(value);
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      return format;
     },
 
     /**
@@ -479,10 +492,12 @@ export default {
      */
     async showAddDialog() {
       await this.getNewAssetCode();
+      console.log(this.assetSelected);
       this.assetSelected = {
         FixedAssetCode: this.newAssetCode,
         Cost: 0,
         DepreciationRate: 0,
+        DepreciationValue: 0,
         Quantity: 0,
         PurchaseDate: new Date(),
         UseDate: new Date(),
@@ -670,7 +685,7 @@ export default {
           }
         );
         // Load lại bảng
-        this.getAssetData();
+        this.filterAsset();
         //  Hiển thị toast xóa thành công
         this.toastShow(toast_msg.REMOVE_SUCESS);
 
@@ -697,9 +712,9 @@ export default {
 
     /**
      * Mô tả : Đóng mở/ Hủy bỏ/ kiểu alert
-     * @param {Boolean} alert
-     * @param {String} title
-     * @param {String} type kiểu của button alert
+     * @param {Boolean} alert Ẩn hiện alert (true - hiện, false - ẩn )
+     * @param {String} title Nội dung của cảnh báo
+     * @param {String} type kiểu của button alert (không tuyền gì hiển thị 1 btn đóng, "remove" - thông báo khi xóa, "cancel"- hủy nhưng không có thay đổi, "cancelchange" - hủy nhưng có thay đổi)
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 16:08 26/04/2022

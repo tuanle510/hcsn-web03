@@ -97,7 +97,8 @@ export default {
     validateRequired() {
       if (
         this.required &&
-        (this.modelValue === "" || this.modelValue === undefined)
+        (this.modelValue === undefined ||
+          this.modelValue.toString().trim() === "")
       ) {
         this.$refs.input.classList.add("m-input-error");
       } else {
