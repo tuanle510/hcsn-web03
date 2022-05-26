@@ -15,6 +15,7 @@ import Datepicker from "@vuepic/vue-datepicker";
 import Paginate from "vuejs-paginate-next";
 
 const app = createApp(App);
+app.use(require('vue3-shortkey'))
 app.component("MISAButton", Button);
 app.component("MISADialog", Dialog);
 app.component("MISACombobox", Combobox);

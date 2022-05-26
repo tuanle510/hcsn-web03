@@ -1,5 +1,5 @@
 <template>
-  <div class="m-dialog">
+  <div class="m-dialog" v-shortkey="['ctrl', 's']" @shortkey="onSubmit()">
     <div class="m-modal">
       <div class="m-nodal-title">{{ dialogTitle }}</div>
       <div class="m-modal-close" @click="onCancel">
@@ -80,7 +80,7 @@
 
         <div class="modal-row">
           <div class="modal-field">
-            <label for="input">Số lượng<span>*</span></label>
+            <label for="input">Số lượng<span> *</span></label>
             <MISAInput
               ref="quantity"
               :required="true"
@@ -130,7 +130,7 @@
 
         <div class="modal-row">
           <div class="modal-field">
-            <label for="input">Tỉ lệ hao mòn(%)<span>*</span></label>
+            <label for="input">Tỉ lệ hao mòn(%) <span>*</span></label>
             <MISAInput
               maxlength="11"
               :isNumber="true"
@@ -186,14 +186,16 @@
                 locale="vi"
                 cancelText="Hủy"
                 selectText="Chọn"
-                format="dd/MM/yyyy"
+                format="MM/dd/yyyy"
                 :enableTimePicker="false"
                 :maxDate="new Date()"
                 name="Ngày mua"
                 class="mt-input input-datepicker"
+                ref="purchaseDate"
                 textInput
                 v-model="asset.PurchaseDate"
               ></MISADatepicker>
+              <!-- @blur="checkDatePicker" -->
               <div class="datepicker-icon"></div>
             </div>
           </div>
@@ -205,7 +207,7 @@
                 locale="vi"
                 cancelText="Hủy"
                 selectText="Chọn"
-                format="dd/MM/yyyy"
+                format="MM/dd/yyyy"
                 :enableTimePicker="false"
                 name="Ngày bắt đầu sử dụng"
                 :maxDate="new Date()"
@@ -213,6 +215,8 @@
                 textInput
                 v-model="asset.UseDate"
               ></MISADatepicker>
+              <!-- @blur="checkDatePicker"
+                inputClassName="m-input-error" -->
               <div class="datepicker-icon"></div>
             </div>
           </div>
@@ -336,11 +340,11 @@ export default {
       var data = this.categoryData.find(
         (item) => item.FixedAssetCategoryCode == newValue
       );
-      if (data) {
-        // Gán các giá trị mặc định lấy từ combobox:
-        this.asset.FixedAssetCategoryName = data.FixedAssetCategoryName;
-        this.asset.LifeTime = data.LifeTime;
-      } else {
+      if (!data) {
+        //   // Gán các giá trị mặc định lấy từ combobox:
+        //   this.asset.FixedAssetCategoryName = data.FixedAssetCategoryName;
+        //   this.asset.LifeTime = data.LifeTime;
+        // } else {
         // Nếu không thì trả về rỗng:
         this.asset.FixedAssetCategoryName = "";
         this.asset.DepreciationRate = "";
@@ -368,6 +372,18 @@ export default {
 
   methods: {
     /**
+     * Mô tả : Validate DatePicker khi blur
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 00:09 25/05/2022
+     */
+    // checkDatePicker() {
+    //   if (this.asset.PurchaseDate == "" || this.asset.PurchaseDate == null) {
+    //     this.$refs.purchaseDate.inputClassName = "m-input-error";
+    //   }
+    // },
+    /**
      * Mô tả : format tiền
      * @param
      * @return
@@ -388,6 +404,8 @@ export default {
      */
     calculatorDepreciationRate(option) {
       this.asset.DepreciationRate = option.DepreciationRate;
+      this.asset.FixedAssetCategoryName = option.FixedAssetCategoryName;
+      this.asset.LifeTime = option.LifeTime;
       // Tính giá trị hao mòn năm:
       this.asset.DepreciationValue =
         this.asset.Cost * this.asset.DepreciationRate;
@@ -523,9 +541,8 @@ export default {
       // 2. Validate nghiệp vụ:
       // 2.1 Tỉ lệ hao mòn khác 1/số năm sử dụng:
       if (
-        this.asset.LifeTime == 0 &&
-        this.asset.DepreciationRate > 0 &&
-        this.asset.DepreciationRate != 1 / this.asset.LifeTime
+        Number(this.asset.DepreciationRate) !==
+        1 / Number(this.asset.LifeTime)
       ) {
         this.errorList.push("Tỷ lệ hao mòn năm phải bằng 1/Số năm sử dụng");
       }

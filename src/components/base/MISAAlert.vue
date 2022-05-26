@@ -23,7 +23,7 @@
       <div v-else-if="alertType == 'cancel'" class="alert-button">
         <MISAButton
           @click="this.$emit('alertShow', false)"
-          type="sub-button"
+          type="outline-button"
           buttonTitle="Không"
         ></MISAButton>
         <MISAButton @click="btnCancel" buttonTitle="Hủy bỏ"></MISAButton>

@@ -109,7 +109,7 @@
                 {{ asset.FixedAssetName }}
               </td>
               <td
-                class="text-align-left max-w-130"
+                class="text-align-left max-w-150"
                 :title="asset.FixedAssetCategoryName"
               >
                 {{ asset.FixedAssetCategoryName }}
@@ -445,13 +445,13 @@ export default {
      * Created date: 11:02 08/05/2022
      */
     async getAssetData() {
-      this.isLoading = true;
+      // this.isLoading = true;
       try {
         const res = await axios.get("http://localhost:5234/api/v1/FixedAssets");
         // this.assetData = res.data;
         this.totalAssetListLength = res.data.length;
         console.log(this.totalAssetListLength);
-        this.isLoading = false;
+        // this.isLoading = false;
       } catch (error) {
         console.log(error);
       }
@@ -498,7 +498,7 @@ export default {
      */
     async showAddDialog() {
       await this.getNewAssetCode();
-      console.log(this.assetSelected);
+      // console.log(this.assetSelected);
       this.assetSelected = {
         FixedAssetCode: this.newAssetCode,
         Cost: 0,
@@ -542,7 +542,7 @@ export default {
           // thay đổi
           this.checkedaAssetList = [...this.assetData];
         }
-        // nếu tích hết rồi thì click thứ 2 sẽ bỏ tích đi
+        // nếu tích hết rồi thì click thứ 2 sẽ bỏ hết tích đi
         else {
           this.checkedaAssetList = [];
         }
