@@ -215,8 +215,7 @@
                 textInput
                 v-model="asset.UseDate"
               ></MISADatepicker>
-              <!-- @blur="checkDatePicker"
-                inputClassName="m-input-error" -->
+
               <div class="datepicker-icon"></div>
             </div>
           </div>

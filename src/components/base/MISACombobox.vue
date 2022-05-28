@@ -116,7 +116,7 @@ export default {
      * Created date: 11:23 30/04/2022
      */
     setFocus($event) {
-      this.isOptionShow = true;
+      // this.isOptionShow = true;
       this.matches = [...this.optionList];
       this.$nextTick(() => {
         this.$refs.optionList.scrollTop = this.selecedIndex * 36;
@@ -209,6 +209,7 @@ export default {
       this.selecedIndex -= 1;
 
       this.scrollToItem();
+      this.selectItem();
     },
 
     down() {
@@ -217,6 +218,7 @@ export default {
       }
       this.selecedIndex += 1;
       this.scrollToItem();
+      this.selectItem();
     },
 
     tab() {

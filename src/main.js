@@ -11,7 +11,6 @@ import Toast from "./components/base/MISAToast.vue";
 import Loading from "./components/base/MISALoading.vue";
 import Dropdown from "./components/base/MISADropdown.vue";
 import Datepicker from "@vuepic/vue-datepicker";
-
 import Paginate from "vuejs-paginate-next";
 
 const app = createApp(App);
