@@ -16,7 +16,11 @@
           type="outline-button"
           buttonTitle="Không"
         ></MISAButton>
-        <MISAButton @click="btnDelete" buttonTitle="Xóa"></MISAButton>
+        <MISAButton
+          ref="focusBtn"
+          @click="btnDelete"
+          buttonTitle="Xóa"
+        ></MISAButton>
       </div>
 
       <!-- Thông báo khi hủy và không có sự thay đổi -->
@@ -26,7 +30,11 @@
           type="outline-button"
           buttonTitle="Không"
         ></MISAButton>
-        <MISAButton @click="btnCancel" buttonTitle="Hủy bỏ"></MISAButton>
+        <MISAButton
+          ref="focusBtn"
+          @click="btnCancel"
+          buttonTitle="Hủy bỏ"
+        ></MISAButton>
       </div>
 
       <!-- Thông báo khi hủy và có sự thay đổi  -->
@@ -42,6 +50,7 @@
           buttonTitle="Không lưu"
         ></MISAButton>
         <MISAButton
+          ref="focusBtn"
           @click="this.$emit('onSubmit')"
           buttonTitle="Lưu"
         ></MISAButton>
@@ -50,6 +59,7 @@
       <!-- Thông báo lỗi, chỉ có thể đóng -->
       <div v-else class="alert-button">
         <MISAButton
+          ref="focusBtn"
           @click="this.$emit('alertShow', false)"
           buttonTitle="Đóng"
         ></MISAButton>
@@ -59,8 +69,13 @@
 </template>
 <script>
 export default {
-  name: "the-alert",
-  props: ["alertTitle", "alertType", "isEditing"],
+  name: 'the-alert',
+  props: ['alertTitle', 'alertType', 'isEditing'],
+  mounted() {
+    // focus
+    this.$refs.focusBtn.setFocus();
+  },
+
   methods: {
     /**
      * Mô tả : Đóng cả cảnh báo và dialog
@@ -70,8 +85,8 @@ export default {
      * Created date: 13:59 26/04/2022
      */
     btnCancel() {
-      this.$emit("alertShow", false);
-      this.$emit("dialogShow", false);
+      this.$emit('alertShow', false);
+      this.$emit('dialogShow', false);
     },
 
     /**
@@ -83,16 +98,8 @@ export default {
      */
     btnDelete() {
       // xóa asset
-      this.$emit("removeAsset");
+      this.$emit('removeAsset');
     },
-
-    /**
-     * Mô tả : Lưu tài sản đã sửa
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 21:03 26/04/2022
-     */
   },
 };
 </script>

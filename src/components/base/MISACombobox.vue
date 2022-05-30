@@ -18,18 +18,18 @@
         :maxlength="maxlength"
         :placeholder="placeholder"
         @keydown.tab="tab"
-        @focus="setFocus($event)"
+        @focus="setFocus"
         @blur="outFocus"
         @keydown.up="up"
         @keydown.down="down"
-        @keydown.enter="selectItem"
         @input="onChangeHandler"
+        @keydown.enter="selectItem"
         :value="this.modelValue"
       />
 
       <div
         style="position: absolute; right: 0"
-        @click="toggleCbb()"
+        @click="toggleOptionList()"
         class="icon-combobox"
       >
         <div v-if="isOptionShow" class="up"></div>
@@ -41,10 +41,7 @@
         v-for="(option, index) in matches"
         :key="index"
         class="m-option-item"
-        @keydown.down="down"
-        @keydown.up="up"
-        @keydown.enter="selectItem"
-        @click="choseOption(index)"
+        @click="choseOption(index, option)"
         :class="{ 'm-item-selected': this.selecedIndex == index }"
       >
         <div class="item-text-limit">
@@ -55,35 +52,56 @@
   </div>
 </template>
 <script>
-import "clickout-event";
+import 'clickout-event';
 export default {
-  name: "the-combobox",
-  emits: ["blur", "keydown", "update:modelValue", "onClickOption"],
+  name: 'the-combobox',
+  emits: ['blur', 'keydown', 'update:modelValue', 'selectItem'],
 
   props: [
-    "hasIcon",
-    "placeholder",
-    "filterby",
-    "optionList",
-    "modelValue",
-    "name",
-    "required",
-    "title",
-    "maxlength",
+    'hasIcon',
+    'placeholder',
+    'filterby',
+    'optionList',
+    'modelValue',
+    'name',
+    'required',
+    'title',
+    'maxlength',
   ],
 
   watch: {
-    matches: function (newValue, oldValue) {
-      if (newValue.length != oldValue.length) {
-        this.selecedIndex = 0;
+    /**
+     * Mô tả : Khi nào đóng optionlist thì validate
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 23:56 28/05/2022
+     */
+    isOptionShow: function (newValue) {
+      if (newValue == false) {
+        this.$refs.input.classList.remove('input-focus');
+
+        this.validateRequired();
+      } else {
+        this.$refs.input.classList.add('input-focus');
+      }
+    },
+
+    selecedIndex: function (newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.scrollToItem();
       }
     },
 
     // Theo dõi giá trị mới của input để hiển thị optionList
     modelValue: function (newValue) {
-      this.validateRequired();
-      if (newValue == undefined || newValue == "") {
-        this.matches = [...this.optionList];
+      // Hiển thị option list:
+      this.isOptionShow = true;
+      // Gán index về 0:
+      this.selecedIndex = 0;
+
+      if (newValue == undefined || newValue == '') {
+        this.matches = this.optionList;
       } else {
         this.matches = this.optionList.filter((item) =>
           item[this.filterby]
@@ -105,7 +123,7 @@ export default {
     onChangeHandler(e) {
       e.preventDefault();
       //gán lại giá trị
-      this.$emit("update:modelValue", e.target.value);
+      this.$emit('update:modelValue', e.target.value);
     },
 
     /**
@@ -115,26 +133,29 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 11:23 30/04/2022
      */
-    setFocus($event) {
-      // this.isOptionShow = true;
-      this.matches = [...this.optionList];
-      this.$nextTick(() => {
-        this.$refs.optionList.scrollTop = this.selecedIndex * 36;
-      });
-      // khi focus vào thì chọn bôi xanh text
-      $event.target.select();
+    setFocus() {
+      // this.$refs.input.focus();
+      this.isFocus = true;
+      // Nếu chưa nhập gì thì matches list hiển thị tất cả
+      if (this.$refs.input.value == null || this.$refs.input.value == '') {
+        this.matches = this.optionList;
+      }
+
+      // Hiển thị option List:
+      this.isOptionShow = true;
+
+      // Hiển thị theo vị trí của index được chọn:
+      this.scrollToItem();
+
+      // Bôi đen tất cả text
+      this.$refs.input.select();
+      // }
     },
 
-    /**
-     * Mô tả : Xử lí sự kiệm blur
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 21:02 10/05/2022
-     */
     outFocus() {
-      this.validateRequired();
+      this.isFocus = false;
     },
+
     /**
      * Mô tả : Validate required
      * @param
@@ -145,11 +166,11 @@ export default {
     validateRequired() {
       if (
         this.required &&
-        (this.modelValue === "" || this.modelValue === undefined)
+        (this.modelValue === undefined || this.modelValue.trim() === '')
       ) {
-        this.$refs.input.classList.add("m-input-error");
+        this.$refs.input.classList.add('m-input-error');
       } else {
-        this.$refs.input.classList.remove("m-input-error");
+        this.$refs.input.classList.remove('m-input-error');
       }
     },
 
@@ -187,40 +208,67 @@ export default {
      * Created date: 12:32 22/05/2022
      */
     async selectItem() {
+      // 1. Chọn theo index của matches list:
+      // 1.1 Lấy obj đã ch gán vào selectedItem
+      this.selecedItem = this.matches[this.selecedIndex];
+      // 1.2 Cập nhật giá trị vào input
       await this.$emit(
-        "update:modelValue",
+        'update:modelValue',
         this.matches[this.selecedIndex][this.filterby]
       );
-      // Lầy giá trị của obj đã được chọn
-      this.selecedItem = this.optionList.filter(
-        (item) =>
-          item[this.filterby] == this.matches[this.selecedIndex][this.filterby]
-      );
-      //  truyền cả obj lên cho component cha
-      this.$emit("onClickOption", this.selecedItem[0]);
-      this.$refs.input.blur();
+
+      // 2. Tìm lại index của giá trị đã chọn theo List đầy đủ:
+      // 2.1 Tìm index của selectItem trong mảng ban đầu ( không phải mảng matches):
+      this.selecedIndex = this.optionList.findIndex((object) => {
+        return object === this.selecedItem;
+      });
+      // 2.2 Gán lại matches list thành optionList:
+      this.matches = [...this.optionList];
+
+      //  truyền cả obj lên cho component cha:
+      this.$emit('selectItem', this.selecedItem);
+      // Validate lại dữ liệu:
       this.isOptionShow = false;
     },
 
+    /**
+     * Mô tả : Ấn nút lên thay đổi index của option
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:47 28/05/2022
+     */
     up() {
+      // Nếu index bằng không thì không ấn được nữa
       if (this.selecedIndex == 0) {
+        this.selecedIndex = this.matches.length - 1;
         return;
       }
       this.selecedIndex -= 1;
-
-      this.scrollToItem();
-      this.selectItem();
     },
 
+    /**
+     * Mô tả :  Ấn nút xuống thay đổi index của option
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:48 28/05/2022
+     */
     down() {
       if (this.selecedIndex >= this.matches.length - 1) {
+        this.selecedIndex = 0;
         return;
       }
       this.selecedIndex += 1;
-      this.scrollToItem();
-      this.selectItem();
     },
 
+    /**
+     * Mô tả : Ấn tab thì đóng optionList
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:48 28/05/2022
+     */
     tab() {
       this.isOptionShow = false;
     },
@@ -232,15 +280,27 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 10:21 08/05/2022
      */
-    toggleCbb() {
-      this.isOptionShow = !this.isOptionShow;
-      this.matches = [...this.optionList];
+    toggleOptionList() {
+      if (this.isFocus == true) {
+        this.isOptionShow = false;
+      } else {
+        this.setFocus();
+      }
     },
 
+    /**
+     * Mô tả : Hiển thị theo index của selected item
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:49 28/05/2022
+     */
     scrollToItem() {
-      if (this.isOptionShow == true) {
-        this.$refs.optionList.scrollTop = this.selecedIndex * 36;
-      }
+      this.$nextTick(() => {
+        if (this.isOptionShow == true) {
+          this.$refs.optionList.scrollTop = this.selecedIndex * 36;
+        }
+      });
     },
   },
 
@@ -250,6 +310,7 @@ export default {
       matches: [],
       isOptionShow: false,
       selecedItem: null,
+      isFocus: false,
     };
   },
 };
