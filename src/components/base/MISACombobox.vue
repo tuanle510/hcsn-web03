@@ -13,6 +13,7 @@
         :title="title"
         :maxlength="maxlength"
         :placeholder="placeholder"
+        @click="onClick"
         @keydown.tab="tab"
         @focus="setFocus"
         @blur="outFocus"
@@ -48,21 +49,21 @@
   </div>
 </template>
 <script>
-import "clickout-event";
+import 'clickout-event';
 export default {
-  name: "the-combobox",
-  emits: ["blur", "keydown", "update:modelValue", "selectItem"],
+  name: 'the-combobox',
+  emits: ['blur', 'keydown', 'update:modelValue', 'selectItem'],
 
   props: [
-    "hasIcon",
-    "placeholder",
-    "filterby",
-    "optionList",
-    "modelValue",
-    "name",
-    "required",
-    "title",
-    "maxlength",
+    'hasIcon',
+    'placeholder',
+    'filterby',
+    'optionList',
+    'modelValue',
+    'name',
+    'required',
+    'title',
+    'maxlength',
   ],
 
   watch: {
@@ -75,11 +76,11 @@ export default {
      */
     isFocus: function (newValue) {
       if (newValue == false) {
-        this.$refs.input.classList.remove("input-focus");
+        this.$refs.input.classList.remove('input-focus');
 
         this.validateRequired();
       } else {
-        this.$refs.input.classList.add("input-focus");
+        this.$refs.input.classList.add('input-focus');
       }
     },
 
@@ -96,7 +97,7 @@ export default {
       // Gán index về 0:
       this.selecedIndex = 0;
 
-      if (newValue == undefined || newValue == "") {
+      if (newValue == undefined || newValue == '') {
         this.matches = this.optionList;
       } else {
         this.matches = this.optionList.filter((item) =>
@@ -110,6 +111,16 @@ export default {
 
   methods: {
     /**
+     * Mô tả : chọn ô input thì bôi đen chữ
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 20:59 30/05/2022
+     */
+    onClick() {
+      this.$refs.input.select();
+    },
+    /**
      * Mô tả : Lấy giá trị từ v-model bên cha
      * @param
      * @return
@@ -119,7 +130,7 @@ export default {
     onChangeHandler(e) {
       e.preventDefault();
       //gán lại giá trị
-      this.$emit("update:modelValue", e.target.value);
+      this.$emit('update:modelValue', e.target.value);
     },
 
     /**
@@ -132,7 +143,7 @@ export default {
     setFocus() {
       this.isFocus = true;
       // Nếu chưa nhập gì thì matches list hiển thị tất cả
-      if (this.$refs.input.value == null || this.$refs.input.value == "") {
+      if (this.$refs.input.value == null || this.$refs.input.value == '') {
         this.matches = this.optionList;
       }
 
@@ -164,11 +175,11 @@ export default {
     validateRequired() {
       if (
         this.required &&
-        (this.modelValue === undefined || this.modelValue.trim() === "")
+        (this.modelValue === undefined || this.modelValue.trim() === '')
       ) {
-        this.$refs.input.classList.add("m-input-error");
+        this.$refs.input.classList.add('m-input-error');
       } else {
-        this.$refs.input.classList.remove("m-input-error");
+        this.$refs.input.classList.remove('m-input-error');
       }
     },
 
@@ -212,7 +223,7 @@ export default {
       this.selecedItem = this.matches[this.selecedIndex];
       // 1.2 Cập nhật giá trị vào input
       await this.$emit(
-        "update:modelValue",
+        'update:modelValue',
         this.matches[this.selecedIndex][this.filterby]
       );
 
@@ -225,7 +236,7 @@ export default {
       this.matches = [...this.optionList];
 
       //  truyền cả obj lên cho component cha:
-      this.$emit("selectItem", this.selecedItem);
+      this.$emit('selectItem', this.selecedItem);
       // Validate lại dữ liệu:
       this.isOptionShow = false;
     },

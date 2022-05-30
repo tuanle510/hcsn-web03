@@ -185,26 +185,21 @@
         <div class="modal-row">
           <div class="modal-field">
             <label for="input">Ngày mua <span>*</span></label>
-            <div class="datepicker-container">
-              <MISADatepicker
-                required
-                name="Ngày mua"
-                ref="purchaseDate"
-                v-model="asset.PurchaseDate"
-              ></MISADatepicker>
-              <div class="datepicker-icon"></div>
-            </div>
+            <MISADatepicker
+              :required="true"
+              name="Ngày mua"
+              ref="purchaseDate"
+              v-model="asset.PurchaseDate"
+            ></MISADatepicker>
           </div>
           <div class="modal-field">
             <label for="input">Ngày bắt đầy sử dụng <span>*</span></label>
-            <div class="datepicker-container">
-              <MISADatepicker
-                required
-                name="Ngày bắt đầu sử dụng"
-                v-model="asset.UseDate"
-              ></MISADatepicker>
-              <div class="datepicker-icon"></div>
-            </div>
+            <MISADatepicker
+              :required="true"
+              name="Ngày bắt đầu sử dụng"
+              ref="UseDate"
+              v-model="asset.UseDate"
+            ></MISADatepicker>
           </div>
         </div>
       </form>
@@ -216,28 +211,27 @@
           @click="onCancel"
           buttonTitle="Hủy"
         ></MISAButton>
-        <!-- @keydown.tab="tabToFocus($event)" -->
         <MISAButton @click="onSubmit($event)" buttonTitle="Lưu"></MISAButton>
       </div>
     </div>
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 import {
   cancel_msg,
   error_msg,
   toast_msg,
-} from "../../assets/resource/ResourceMsg";
+} from '../../assets/resource/ResourceMsg';
 
 export default {
-  name: "the-dialog",
+  name: 'the-dialog',
   props: [
-    "assetSelected",
-    "dialogTitle",
-    "isEditing",
-    "departmentData",
-    "categoryData",
+    'assetSelected',
+    'dialogTitle',
+    'isEditing',
+    'departmentData',
+    'categoryData',
   ],
 
   beforeMount() {
@@ -269,7 +263,7 @@ export default {
         return this.formatSalary(this.asset.DepreciationValue.toString());
       },
       set(newValue) {
-        newValue = newValue.replaceAll(".", "");
+        newValue = newValue.replaceAll('.', '');
         this.asset.DepreciationValue = newValue;
       },
     },
@@ -286,7 +280,7 @@ export default {
         return this.formatSalary(this.asset.Cost.toString());
       },
       set(newValue) {
-        newValue = newValue.replaceAll(".", "");
+        newValue = newValue.replaceAll('.', '');
         this.asset.Cost = newValue;
         // Tính giá trị hao mòn năm
         this.asset.DepreciationValue = Math.floor(
@@ -315,6 +309,9 @@ export default {
   },
 
   watch: {
+    'this.asset.PurchaseDate'(newValue) {
+      console.log(newValue);
+    },
     /**
      * Mô tả : Theo dõi sự thay đổi của mã loại tài sản để gán dữ liệu cho các trường input
      * @param
@@ -322,14 +319,14 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 00:29 20/05/2022
      */
-    "asset.FixedAssetCategoryCode"(newValue) {
+    'asset.FixedAssetCategoryCode'(newValue) {
       var data = this.categoryData.find(
         (item) => item.FixedAssetCategoryCode == newValue
       );
       if (!data) {
-        this.asset.FixedAssetCategoryName = "";
-        this.asset.DepreciationRate = "";
-        this.asset.LifeTime = "";
+        this.asset.FixedAssetCategoryName = '';
+        this.asset.DepreciationRate = '';
+        this.asset.LifeTime = '';
       }
     },
     /**
@@ -339,31 +336,19 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 00:29 20/05/2022
      */
-    "asset.DepartmentCode"(newValue) {
+    'asset.DepartmentCode'(newValue) {
       var data = this.departmentData.find(
         (item) => item.DepartmentCode == newValue
       );
       if (data) {
         this.asset.DepartmentName = data.DepartmentName;
       } else {
-        this.asset.DepartmentName = "";
+        this.asset.DepartmentName = '';
       }
     },
   },
 
   methods: {
-    /**
-     * Mô tả : Validate DatePicker khi blur
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 00:09 25/05/2022
-     */
-    // checkDatePicker() {
-    //   if (this.asset.PurchaseDate == "" || this.asset.PurchaseDate == null) {
-    //     this.$refs.purchaseDate.inputClassName = "m-input-error";
-    //   }
-    // },
     /**
      * Mô tả : format tiền
      * @param
@@ -372,7 +357,7 @@ export default {
      * Created date: 00:35 03/05/2022
      */
     formatSalary(value) {
-      var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -429,21 +414,21 @@ export default {
       // Gửi dữ liệu lên api
       try {
         const res = await axios.post(
-          "http://localhost:5234/api/v1/FixedAssets",
+          'http://localhost:5234/api/v1/FixedAssets',
           this.asset
         );
-        this.$emit("alertShow", false);
-        this.$emit("dialogShow", false);
-        if (res.statusText == "Created") {
+        this.$emit('alertShow', false);
+        this.$emit('dialogShow', false);
+        if (res.statusText == 'Created') {
           // Cập nhật lại bảng
-          this.$emit("filterAsset");
+          this.$emit('filterAsset');
           // Cập nhật lại tổng bản ghi
-          this.$emit("getAssetData");
+          this.$emit('getAssetData');
           // Hiên thị toast thành công
-          this.$emit("toastShow", toast_msg.CREATE_SUCCESS);
+          this.$emit('toastShow', toast_msg.CREATE_SUCCESS);
         }
       } catch (error) {
-        this.$emit("alertShow", true, error.response.data.data.data[0]);
+        this.$emit('alertShow', true, error.response.data.data.data[0]);
       }
     },
 
@@ -463,19 +448,19 @@ export default {
           `http://localhost:5234/api/v1/FixedAssets/${this.asset.FixedAssetId}`,
           this.asset
         );
-        this.$emit("alertShow", false);
-        this.$emit("dialogShow", false);
-        if (res.statusText == "OK") {
+        this.$emit('alertShow', false);
+        this.$emit('dialogShow', false);
+        if (res.statusText == 'OK') {
           // Cập nhật lại bảng:
-          this.$emit("filterAsset");
+          this.$emit('filterAsset');
           // Cập nhật lại tổng bản ghi
-          this.$emit("getAssetData");
+          this.$emit('getAssetData');
           // Hiển thị thông báo thành công:
-          this.$emit("toastShow", toast_msg.SAVE_SUCESS);
+          this.$emit('toastShow', toast_msg.SAVE_SUCESS);
         }
       } catch (error) {
         console.log(error.response);
-        this.$emit("alertShow", true, error.response.data.data.data[0]);
+        this.$emit('alertShow', true, error.response.data.data.data[0]);
       }
     },
 
@@ -490,10 +475,10 @@ export default {
       // Kiểm tra sự thay đổi trong các ô input:
       // Nếu không có hiển thị thông báo đóng:
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
-        this.$emit("alertShow", true, cancel_msg.CANCEL, "cancel");
+        this.$emit('alertShow', true, cancel_msg.CANCEL, 'cancel');
       } else {
         // Nếu có sự thay đổi hiển thị cảnh báo báo:
-        this.$emit("alertShow", true, cancel_msg.CANCEL_CHANGE, "cancelChange");
+        this.$emit('alertShow', true, cancel_msg.CANCEL_CHANGE, 'cancelChange');
       }
     },
 
@@ -514,36 +499,34 @@ export default {
       // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
         // Kiểm tra giá trị của input
-        if (element.required && element.value.trim() == "") {
+        if (element.required && element.value.trim() == '') {
           if (first) {
             first = false;
             this.firstEmptyElement = element;
           }
-          element.classList.add("m-input-error");
+          element.classList.add('m-input-error');
           this.errorList.push(`${error_msg.EMPTY_VALUE}${element.name}`);
         }
       });
 
-      console.log(this.firstEmptyElement);
-
       // 2. Validate nghiệp vụ:
       // 2.1 Tỉ lệ hao mòn khác 1/số năm sử dụng:
-      if (
-        this.asset.DepreciationRate !== (1 / this.asset.LifeTime).toFixed(4)
-      ) {
-        this.errorList.push("Tỷ lệ hao mòn năm phải bằng 1/Số năm sử dụng");
-      }
+      // if (
+      //   this.asset.DepreciationRate !== (1 / this.asset.LifeTime).toFixed(4)
+      // ) {
+      //   this.errorList.push('Tỷ lệ hao mòn năm phải bằng 1/Số năm sử dụng');
+      // }
 
       // 2.2 Hao mòn năm nhỏ hơn nguyên giá:
       if (Number(this.asset.DepreciationValue) > Number(this.asset.Cost)) {
-        this.errorList.push("Hao mòn năm phải nhỏ hơn hoặc bằng nguyên giá");
+        this.errorList.push('Hao mòn năm phải nhỏ hơn hoặc bằng nguyên giá');
       }
 
       // console.log(Object.entries(this.$refs));
 
       // 3. Nếu không có lỗi gì thì thực hiện thêm hoặc sửa
       if (this.errorList.length != 0) {
-        this.$emit("alertShow", true, this.errorList[0]);
+        this.$emit('alertShow', true, this.errorList[0]);
       } else {
         this.isEditing ? this.onUpdateAsset() : this.onCreateAsset();
       }

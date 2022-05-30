@@ -13,6 +13,7 @@
     :isNumber="isNumber"
     @keypress="onlyNumber"
     @blur="outFocus($event)"
+    @click="this.$refs.input.select()"
     @input="onChangeHandler"
     :value="this.modelValue"
   />
@@ -44,9 +45,9 @@ export default {
     'blur',
   ],
 
-  updated() {
-    this.validateRequired();
-  },
+  // updated() {
+  //   this.validateRequired();
+  // },
 
   methods: {
     // Nhận thay đổi của component cha
