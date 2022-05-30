@@ -60,7 +60,7 @@
       <div v-else class="alert-button">
         <MISAButton
           ref="focusBtn"
-          @click="this.$emit('alertShow', false)"
+          @click="closeBtn"
           buttonTitle="Đóng"
         ></MISAButton>
       </div>
@@ -69,8 +69,8 @@
 </template>
 <script>
 export default {
-  name: 'the-alert',
-  props: ['alertTitle', 'alertType', 'isEditing'],
+  name: "the-alert",
+  props: ["alertTitle", "alertType", "isEditing", "isCloseOnly"],
   mounted() {
     // focus
     this.$refs.focusBtn.setFocus();
@@ -85,8 +85,8 @@ export default {
      * Created date: 13:59 26/04/2022
      */
     btnCancel() {
-      this.$emit('alertShow', false);
-      this.$emit('dialogShow', false);
+      this.$emit("alertShow", false);
+      this.$emit("dialogShow", false);
     },
 
     /**
@@ -98,7 +98,22 @@ export default {
      */
     btnDelete() {
       // xóa asset
-      this.$emit('removeAsset');
+      this.$emit("removeAsset");
+    },
+
+    /**
+     * Mô tả : Xử lí sự kiện nút Đóng
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 16:38 30/05/2022
+     */
+    closeBtn() {
+      this.$emit("alertShow", false);
+      if (this.isCloseOnly == false) {
+        this.$emit("setFocusEmpty");
+      }
+      this.$emit("setCloseOnly", false);
     },
   },
 };
