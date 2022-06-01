@@ -21,39 +21,46 @@
 </template>
 <script>
 export default {
-  name: 'the-input',
+  name: "the-input",
 
   props: [
-    'number', //style number chuyền từ component cha
-    'placeholder',
-    'disabled',
-    'classParent',
-    'type',
-    'modelValue',
-    'maxlength',
-    'required',
-    'name',
-    'isNumber',
+    "number", //style number chuyền từ component cha
+    "placeholder",
+    "disabled",
+    "classParent",
+    "type",
+    "modelValue",
+    "maxlength",
+    "required",
+    "name",
+    "isNumber",
   ],
 
   emits: [
-    'setIsValid',
-    'update:modelValue',
-    'keypress',
-    'keydown.down',
-    'keydown.up',
-    'blur',
+    "setIsValid",
+    "update:modelValue",
+    "keypress",
+    "keydown.down",
+    "keydown.up",
+    "blur",
   ],
 
-  // updated() {
-  //   this.validateRequired();
-  // },
+  /**
+   * Mô tả : Validate khi giá trị input thay đổi
+   * @param
+   * @return
+   * Created by: Lê Thiện Tuấn - MF1118
+   * Created date: 09:46 31/05/2022
+   */
+  updated() {
+    this.validateRequired();
+  },
 
   methods: {
     // Nhận thay đổi của component cha
     onChangeHandler(e) {
       e.preventDefault();
-      this.$emit('update:modelValue', e.target.value);
+      this.$emit("update:modelValue", e.target.value);
     },
 
     /**
@@ -92,18 +99,18 @@ export default {
      */
     outFocus($event) {
       this.validateRequired();
-      this.$emit('blur', $event);
+      this.$emit("blur", $event);
     },
 
     validateRequired() {
       if (
         this.required &&
         (this.modelValue === undefined ||
-          this.modelValue.toString().trim() === '')
+          this.modelValue.toString().trim() === "")
       ) {
-        this.$refs.input.classList.add('m-input-error');
+        this.$refs.input.classList.add("m-input-error");
       } else {
-        this.$refs.input.classList.remove('m-input-error');
+        this.$refs.input.classList.remove("m-input-error");
       }
     },
   },

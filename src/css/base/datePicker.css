@@ -44,6 +44,7 @@
   height: 36px !important;
   font-family: MISA Font !important;
   font-size: 14px !important;
+  transition: none !important;
 }
 .dp__input_icon_pad {
   padding-left: 14px !important;
@@ -67,7 +68,7 @@
 }
 
 .datepicker-container .datepicker-icon {
-  background: url('../../assets/icon/qlts-icon.png') no-repeat -287px -67px;
+  background: url("../../assets/icon/qlts-icon.png") no-repeat -287px -67px;
   width: 18px;
   height: 18px;
   position: absolute;

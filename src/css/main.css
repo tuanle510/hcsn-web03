@@ -1,8 +1,14 @@
+@import url(./base/icon.css);
+
+/* main */
 @import url(./layout/header.css);
 @import url(./layout/navbar.css);
 @import url(./layout/content.css);
-@import url(./base/icon.css);
 
+/* login */
+@import url(./page/login.css);
+
+/* base */
 @import url(./base/alert.css);
 @import url(./base/input.css);
 @import url(./base/button.css);
