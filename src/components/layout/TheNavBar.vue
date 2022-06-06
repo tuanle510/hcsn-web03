@@ -40,8 +40,8 @@
 </template>
 <script>
 export default {
-  name: 'the-navbar',
-  props: ['navBarWidth'],
+  name: "the-navbar",
+  props: ["navBarWidth"],
 
   beforeMount() {
     this.navBarSeleced = this.navBarList[1];
@@ -50,9 +50,16 @@ export default {
   methods: {
     onClickToggleNavBar() {
       this.isNavBarClose = !this.isNavBarClose;
-      this.$emit('onCloseNavBar', this.isNavBarClose);
+      this.$emit("onCloseNavBar", this.isNavBarClose);
     },
 
+    /**
+     * Mô tả : Ấn vào từng dòng trong navbar
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 14:11 02/06/2022
+     */
     onClickNavBar(navbar) {
       this.navBarSeleced = navbar;
     },
@@ -63,34 +70,34 @@ export default {
       navBarSeleced: {},
       navBarList: [
         {
-          title: 'Tổng quan',
-          icon: 'home',
+          title: "Tổng quan",
+          icon: "home",
         },
         {
-          title: 'Tài sản',
-          icon: 'asset',
-          childList: [{ childTitle: 'Tổng quan 1' }],
+          title: "Tài sản",
+          icon: "asset",
+          childList: [{ childTitle: "Tổng quan 1" }],
         },
         {
-          title: 'Tài sản HT-ĐB',
-          icon: 'line',
-          childList: [{ childTitle: 'Tổng quan 1' }],
+          title: "Tài sản HT-ĐB",
+          icon: "line",
+          childList: [{ childTitle: "Tổng quan 1" }],
         },
         {
-          title: 'Công cụ dụng cụ',
-          icon: 'tool',
-          childList: [{ childTitle: 'Tổng quan 1' }],
+          title: "Công cụ dụng cụ",
+          icon: "tool",
+          childList: [{ childTitle: "Tổng quan 1" }],
         },
-        { title: 'Danh mục', icon: 'category' },
+        { title: "Danh mục", icon: "category" },
         {
-          title: 'Tra cứu',
-          icon: 'search',
-          childList: [{ childTitle: 'Tổng quan 1' }],
+          title: "Tra cứu",
+          icon: "search",
+          childList: [{ childTitle: "Tổng quan 1" }],
         },
         {
-          title: 'Báo cáo',
-          icon: 'report',
-          childList: [{ childTitle: 'Tổng quan 1' }],
+          title: "Báo cáo",
+          icon: "report",
+          childList: [{ childTitle: "Tổng quan 1" }],
         },
       ],
     };

@@ -118,7 +118,8 @@ export default {
      * Created date: 20:59 30/05/2022
      */
     onClick() {
-      this.$refs.input.select();
+      this.isToggle = false;
+      this.setFocus();
     },
     /**
      * Mô tả : Lấy giá trị từ v-model bên cha

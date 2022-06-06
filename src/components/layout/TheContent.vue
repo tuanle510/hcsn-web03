@@ -56,26 +56,22 @@
         <table class="m-table">
           <thead>
             <tr>
-              <th style="padding-left: 16px; width: 50px">
+              <th class="max-w-50" style="padding-left: 16px">
                 <MISACheckbox
                   @click="onCheckedAll"
                   :checked="checkedAll"
                 ></MISACheckbox>
               </th>
-              <th class="text-align-left" style="width: 50px">STT</th>
-              <th class="text-align-left">Mã tài sản</th>
-              <th class="text-align-left">Tên tài sản</th>
-              <th class="text-align-left">Loại tài sản</th>
-              <th class="text-align-left">Bộ phận sử dụng</th>
-              <th class="text-align-right" style="width: 60px">Số lượng</th>
-              <th class="text-align-right" style="width: 130px">Nguyên giá</th>
-              <th class="text-align-right" style="width: 130px">
-                HM/KH lũy kế
-              </th>
-              <th class="text-align-right" style="width: 130px">
-                Giá trị còn lại
-              </th>
-              <th class="text-align-center" style="width: 90px">Chức năng</th>
+              <th class="text-align-left max-w-50">STT</th>
+              <th class="text-align-left max-w-130">Mã tài sản</th>
+              <th class="text-align-left max-w-150">Tên tài sản</th>
+              <th class="text-align-left max-w-150">Loại tài sản</th>
+              <th class="text-align-left max-w-130">Bộ phận sử dụng</th>
+              <th class="text-align-right max-w-60">Số lượng</th>
+              <th class="text-align-right min-max-w-130">Nguyên giá</th>
+              <th class="text-align-right min-max-w-130">HM/KH lũy kế</th>
+              <th class="text-align-right min-max-w-130">Giá trị còn lại</th>
+              <th class="text-align-center max-w-90">Chức năng</th>
             </tr>
           </thead>
           <div v-if="isLostConnection" class="table-msg">
@@ -99,7 +95,7 @@
                 ></MISACheckbox>
               </td>
               <td class="text-align-left">{{ index + 1 }}</td>
-              <td class="text-align-left max-w-130">
+              <td class="text-align-left">
                 {{ asset.FixedAssetCode }}
               </td>
               <td
@@ -146,48 +142,50 @@
       </div>
 
       <!-- paging -->
-      <table class="m-table-footer">
-        <tbody>
-          <tr>
-            <td>
-              <div class="m-paging-left">
-                <div class="m-total-number">
-                  Tổng số: <strong>{{ this.totalAssetListLength }}</strong> bản
-                  ghi
+      <div class="m-table-container footer-container">
+        <table class="m-table-footer">
+          <tbody>
+            <tr>
+              <td style="min-width: 630px">
+                <div class="m-paging-left">
+                  <div class="m-total-number">
+                    Tổng số:
+                    <strong>{{ this.totalAssetListLength }}</strong> bản ghi
+                  </div>
+                  <MISADropdown
+                    :defaultValue="this.pageSize"
+                    @onChose="getPageSize"
+                  ></MISADropdown>
+                  <MISAPaginate
+                    v-model="pageIndex"
+                    :pageCount="totalPageIndex"
+                    :prev-text="'pre'"
+                    :prev-link-class="'prev-link-class'"
+                    :next-text="'next'"
+                    :next-link-class="'next-link-class'"
+                    :container-class="'m-paging-list'"
+                    :prev-class="'prev-class'"
+                    :click-handler="getPageIndex"
+                  ></MISAPaginate>
                 </div>
-                <MISADropdown
-                  :defaultValue="this.pageSize"
-                  @onChose="getPageSize"
-                ></MISADropdown>
-                <MISAPaginate
-                  v-model="pageIndex"
-                  :pageCount="totalPageIndex"
-                  :prev-text="'pre'"
-                  :prev-link-class="'prev-link-class'"
-                  :next-text="'next'"
-                  :next-link-class="'next-link-class'"
-                  :container-class="'m-paging-list'"
-                  :prev-class="'prev-class'"
-                  :click-handler="getPageIndex"
-                ></MISAPaginate>
-              </div>
-            </td>
-            <td class="text-align-right" style="width: 60px">
-              {{ quantityTotal }}
-            </td>
-            <td class="text-align-right" style="width: 130px">
-              {{ currencyFormat(costTotal) }}
-            </td>
-            <td class="text-align-right" style="width: 130px">
-              {{ currencyFormat(accumulatedTotal) }}
-            </td>
-            <td class="text-align-right" style="width: 130px">
-              {{ currencyFormat(costTotal - accumulatedTotal) }}
-            </td>
-            <td style="width: 90px"></td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+              <td class="text-align-right max-w-60">
+                {{ quantityTotal }}
+              </td>
+              <td class="text-align-right min-max-w-130">
+                {{ currencyFormat(costTotal) }}
+              </td>
+              <td class="text-align-right min-max-w-130">
+                {{ currencyFormat(accumulatedTotal) }}
+              </td>
+              <td class="text-align-right min-max-w-130">
+                {{ currencyFormat(costTotal - accumulatedTotal) }}
+              </td>
+              <td class="max-w-90"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div v-if="isDialogLoading" class="m-dialog">
@@ -334,7 +332,7 @@ export default {
      * Created date: 22:01 27/04/2022
      */
     try {
-      const res = await axios.get("http://localhost:5234/api/v1/Departments");
+      const res = await axios.get("Departments");
       this.departmentData = res.data;
     } catch (error) {
       console.log(error);
@@ -348,9 +346,7 @@ export default {
      * Created date: 13:33 29/04/2022
      */
     try {
-      const res = await axios.get(
-        "http://localhost:5234/api/v1/FixedAssetCategories"
-      );
+      const res = await axios.get("FixedAssetCategories");
       this.categoryData = res.data;
     } catch (error) {
       console.log(error);
@@ -423,18 +419,15 @@ export default {
     async filterAsset() {
       this.isLoading = true;
       try {
-        const res = await axios.get(
-          "http://localhost:5234/api/v1/FixedAssets/Filter",
-          {
-            params: {
-              FixedAssetFilter: this.searchBox,
-              FixedAssetCategoryName: this.searchCategory,
-              DepartmentName: this.searchDepartment,
-              pageIndex: this.pageIndex,
-              pageSize: this.pageSize,
-            },
-          }
-        );
+        const res = await axios.get("FixedAssets/Filter", {
+          params: {
+            FixedAssetFilter: this.searchBox,
+            FixedAssetCategoryName: this.searchCategory,
+            DepartmentName: this.searchDepartment,
+            pageIndex: this.pageIndex,
+            pageSize: this.pageSize,
+          },
+        });
         this.assetData = res.data.FilterList;
         this.assetLength = res.data.FilterCount;
         this.isLoading = false;
@@ -452,7 +445,7 @@ export default {
      */
     async getAssetData() {
       try {
-        const res = await axios.get("http://localhost:5234/api/v1/FixedAssets");
+        const res = await axios.get("FixedAssets");
         this.totalAssetListLength = res.data.length;
       } catch (error) {
         console.log(error);
@@ -481,9 +474,7 @@ export default {
     async getNewAssetCode() {
       this.isDialogLoading = true;
       try {
-        var res = await axios.get(
-          "http://localhost:5234/api/v1/FixedAssets/NewFixedAssetCode"
-        );
+        var res = await axios.get("FixedAssets/NewFixedAssetCode");
         // Gán dữ liệu trả về vào asset Code mới
         this.newAssetCode = res.data;
       } catch (error) {
@@ -620,9 +611,7 @@ export default {
     async getAssetById(assetId) {
       this.isDialogLoading = true;
       try {
-        const res = await axios.get(
-          `http://localhost:5234/api/v1/FixedAssets/${assetId}`
-        );
+        const res = await axios.get(`FixedAssets/${assetId}`);
         this.assetSelected = res.data;
       } catch (error) {
         console.error(error);
@@ -684,15 +673,12 @@ export default {
       });
       // Gửi lên API
       try {
-        const res = await axios.delete(
-          `http://localhost:5234/api/v1/FixedAssets/DeleteMulti`,
-          {
-            data: JSON.stringify(idList),
-            headers: {
-              "content-type": "application/json",
-            },
-          }
-        );
+        const res = await axios.delete(`FixedAssets/DeleteMulti`, {
+          data: JSON.stringify(idList),
+          headers: {
+            "content-type": "application/json",
+          },
+        });
         // Load lại bảng
         this.filterAsset();
 

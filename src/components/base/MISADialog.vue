@@ -413,10 +413,7 @@ export default {
       this.autoFieldData();
       // Gửi dữ liệu lên api
       try {
-        const res = await axios.post(
-          "http://localhost:5234/api/v1/FixedAssets",
-          this.asset
-        );
+        const res = await axios.post("FixedAssets", this.asset);
         this.$emit("alertShow", false);
         this.$emit("dialogShow", false);
         if (res.statusText == "Created") {
@@ -445,7 +442,7 @@ export default {
       // Gửi dữ liệu lên api
       try {
         const res = await axios.put(
-          `http://localhost:5234/api/v1/FixedAssets/${this.asset.FixedAssetId}`,
+          `FixedAssets/${this.asset.FixedAssetId}`,
           this.asset
         );
         this.$emit("alertShow", false);
@@ -509,13 +506,20 @@ export default {
         }
       });
 
+      console.log(this.asset.DepreciationRate);
+      console.log(1 / this.asset.LifeTime);
+
       // 2. Validate nghiệp vụ:
       // 2.1 Tỉ lệ hao mòn khác 1/số năm sử dụng:
-      // if (
-      //   this.asset.DepreciationRate !== (1 / this.asset.LifeTime).toFixed(4)
-      // ) {
-      //   this.errorList.push('Tỷ lệ hao mòn năm phải bằng 1/Số năm sử dụng');
-      // }
+      if (this.asset.LifeTime == 0 && this.asset.DepreciationRate != 0) {
+        this.errorList.push("Tỷ lệ hao mòn năm phải bằng 1/Số năm sử dụng");
+      } else if (
+        this.asset.LifeTime != 0 &&
+        this.asset.DepreciationRate !=
+          Number((1 / this.asset.LifeTime).toFixed(4))
+      ) {
+        this.errorList.push("Tỷ lệ hao mòn năm phải bằng 1/Số năm sử dụng");
+      }
 
       // 2.2 Hao mòn năm nhỏ hơn nguyên giá:
       if (Number(this.asset.DepreciationValue) > Number(this.asset.Cost)) {

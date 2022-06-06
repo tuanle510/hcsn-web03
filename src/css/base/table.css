@@ -15,6 +15,31 @@
   border-radius: 3px;
   position: relative;
 }
+
+.m-grip .m-table-container.footer-container {
+  height: 40px;
+}
+
+.max-w-50 {
+  min-width: 50px;
+  width: 50px;
+  max-width: 50px;
+}
+.max-w-60 {
+  min-width: 60px;
+  width: 60px;
+  max-width: 60px;
+}
+.max-w-90 {
+  min-width: 90px;
+  width: 90px;
+  max-width: 90px;
+}
+.min-max-w-130 {
+  min-width: 130px;
+  width: 130px;
+  max-width: 130px;
+}
 .max-w-130 {
   min-width: 100px;
   max-width: 130px;
@@ -131,14 +156,14 @@
 
 .m-paging-left .m-paging-list .prev-class {
   cursor: pointer;
-  background: url('/src/assets/icon/qlts-icon.png') no-repeat -29px -246px;
+  background: url("/src/assets/icon/qlts-icon.png") no-repeat -29px -246px;
   width: 7px;
   height: 12px;
 }
 
 .m-paging-left .m-paging-list .page-item:last-child {
   cursor: pointer;
-  background: url('/src/assets/icon/qlts-icon.png') no-repeat -73px -246px;
+  background: url("/src/assets/icon/qlts-icon.png") no-repeat -73px -246px;
   width: 7px;
   height: 12px;
 }
