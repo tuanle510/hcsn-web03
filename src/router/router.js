@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../page/Home.vue";
 import Login from "../page/Login.vue";
 import store from "../store/store";
+import MISAContent from "../components/layout/TheContent.vue";
+import MISALisence from "../components/layout/TheLisence.vue";
 
 const routes = [
   {
@@ -9,6 +11,10 @@ const routes = [
     name: "Home",
     component: Home,
     meta: { requiresAuth: true },
+    children: [
+      { path: "/asset", component: MISAContent },
+      { path: "/lisence", component: MISALisence },
+    ],
   },
   {
     path: "/login",

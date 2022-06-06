@@ -69,8 +69,8 @@ export default {
             "Content-Type": "application/json",
           },
         });
-        if (res.status == 200) {
-          this.$router.push("/");
+        if (res.status == 200 ) {
+          this.$router.push("/asset");
           this.setUser(res.data);
         }
       } catch (error) {}

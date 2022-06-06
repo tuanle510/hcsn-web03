@@ -149,7 +149,7 @@
 
       <!-- paging -->
       <div
-        class="m-table-footer-container"
+        class="m-footer-container"
         ref="FooterTable"
         @scroll="
           this.$refs.MainTable.scrollLeft = this.$refs.FooterTable.scrollLeft

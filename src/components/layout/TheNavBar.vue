@@ -6,10 +6,10 @@
     </div>
 
     <ul class="m-navbar-list">
+      <!-- @click="onClickNavBar(navbar)" -->
       <li
         v-for="(navbar, index) in navBarList"
         :key="index"
-        @click="onClickNavBar(navbar)"
         class="navbar-item"
         :class="{ 'navbar-selected': this.navBarSeleced == navbar }"
       >
@@ -21,7 +21,9 @@
           <div v-else :class="navbar.icon"></div>
         </div>
         <div class="navbar-item-title" v-if="!isNavBarClose">
-          <p>{{ navbar.title }}</p>
+          <router-link :to="'/' + navbar.link">
+            {{ navbar.title }}
+          </router-link>
           <div class="navbar-down" v-show="navbar.hasOwnProperty('childList')">
             <div class="dropdown"></div>
           </div>
@@ -76,7 +78,13 @@ export default {
         {
           title: "Tài sản",
           icon: "asset",
+          link: "asset",
           childList: [{ childTitle: "Tổng quan 1" }],
+        },
+        {
+          title: "Ghi tăng",
+          icon: "asset",
+          link: "lisence",
         },
         {
           title: "Tài sản HT-ĐB",

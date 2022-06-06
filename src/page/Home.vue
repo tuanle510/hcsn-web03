@@ -6,7 +6,8 @@
       :style="{ width: 'calc(100% - ' + this.navBarWidth + 'px)' }"
     >
       <MISAHeader />
-      <MISAContent></MISAContent>
+      <!-- <MISAContent></MISAContent> -->
+      <router-view></router-view>
     </div>
   </div>
 </template>

@@ -500,14 +500,12 @@ export default {
           if (first) {
             first = false;
             this.firstEmptyElement = element;
+            console.log(this.firstEmptyElement);
           }
           element.classList.add("m-input-error");
           this.errorList.push(`${error_msg.EMPTY_VALUE}${element.name}`);
         }
       });
-
-      console.log(this.asset.DepreciationRate);
-      console.log(1 / this.asset.LifeTime);
 
       // 2. Validate nghiệp vụ:
       // 2.1 Tỉ lệ hao mòn khác 1/số năm sử dụng:

@@ -1,15 +1,23 @@
 <template>
-  <div class="m-dropdown" v-on:clickout="this.isOptionShow = false">
-    <div
-      class="m-dropdown-main"
-      @click="this.isOptionShow = !this.isOptionShow"
-    >
+  <div
+    class="m-dropdown"
+    v-on:clickout="this.isOptionShow = false"
+    ref="dropdown"
+  >
+    <div class="m-dropdown-main" @click.prevent="onClick">
       <div class="dropdown-title">{{ optionChose }}</div>
       <div class="dropdown-icon">
         <div :class="[this.isOptionShow ? 'up' : 'down']"></div>
       </div>
     </div>
-    <ul v-if="isOptionShow" class="m-dropdown-option">
+    <ul
+      v-if="isOptionShow"
+      class="m-dropdown-option"
+      :style="{
+        top: this.optionPos.top + 'px',
+        left: this.optionPos.left + 'px',
+      }"
+    >
       <li
         v-for="(option, index) in optionList"
         :key="index"
@@ -29,6 +37,15 @@ export default {
     this.optionChose = this.defaultValue;
   },
   methods: {
+    onClick() {
+      let dropdown = this.$refs.dropdown.getBoundingClientRect();
+      this.optionPos = {
+        top: dropdown.top - 100,
+        left: dropdown.left,
+      };
+
+      this.isOptionShow = !this.isOptionShow;
+    },
     onChose(option) {
       this.optionChose = option;
       this.isOptionShow = false;
@@ -40,6 +57,7 @@ export default {
       optionList: [20, 30, 40, 100],
       isOptionShow: false,
       optionChose: null,
+      optionPos: {},
     };
   },
 };
