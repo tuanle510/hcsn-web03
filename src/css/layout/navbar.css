@@ -51,6 +51,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
 }
 
 .m-navbar .m-navbar-list .navbar-item .navbar-item-title {

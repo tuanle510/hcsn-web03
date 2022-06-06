@@ -6,9 +6,9 @@
     </div>
 
     <ul class="m-navbar-list">
-      <!-- @click="onClickNavBar(navbar)" -->
       <li
         v-for="(navbar, index) in navBarList"
+        @click="onClickNavBar(navbar)"
         :key="index"
         class="navbar-item"
         :class="{ 'navbar-selected': this.navBarSeleced == navbar }"
@@ -20,9 +20,13 @@
           ></div>
           <div v-else :class="navbar.icon"></div>
         </div>
-        <div class="navbar-item-title" v-if="!isNavBarClose">
-          <router-link :to="'/' + navbar.link">
-            {{ navbar.title }}
+
+        <div class="navbar-item-title">
+          <router-link
+            :to="'/' + navbar.link"
+            style="line-height: 20px; padding: 10px 90px 10px 44px; z-index: 20"
+          >
+            <p v-show="!isNavBarClose">{{ navbar.title }}</p>
           </router-link>
           <div class="navbar-down" v-show="navbar.hasOwnProperty('childList')">
             <div class="dropdown"></div>
@@ -42,8 +46,8 @@
 </template>
 <script>
 export default {
-  name: "the-navbar",
-  props: ["navBarWidth"],
+  name: 'the-navbar',
+  props: ['navBarWidth'],
 
   beforeMount() {
     this.navBarSeleced = this.navBarList[1];
@@ -52,7 +56,7 @@ export default {
   methods: {
     onClickToggleNavBar() {
       this.isNavBarClose = !this.isNavBarClose;
-      this.$emit("onCloseNavBar", this.isNavBarClose);
+      this.$emit('onCloseNavBar', this.isNavBarClose);
     },
 
     /**
@@ -71,45 +75,49 @@ export default {
       isNavBarClose: false, //đóng mở navbar
       navBarSeleced: {},
       navBarList: [
+        // {
+        //   title: 'Tổng quan',
+        //   icon: 'home',
+        // },
         {
-          title: "Tổng quan",
-          icon: "home",
+          title: 'Tài sản',
+          icon: 'asset',
+          link: 'asset',
+          childList: [{ childTitle: 'Tổng quan 1' }],
         },
         {
-          title: "Tài sản",
-          icon: "asset",
-          link: "asset",
-          childList: [{ childTitle: "Tổng quan 1" }],
+          title: 'Ghi tăng',
+          icon: 'setting',
+          link: 'lisence',
         },
-        {
-          title: "Ghi tăng",
-          icon: "asset",
-          link: "lisence",
-        },
-        {
-          title: "Tài sản HT-ĐB",
-          icon: "line",
-          childList: [{ childTitle: "Tổng quan 1" }],
-        },
-        {
-          title: "Công cụ dụng cụ",
-          icon: "tool",
-          childList: [{ childTitle: "Tổng quan 1" }],
-        },
-        { title: "Danh mục", icon: "category" },
-        {
-          title: "Tra cứu",
-          icon: "search",
-          childList: [{ childTitle: "Tổng quan 1" }],
-        },
-        {
-          title: "Báo cáo",
-          icon: "report",
-          childList: [{ childTitle: "Tổng quan 1" }],
-        },
+        // {
+        //   title: 'Tài sản HT-ĐB',
+        //   icon: 'line',
+        //   childList: [{ childTitle: 'Tổng quan 1' }],
+        // },
+        // {
+        //   title: 'Công cụ dụng cụ',
+        //   icon: 'tool',
+        //   childList: [{ childTitle: 'Tổng quan 1' }],
+        // },
+        // { title: 'Danh mục', icon: 'category' },
+        // {
+        //   title: 'Tra cứu',
+        //   icon: 'search',
+        //   childList: [{ childTitle: 'Tổng quan 1' }],
+        // },
+        // {
+        //   title: 'Báo cáo',
+        //   icon: 'report',
+        //   childList: [{ childTitle: 'Tổng quan 1' }],
+        // },
       ],
     };
   },
 };
 </script>
-<style></style>
+<style>
+.text-show {
+  visibility: hidden;
+}
+</style>

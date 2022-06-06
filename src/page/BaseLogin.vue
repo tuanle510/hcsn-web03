@@ -44,16 +44,16 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import { mapGetters, mapMutations } from "vuex";
+import axios from 'axios';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
   computed: {
-    ...mapGetters(["user"]),
+    ...mapGetters(['user']),
   },
 
   methods: {
-    ...mapMutations(["setUser"]),
+    ...mapMutations(['setUser']),
     /**
      * Mô tả : login
      * @param
@@ -63,25 +63,27 @@ export default {
      */
     async onLoginClick() {
       try {
-        const res = await axios.post("Users/Login", this.loginForm, {
+        const res = await axios.post('Users/Login', this.loginForm, {
           headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
           },
         });
-        if (res.status == 200 ) {
-          this.$router.push("/asset");
+        if (res.status == 200) {
+          this.$router.push('/asset');
           this.setUser(res.data);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 
   data() {
     return {
       loginForm: {
-        email: "",
-        password: "",
+        email: '',
+        password: '',
       },
     };
   },

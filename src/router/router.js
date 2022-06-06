@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../page/Home.vue";
-import Login from "../page/Login.vue";
+import Home from "../page/BaseHome.vue";
+import Login from "../page/BaseLogin.vue";
 import store from "../store/store";
 import MISAContent from "../components/layout/TheContent.vue";
 import MISALisence from "../components/layout/TheLisence.vue";
