@@ -52,7 +52,13 @@
 
     <div class="m-grip">
       <!-- Table -->
-      <div class="m-table-container">
+      <div
+        class="m-table-container"
+        ref="MainTable"
+        @scroll="
+          this.$refs.FooterTable.scrollLeft = this.$refs.MainTable.scrollLeft
+        "
+      >
         <table class="m-table">
           <thead>
             <tr>
@@ -142,7 +148,13 @@
       </div>
 
       <!-- paging -->
-      <div class="m-table-container footer-container">
+      <div
+        class="m-table-footer-container"
+        ref="FooterTable"
+        @scroll="
+          this.$refs.MainTable.scrollLeft = this.$refs.FooterTable.scrollLeft
+        "
+      >
         <table class="m-table-footer">
           <tbody>
             <tr>
@@ -232,6 +244,13 @@ export default {
   name: "the-content",
 
   watch: {
+    /**
+     * Mô tả : Theo dõi trường search nếu rỗng thì trả về danh sách đầy đủ
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:34 06/06/2022
+     */
     searchDepartment(newValue) {
       if (newValue == "" || newValue == null) {
         this.filterAsset();
@@ -242,6 +261,10 @@ export default {
       if (newValue == "" || newValue == null) {
         this.filterAsset();
       }
+    },
+
+    "this.$refs.MainTable.scrollLeft"(newValue) {
+      console.log(newValue);
     },
   },
 
@@ -354,6 +377,13 @@ export default {
   },
 
   methods: {
+    /**
+     * Mô tả : Focus vào ô trống đầu tiên
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:42 06/06/2022
+     */
     setFocusEmpty() {
       this.$refs.dialog.setFocusEmpty();
     },
@@ -785,6 +815,7 @@ export default {
       searchBox: null,
       pageIndex: null,
       pageSize: null,
+      scrollBar: null,
     };
   },
 };
