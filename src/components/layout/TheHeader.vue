@@ -33,25 +33,25 @@
   </div>
 </template>
 
-<style scoped></style>
-
 <script>
-import axios from "axios";
-import { mapGetters, mapMutations } from "vuex";
+import axios from 'axios';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
   computed: {
-    ...mapGetters(["user"]),
+    ...mapGetters(['user']),
   },
 
   methods: {
-    ...mapMutations(["setUser"]),
+    ...mapMutations(['setUser']),
     async logout() {
       try {
-        const res = await axios.get("Users/Logout");
-        this.$router.push("/login");
+        const res = await axios.get('Users/Logout');
+        this.$router.push('/login');
         this.setUser(res.data);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 
