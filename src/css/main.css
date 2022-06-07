@@ -77,10 +77,11 @@ ul li {
 
 .text-align-left {
   text-align: left;
-  padding-right: 5px;
+  padding-left: 5px;
 }
 .text-align-right {
   text-align: right;
+  padding-right: 5px;
 }
 .text-align-center {
   text-align: center;

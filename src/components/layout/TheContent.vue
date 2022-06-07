@@ -41,10 +41,10 @@
           style="box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16)"
           buttonTitle="+Thêm tài sản"
         ></MISAButton>
-        <div class="toolbar-btn icon-box">
+        <div class="toolbar-btn">
           <div class="excel"></div>
         </div>
-        <div class="toolbar-btn icon-box" @click="btnRemove">
+        <div class="toolbar-btn" @click="btnRemove">
           <div class="remove"></div>
         </div>
       </div>
@@ -134,11 +134,11 @@
               </td>
               <td>
                 <div class="m-function-box" style="display: none">
-                  <div class="icon-box edit">
-                    <div class="table-icon edit"></div>
+                  <div class="icon-box-24">
+                    <div class="edit"></div>
                   </div>
-                  <div class="icon-box copy">
-                    <div class="table-icon copy"></div>
+                  <div class="icon-box-24">
+                    <div class="copy"></div>
                   </div>
                 </div>
               </td>
