@@ -2,7 +2,7 @@
   <div class="m-dialog lisence-dialog">
     <div class="m-modal lisence-modal">
       <div class="m-modal-title lisence-title">Thêm chứng từ ghi tăng</div>
-      <div class="m-modal-close">
+      <div class="m-modal-close" @click="onCancel">
         <div class="close"></div>
       </div>
 
@@ -51,7 +51,8 @@
             <MISAButton
               style="width: 120px"
               type="outline-button"
-              @click="showDialog"
+              @click="showAssetDialog"
+              @choseAsset="choseAsset"
               buttonTitle="Chọn tài sản"
             ></MISAButton>
           </div>
@@ -116,7 +117,11 @@
       </div>
 
       <div class="m-modal-footer">
-        <MISAButton type="outline-button" buttonTitle="Hủy"></MISAButton>
+        <MISAButton
+          @click="onCancel"
+          type="outline-button"
+          buttonTitle="Hủy"
+        ></MISAButton>
         <MISAButton buttonTitle="Lưu"></MISAButton>
       </div>
     </div>
@@ -125,10 +130,34 @@
 <script>
 export default {
   methods: {
-    showDialog() {
-      this.$emit("choseAssetDialogShow", true);
-      this.$emit("lisenceDialogShow", false);
+    /**
+     * Mô tả : Mở form chọn tài sản
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:58 08/06/2022
+     */
+    showAssetDialog() {
+      this.$emit('choseAssetDialogShow', true);
+      this.$emit('lisenceDialogShow', false);
     },
+
+    /**
+     * Mô tả : Tích chọn tài sản
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 23:03 08/06/2022
+     */
+    choseAsset(list) {
+      this.assetList = [...list];
+    },
+  },
+
+  data() {
+    return {
+      assetList: [],
+    };
   },
 };
 </script>

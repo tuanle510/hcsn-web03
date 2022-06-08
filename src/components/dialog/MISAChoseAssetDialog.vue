@@ -1,7 +1,12 @@
 <template>
   <div class="m-dialog lisence-dialog">
     <div class="m-modal lisence-modal">
-      <div class="m-modal-title lisence-title">Chọn tài sản ghi tăng</div>
+      <div
+        class="m-modal-title lisence-title"
+        style="border-bottom: 1px solid #c7c7c7"
+      >
+        Chọn tài sản ghi tăng
+      </div>
       <div class="m-modal-close">
         <div class="close"></div>
       </div>
@@ -21,7 +26,7 @@
           </div>
         </div>
         <!-- Bảng -->
-        <div class="m-detail-table" style="height: calc(100% - 162px)">
+        <div class="m-detail-table" style="height: 382px">
           <table class="m-table">
             <thead>
               <tr>

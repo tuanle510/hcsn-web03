@@ -44,7 +44,7 @@
 .m-modal-centent {
   height: 100%;
   overflow: auto;
-  padding: 0 16px 62px 16px;
+  padding: 0 16px 10px 16px;
   border-radius: 0 0 3px 3px;
 }
 
@@ -91,9 +91,6 @@
 }
 
 .m-modal-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   display: flex;
   gap: 10px;
   justify-content: flex-end;
@@ -140,10 +137,9 @@
 
 /* chose-asset */
 .lisence-dialog .chose-asset-content {
-  padding: 0 0 62px 0;
+  padding: 0 0 10px 0;
 }
 
 .lisence-dialog .chose-asset-content .chose-asset-toolbar {
-  padding: 16px;
-  border-top: 1px solid #c7c7c7;
+  padding: 16px 0 16px 16px;
 }
