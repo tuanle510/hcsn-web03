@@ -52,10 +52,6 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-input {
-  font-size: 14px;
-}
-
 .m-error {
   position: absolute;
   color: #ec4b4b;

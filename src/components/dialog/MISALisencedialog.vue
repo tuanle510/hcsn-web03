@@ -26,7 +26,7 @@
           </div>
           <div class="modal-row" style="margin-bottom: 0">
             <div class="modal-field modal-field-full">
-              <label>Ngày ghi tăng</label>
+              <label>Ghi chú</label>
               <MISAInput></MISAInput>
             </div>
           </div>
@@ -56,7 +56,7 @@
             ></MISAButton>
           </div>
           <!-- bảng -->
-          <div class="m-detail-table" style="height: 180px">
+          <div class="m-detail-table" style="height: 120px">
             <table class="m-table">
               <thead>
                 <tr>

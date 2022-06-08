@@ -157,7 +157,7 @@
       >
         <table class="m-table-footer">
           <tbody>
-            <tr>
+            <tr style="border-top: 1px solid rgba(175, 175, 175, 0.6)">
               <td style="min-width: 630px">
                 <div class="m-paging-left">
                   <div class="m-total-number">

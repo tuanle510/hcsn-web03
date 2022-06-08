@@ -43,7 +43,7 @@
 .dp__input {
   height: 36px !important;
   font-family: MISA Font !important;
-  font-size: 14px !important;
+  /* font-size: 14px !important; */
   transition: none !important;
 }
 .dp__input_icon_pad {

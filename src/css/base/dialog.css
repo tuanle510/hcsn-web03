@@ -21,7 +21,7 @@
 }
 
 .m-modal-title {
-  padding: 20px 16px;
+  padding: 16px;
   font-weight: bold;
   font-size: 15px;
 }
@@ -45,6 +45,7 @@
   height: 100%;
   overflow: auto;
   padding: 0 16px 62px 16px;
+  border-radius: 0 0 3px 3px;
 }
 
 .modal-row {
@@ -104,12 +105,6 @@
   border-radius: 0 0 3px 3px;
 }
 
-/* lisence dialog */
-.lisence-dialog .lisence-modal {
-  width: 950px;
-  height: 700px;
-}
-
 .lisence-dialog .lisence-title {
   font-weight: bold;
   font-size: 20px;
@@ -117,9 +112,6 @@
 
 .lisence-dialog .lisence-modal-content {
   background-color: #f4f7ff;
-  padding-bottom: 0;
-  height: calc(100% - 64px);
-  /* trừ height của header */
 }
 
 .lisence-dialog .lisence-modal-content .lisence-form {
@@ -129,7 +121,7 @@
 }
 
 .lisence-dialog .center-title {
-  line-height: 40px;
+  line-height: 30px;
   font-size: 16px;
   font-weight: bold;
 }
