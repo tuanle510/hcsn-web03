@@ -104,20 +104,19 @@
             Tổng số:
             <strong>31</strong> bản ghi
           </div>
-          <MISADropdown
-            :defaultValue="this.pageSize"
-            @onChose="getPageSize"
-          ></MISADropdown>
+          <!-- :defaultValue="this.pageSize"
+            @onChose="getPageSize" -->
+          <MISADropdown></MISADropdown>
+          <!-- v-model="pageIndex" -->
+          <!-- :click-handler="getPageIndex" -->
           <MISAPaginate
-            v-model="pageIndex"
-            :pageCount="totalPageIndex"
+            :pageCount="1"
             :prev-text="'pre'"
             :prev-link-class="'prev-link-class'"
             :next-text="'next'"
             :next-link-class="'next-link-class'"
             :container-class="'m-paging-list'"
             :prev-class="'prev-class'"
-            :click-handler="getPageIndex"
           ></MISAPaginate>
         </div>
         <!-- border  -->
@@ -155,8 +154,15 @@
       </div>
     </div>
 
-    <!-- Dialog -->
-    <MISALisencedialog v-if="isLisenceShow"></MISALisencedialog>
+    <!-- lisence dialog -->
+    <MISALisenceDialog
+      v-if="isLisenceShow"
+      @lisenceDialogShow="lisenceDialogShow"
+      @choseAssetDialogShow="choseAssetDialogShow"
+    ></MISALisenceDialog>
+    <MISAChoseAssetDialog v-if="isChoseShow"></MISAChoseAssetDialog>
+
+    <!-- detail lisence dialog -->
   </div>
 </template>
 <script>
@@ -173,15 +179,21 @@ export default {
       this.lisenceDialogShow(true);
     },
 
-    // Tắt mở dialog
+    // Tắt mở lisence dialog
     lisenceDialogShow(value) {
       this.isLisenceShow = value;
+    },
+
+    // Tắt mở chose dialog
+    choseAssetDialogShow(value) {
+      this.isChoseShow = value;
     },
   },
 
   data() {
     return {
-      isLisenceShow: true,
+      isLisenceShow: false,
+      isChoseShow: false,
     };
   },
 };

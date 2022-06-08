@@ -168,6 +168,7 @@
                     :defaultValue="this.pageSize"
                     @onChose="getPageSize"
                   ></MISADropdown>
+
                   <MISAPaginate
                     v-model="pageIndex"
                     :pageCount="totalPageIndex"
@@ -203,7 +204,7 @@
     <div v-if="isDialogLoading" class="m-dialog">
       <MISALoading></MISALoading>
     </div>
-    <MISAAssetdialog
+    <MISAAssetDialog
       ref="dialog"
       :dialogTitle="isEditing ? 'Sửa sản phẩm' : 'Thêm sản phẩm'"
       :isEditing="isEditing"
@@ -216,7 +217,7 @@
       @toastShow="toastShow"
       @dialogShow="dialogShow"
       @alertShow="alertShow"
-    ></MISAAssetdialog>
+    ></MISAAssetDialog>
 
     <MISAAlert
       v-if="alert.isShow"

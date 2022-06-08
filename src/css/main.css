@@ -36,17 +36,17 @@ body {
 
 @font-face {
   font-family: MISA Font;
-  src: url(../assets/font/GoogleSans-Regular.otf);
+  src: url(../assets/font/Roboto-Regular.ttf);
 }
 
 @font-face {
   font-family: MISA Font Bold;
-  src: url(../assets/font/GoogleSans-Bold.otf);
+  src: url(../assets/font/Roboto-Bold.ttf);
 }
 
 @font-face {
   font-family: MISA Font Italic;
-  src: url(../assets/font/GoogleSans-Italic.otf);
+  src: url(../assets/font/Roboto-Italic.ttf);
 }
 
 .m-layout {

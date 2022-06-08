@@ -105,16 +105,24 @@
 }
 
 /* lisence dialog */
+.lisence-dialog .lisence-modal {
+  width: 950px;
+  height: 700px;
+}
+
 .lisence-dialog .lisence-title {
   font-weight: bold;
   font-size: 20px;
 }
 
-.lisence-dialog .lisence-modal {
+.lisence-dialog .lisence-modal-content {
   background-color: #f4f7ff;
+  padding-bottom: 0;
+  height: calc(100% - 64px);
+  /* trừ height của header */
 }
 
-.lisence-dialog .lisence-modal .lisence-form {
+.lisence-dialog .lisence-modal-content .lisence-form {
   background-color: #fff;
   border-radius: 3px;
   padding: 16px;
@@ -126,14 +134,24 @@
   font-weight: bold;
 }
 
-.lisence-dialog .lisence-modal .lesence-detail {
+.lisence-dialog .lisence-modal-content .lesence-detail {
   background-color: #fff;
   border-radius: 3px;
 }
 
-.lisence-dialog .lisence-modal .lesence-detail .lisence-table-toolbar {
+.lisence-dialog .lisence-modal-content .lesence-detail .lisence-table-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px;
+}
+
+/* chose-asset */
+.lisence-dialog .chose-asset-content {
+  padding: 0 0 62px 0;
+}
+
+.lisence-dialog .chose-asset-content .chose-asset-toolbar {
+  padding: 16px;
+  border-top: 1px solid #c7c7c7;
 }

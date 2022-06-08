@@ -1,15 +1,15 @@
 <template>
   <div class="m-dialog lisence-dialog">
-    <div class="m-modal">
+    <div class="m-modal lisence-modal">
       <div class="m-modal-title lisence-title">Thêm chứng từ ghi tăng</div>
       <div class="m-modal-close">
         <div class="close"></div>
       </div>
 
-      <div class="m-modal-centent lisence-modal" ref="form" autocomplete="off">
+      <div class="m-modal-centent lisence-modal-content">
         <!-- Thông tin chứng từ -->
         <div class="center-title">Thông tin chứng từ</div>
-        <form action="" class="lisence-form">
+        <form action="" class="lisence-form" autocomplete="off" ref="form">
           <div class="modal-row">
             <div class="modal-field">
               <label>Mã chứng từ <span>*</span></label>
@@ -35,8 +35,8 @@
         <!-- Thông tin chi tiết -->
         <div class="center-title">Thông tin chi tiết</div>
         <div class="lesence-detail">
+          <!-- toolbar -->
           <div class="lisence-table-toolbar">
-            <!--  -->
             <div class="search-field" style="width: 300px">
               <input
                 placeholder="Tìm kiếm theo số chứng từ, nội dung"
@@ -48,16 +48,15 @@
                 <div class="search"></div>
               </div>
             </div>
-
             <MISAButton
-              style="border: none; box-shadow: 0 2px 6px rgb(0 0 0 / 16%)"
+              style="width: 120px"
               type="outline-button"
+              @click="showDialog"
               buttonTitle="Chọn tài sản"
             ></MISAButton>
-            <!--  -->
           </div>
           <!-- bảng -->
-          <div class="m-detail-table" style="height: 200px">
+          <div class="m-detail-table" style="height: 180px">
             <table class="m-table">
               <thead>
                 <tr>
@@ -83,43 +82,54 @@
               </tbody>
             </table>
           </div>
+          <!-- bảng total -->
+          <div class="m-detail-table-footer">
+            <table class="m-table-footer">
+              <thead>
+                <tr>
+                  <th></th>
+                </tr>
+              </thead>
+            </table>
+          </div>
           <!-- paging -->
           <div class="lisence-paging">
             <div class="m-total-number">
               Tổng số:
               <strong>31</strong> bản ghi
             </div>
-            <MISADropdown
-              :defaultValue="this.pageSize"
-              @onChose="getPageSize"
-            ></MISADropdown>
+            <MISADropdown></MISADropdown>
+            <!-- :defaultValue="this.pageSize"
+              @onChose="getPageSize" -->
             <MISAPaginate
-              v-model="pageIndex"
-              :pageCount="totalPageIndex"
+              :pageCount="1"
               :prev-text="'pre'"
               :prev-link-class="'prev-link-class'"
               :next-text="'next'"
               :next-link-class="'next-link-class'"
               :container-class="'m-paging-list'"
               :prev-class="'prev-class'"
-              :click-handler="getPageIndex"
             ></MISAPaginate>
+            <!-- :click-handler="getPageIndex" -->
           </div>
         </div>
       </div>
 
       <div class="m-modal-footer">
-        <MISAButton
-          style="border: none; box-shadow: 0 2px 6px rgb(0 0 0 / 16%)"
-          type="outline-button"
-          buttonTitle="Hủy"
-        ></MISAButton>
-        <MISAButton @click="onSubmit($event)" buttonTitle="Lưu"></MISAButton>
+        <MISAButton type="outline-button" buttonTitle="Hủy"></MISAButton>
+        <MISAButton buttonTitle="Lưu"></MISAButton>
       </div>
     </div>
   </div>
 </template>
 <script>
-export default {};
+export default {
+  methods: {
+    showDialog() {
+      this.$emit("choseAssetDialogShow", true);
+      this.$emit("lisenceDialogShow", false);
+    },
+  },
+};
 </script>
 <style></style>
