@@ -15,6 +15,7 @@
 .m-lisence .m-lisence-toolbar .l-toolbar-left p {
   font-size: 20px;
   font-weight: bold;
+  padding-left: 16px;
 }
 
 .m-lisence .m-lisence-toolbar .l-toolbar-right {
@@ -36,7 +37,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 0 10px 10px;
+  padding: 10px 0 10px 16px;
 }
 
 .m-lisence .m-lisence-main .main-header .l-search {

@@ -19,7 +19,19 @@
     <!-- table-->
     <div class="m-lisence-main">
       <div class="main-header">
-        <MISAInput class="l-search"></MISAInput>
+        <div style="width: 300px">
+          <div class="search-field" style="width: 300px">
+            <input
+              placeholder="Tìm kiếm theo số chứng từ, nội dung"
+              ref="searchInput"
+              class="m-search"
+              @input="searchInput"
+            />
+            <div class="search-icon">
+              <div class="search"></div>
+            </div>
+          </div>
+        </div>
         <div class="l-icon-container">
           <div class="icon-box-36">
             <div class="export"></div>
@@ -36,13 +48,11 @@
           <table class="m-table">
             <thead>
               <tr>
-                <th style="width: 50px">
+                <th class="max-w-50" style="padding-left: 16px">
                   <MISACheckbox></MISACheckbox>
                 </th>
-                <th class="text-align-center" style="width: 50px">STT</th>
-                <th class="text-align-left" style="width: 130px">
-                  Số chứng từ
-                </th>
+                <th class="text-align-center max-w-50">STT</th>
+                <th class="text-align-left max-w-130">Số chứng từ</th>
                 <th class="text-align-center" style="width: 130px">
                   Ngày chứng từ
                 </th>
@@ -56,7 +66,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr class="m-tr">
+              <tr class="m-tr" @dblclick="showEditLisence">
                 <td style="width: 50px">
                   <MISACheckbox></MISACheckbox>
                 </td>
@@ -152,9 +162,36 @@
         </div>
       </div>
     </div>
+
+    <!-- Dialog -->
+    <MISALisencedialog v-if="isLisenceShow"></MISALisencedialog>
   </div>
 </template>
 <script>
-export default {};
+export default {
+  methods: {
+    /**
+     * Mô tả : HIển thị lisence dialog sửa
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 09:35 08/06/2022
+     */
+    showEditLisence() {
+      this.lisenceDialogShow(true);
+    },
+
+    // Tắt mở dialog
+    lisenceDialogShow(value) {
+      this.isLisenceShow = value;
+    },
+  },
+
+  data() {
+    return {
+      isLisenceShow: false,
+    };
+  },
+};
 </script>
 <style></style>
