@@ -39,6 +39,7 @@ export default {
   methods: {
     onClick() {
       let dropdown = this.$refs.dropdown.getBoundingClientRect();
+      console.log(dropdown);
       this.optionPos = {
         top: dropdown.top - 100,
         left: dropdown.left,

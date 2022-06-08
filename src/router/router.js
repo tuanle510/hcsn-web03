@@ -39,7 +39,7 @@ const router = createRouter({
  */
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
-    if (store.getters.user) {
+    if (store.getters.user != []) {
       next();
       return;
     }

@@ -1,7 +1,7 @@
 <template>
   <div class="m-dialog" v-shortkey="['ctrl', 's']" @shortkey="onSubmit()">
     <div class="m-modal">
-      <div class="m-nodal-title">{{ dialogTitle }}</div>
+      <div class="m-modal-title">{{ dialogTitle }}</div>
       <div class="m-modal-close" @click="onCancel">
         <div class="close"></div>
       </div>

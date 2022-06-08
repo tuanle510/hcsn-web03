@@ -70,7 +70,7 @@
 <script>
 export default {
   name: "the-alert",
-  props: ["alertTitle", "alertType", "isEditing", "isCloseOnly"],
+  props: ["alertTitle", "alertType", "isCloseOnly"],
   mounted() {
     // focus
     this.$refs.focusBtn.setFocus();

@@ -19,17 +19,15 @@
     <!-- table-->
     <div class="m-lisence-main">
       <div class="main-header">
-        <div style="width: 300px">
-          <div class="search-field" style="width: 300px">
-            <input
-              placeholder="Tìm kiếm theo số chứng từ, nội dung"
-              ref="searchInput"
-              class="m-search"
-              @input="searchInput"
-            />
-            <div class="search-icon">
-              <div class="search"></div>
-            </div>
+        <div class="search-field" style="width: 300px">
+          <input
+            placeholder="Tìm kiếm theo số chứng từ, nội dung"
+            ref="searchInput"
+            class="m-search"
+            @input="searchInput"
+          />
+          <div class="search-icon">
+            <div class="search"></div>
           </div>
         </div>
         <div class="l-icon-container">
@@ -131,9 +129,6 @@
             <table class="m-table">
               <thead>
                 <tr>
-                  <th style="width: 50px">
-                    <MISACheckbox></MISACheckbox>
-                  </th>
                   <th class="text-align-center max-w-50">STT</th>
                   <th class="text-align-left">Mã tài sản</th>
                   <th class="text-align-left">Tên tài sản</th>
@@ -145,9 +140,6 @@
               </thead>
               <tbody>
                 <tr>
-                  <td style="width: 50px">
-                    <MISACheckbox></MISACheckbox>
-                  </td>
                   <td class="text-align-center">STT</td>
                   <td class="text-align-left">Mã tài sản</td>
                   <td class="text-align-left">Tên tài sản</td>
@@ -189,7 +181,7 @@ export default {
 
   data() {
     return {
-      isLisenceShow: false,
+      isLisenceShow: true,
     };
   },
 };
