@@ -96,7 +96,6 @@
               class="m-tr"
             >
               <td style="padding-left: 16px">
-                <!-- :checked="checkedaAssetList.includes(asset)" -->
                 <MISACheckbox :checked="asset.checked"></MISACheckbox>
               </td>
               <td class="text-align-left">{{ index + 1 }}</td>
@@ -261,10 +260,6 @@ export default {
         this.filterAsset();
       }
     },
-
-    "this.$refs.MainTable.scrollLeft"(newValue) {
-      console.log(newValue);
-    },
   },
 
   computed: {
@@ -278,23 +273,7 @@ export default {
     totalPageIndex: function () {
       return Math.ceil(this.assetLength / this.pageSize);
     },
-    /**
-     * Mô tả : Giá trị ô check all
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 11:17 29/04/2022
-     */
-    checkedAll: function () {
-      if (
-        this.assetData.length == this.checkedaAssetList.length &&
-        this.checkedaAssetList != 0
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    },
+
     /**
      * Mô tả : Tính tổng số lượng
      * @param

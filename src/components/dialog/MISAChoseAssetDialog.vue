@@ -30,7 +30,9 @@
           <table class="m-table">
             <thead>
               <tr>
-                <th><MISACheckbox></MISACheckbox></th>
+                <th style="padding-left: 16px">
+                  <MISACheckbox></MISACheckbox>
+                </th>
                 <th class="text-align-center max-w-50">STT</th>
                 <th class="text-align-left">Mã tài sản</th>
                 <th class="text-align-left">Tên tài sản</th>
@@ -40,10 +42,18 @@
                 <th class="text-align-right">Giá trị còn lại</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <th><MISACheckbox></MISACheckbox></th>
-                <td class="text-align-center">1</td>
+            <MISALoading v-if="isLoading"></MISALoading>
+            <tbody v-else>
+              <tr
+                @click="onRowClick(asset)"
+                v-for="(asset, index) in assetData"
+                :key="index"
+                class="m-tr"
+              >
+                <td style="padding-left: 16px">
+                  <MISACheckbox :checked="asset.checked"></MISACheckbox>
+                </td>
+                <td class="text-align-center">{{ index + 1 }}</td>
                 <td class="text-align-left">Mã tài sản</td>
                 <td class="text-align-left">Tên tài sản</td>
                 <td class="text-align-left">Bộ phận sử dụng</td>
@@ -58,7 +68,7 @@
         <div class="lisence-paging">
           <div class="m-total-number">
             Tổng số:
-            <strong>31</strong> bản ghi
+            <strong>{{ this.assetLength }}</strong> bản ghi
           </div>
           <!-- :defaultValue="this.pageSize"
             @onChose="getPageSize" -->
@@ -83,6 +93,62 @@
   </div>
 </template>
 <script>
-export default {};
+import axios from "axios";
+export default {
+  async beforeMount() {
+    this.pageSize = 20;
+    await this.filterAsset();
+  },
+  methods: {
+    /**
+     * Mô tả : Ấn vào hàng để tích checkbox
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 21:12 09/06/2022
+     */
+    onRowClick() {},
+
+    /**
+     * Mô tả : Lấy về danh sách tài sản đã phân trang
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 21:12 09/06/2022
+     */
+    async filterAsset() {
+      this.isLoading = true;
+      try {
+        const res = await axios.get("FixedAssets/Filter", {
+          params: {
+            FixedAssetFilter: this.searchBox,
+            pageIndex: this.pageIndex,
+            pageSize: this.pageSize,
+          },
+        });
+        // Thêm trường checkd vào obj
+        res.data.FilterList.map((element) => {
+          element.checked = false;
+        });
+        // Gán vào data
+        this.assetData = [...res.data.FilterList];
+        // Lấy tổng số bản ghi
+        this.assetLength = res.data.FilterCount;
+        this.isLoading = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
+
+  data() {
+    return {
+      isLoading: false,
+      assetLength: 0,
+      assetData: [],
+      searchBox: "",
+    };
+  },
+};
 </script>
 <style></style>

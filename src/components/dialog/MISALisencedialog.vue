@@ -2,7 +2,7 @@
   <div class="m-dialog lisence-dialog">
     <div class="m-modal lisence-modal">
       <div class="m-modal-title lisence-title">Thêm chứng từ ghi tăng</div>
-      <div class="m-modal-close" @click="onCancel">
+      <div class="m-modal-close">
         <div class="close"></div>
       </div>
 
@@ -117,11 +117,7 @@
       </div>
 
       <div class="m-modal-footer">
-        <MISAButton
-          @click="onCancel"
-          type="outline-button"
-          buttonTitle="Hủy"
-        ></MISAButton>
+        <MISAButton type="outline-button" buttonTitle="Hủy"></MISAButton>
         <MISAButton buttonTitle="Lưu"></MISAButton>
       </div>
     </div>
