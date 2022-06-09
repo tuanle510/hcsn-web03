@@ -603,12 +603,8 @@ export default {
       // Nếu ấn vào cả dòng
       else {
         // Kiểm tra xem có check hết không:
-        // Nếu có thì ô checkedALl sẽ tích không thì xóa tích đi:
-        if (this.checkedaAssetList.length != this.assetData.length) {
-          this.checkedAll = false;
-        } else {
-          this.checkedAll = true;
-        }
+        this.checkedAll =
+          this.checkedaAssetList.length != this.assetData.length ? false : true;
         // Tích vào ô cần tích:
         if (asset.checked == true) {
           asset.checked = false;
