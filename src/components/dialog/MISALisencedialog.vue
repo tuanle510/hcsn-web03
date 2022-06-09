@@ -9,7 +9,7 @@
       <div class="m-modal-centent lisence-modal-content">
         <!-- Thông tin chứng từ -->
         <div class="center-title">Thông tin chứng từ</div>
-        <form action="" class="lisence-form" autocomplete="off" ref="form">
+        <form class="edit-asset-form" autocomplete="off" ref="form">
           <div class="modal-row">
             <div class="modal-field">
               <label>Mã chứng từ <span>*</span></label>
@@ -52,12 +52,11 @@
               style="width: 120px"
               type="outline-button"
               @click="showAssetDialog"
-              @choseAsset="choseAsset"
               buttonTitle="Chọn tài sản"
             ></MISAButton>
           </div>
           <!-- bảng -->
-          <div class="m-detail-table" style="height: 120px">
+          <div class="m-detail-table" style="height: 150px; overflow-y: auto">
             <table class="m-table">
               <thead>
                 <tr>
@@ -71,21 +70,50 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td class="text-align-center">1</td>
-                  <td class="text-align-left">Mã tài sản</td>
-                  <td class="text-align-left">Tên tài sản</td>
-                  <td class="text-align-left">Bộ phận sử dụng</td>
-                  <td class="text-align-right">Nguyên giá</td>
-                  <td class="text-align-right">Hao mòn năm</td>
-                  <td class="text-align-right">Giá trị còn lại</td>
+                <tr
+                  v-for="(asset, index) in assetList"
+                  :key="index"
+                  class="m-tr"
+                >
+                  <td class="text-align-center">
+                    {{ index + 1 }}
+                  </td>
+                  <td class="text-align-left">
+                    {{ asset.FixedAssetCode }}
+                  </td>
+                  <td class="text-align-left">
+                    {{ asset.FixedAssetName }}
+                  </td>
+                  <td class="text-align-left">
+                    {{ asset.DepartmentName }}
+                  </td>
+                  <td class="text-align-right">
+                    {{ currencyFormat(asset.Cost) }}
+                  </td>
+                  <td class="text-align-right">
+                    {{ currencyFormat(asset.DepreciationValue) }}
+                  </td>
+                  <td class="text-align-right">20.000</td>
+                  <div class="m-function-box">
+                    <div class="icon-box-36 btn-edit" @click="btnEditAsset">
+                      <div class="edit"></div>
+                    </div>
+                    <div class="icon-box-36 btn-remove">
+                      <div class="remove-red"></div>
+                    </div>
+                  </div>
                 </tr>
               </tbody>
             </table>
           </div>
           <!-- bảng total -->
-          <div class="m-detail-table-footer">
-            <table class="m-table-footer">
+          <div
+            :class="[
+              this.assetList.length == 0 ? 'visible-none' : '',
+              'm-detail-table-footer',
+            ]"
+          >
+            <table class="m-table-footer" style="border-top: none">
               <thead>
                 <tr>
                   <th></th>
@@ -94,7 +122,7 @@
             </table>
           </div>
           <!-- paging -->
-          <div class="lisence-paging">
+          <div class="lisence-paging" style="border-top: none">
             <div class="m-total-number">
               Tổng số:
               <strong>31</strong> bản ghi
@@ -125,7 +153,24 @@
 </template>
 <script>
 export default {
+  props: ['choseAssetList'],
+
+  beforeMount() {
+    // Gán danh sách tài sản thuộc chứng từ
+    this.assetList = [...this.choseAssetList];
+  },
+
   methods: {
+    /**
+     * Mô tả : Sửa tài sản trong list
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 00:11 10/06/2022
+     */
+    btnEditAsset() {
+      this.$emit('editAssetDialogShow', true);
+    },
     /**
      * Mô tả : Mở form chọn tài sản
      * @param
@@ -134,19 +179,19 @@ export default {
      * Created date: 22:58 08/06/2022
      */
     showAssetDialog() {
-      this.$emit("choseAssetDialogShow", true);
-      this.$emit("lisenceDialogShow", false);
+      this.$emit('choseAssetDialogShow', true);
     },
 
     /**
-     * Mô tả : Tích chọn tài sản
+     * Mô tả : format tiền ttrong bảng
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 23:03 08/06/2022
+     * Created date: 21:30 09/06/2022
      */
-    choseAsset(list) {
-      this.assetList = [...list];
+    currencyFormat(value) {
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      return format;
     },
   },
 

@@ -4,10 +4,10 @@
   border-radius: 2.5px;
   border: none;
   outline: none;
+  z-index: 99;
 }
 
 .m-combobox .combobox-contaner {
-  z-index: 2;
   border-radius: 2.5px;
   height: 100%;
   display: flex;

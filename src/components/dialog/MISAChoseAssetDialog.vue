@@ -26,14 +26,17 @@
           </div>
         </div>
         <!-- Bảng -->
-        <div class="m-detail-table" style="height: 382px">
+        <div class="m-detail-table" style="height: 422px">
           <table class="m-table">
             <thead>
               <tr>
                 <th style="padding-left: 16px">
-                  <MISACheckbox></MISACheckbox>
+                  <MISACheckbox
+                    @click="onCheckedAll"
+                    :checked="this.checkedAll"
+                  ></MISACheckbox>
                 </th>
-                <th class="text-align-center max-w-50">STT</th>
+                <th class="text-align-center">STT</th>
                 <th class="text-align-left">Mã tài sản</th>
                 <th class="text-align-left">Tên tài sản</th>
                 <th class="text-align-left">Bộ phận sử dụng</th>
@@ -48,18 +51,33 @@
                 @click="onRowClick(asset)"
                 v-for="(asset, index) in assetData"
                 :key="index"
-                class="m-tr"
+                :class="[{ 'm-tr-seleced': asset.checked }, 'm-tr']"
               >
-                <td style="padding-left: 16px">
+                <!-- class="m-tr" -->
+                <td style="width: 40px; padding-left: 16px">
                   <MISACheckbox :checked="asset.checked"></MISACheckbox>
                 </td>
-                <td class="text-align-center">{{ index + 1 }}</td>
-                <td class="text-align-left">Mã tài sản</td>
-                <td class="text-align-left">Tên tài sản</td>
-                <td class="text-align-left">Bộ phận sử dụng</td>
-                <td class="text-align-right">Nguyên giá</td>
-                <td class="text-align-right">Hao mòn năm</td>
-                <td class="text-align-right">Giá trị còn lại</td>
+                <td class="text-align-center" style="width: 50px">
+                  {{ index + 1 }}
+                </td>
+                <td class="text-align-left" style="width: 110px">
+                  {{ asset.FixedAssetCode }}
+                </td>
+                <td class="text-align-left" style="width: 170px">
+                  {{ asset.FixedAssetName }}
+                </td>
+                <td class="text-align-left" style="width: 170px">
+                  {{ asset.DepartmentName }}
+                </td>
+                <td class="text-align-right" style="width: 105px">
+                  {{ currencyFormat(asset.Cost) }}
+                </td>
+                <td class="text-align-right" style="width: 100px">
+                  {{ currencyFormat(asset.DepreciationValue) }}
+                </td>
+                <td class="text-align-right" style="width: 100px">
+                  Giá trị còn lại
+                </td>
               </tr>
             </tbody>
           </table>
@@ -87,13 +105,13 @@
       </div>
       <div class="m-modal-footer">
         <MISAButton type="outline-button" buttonTitle="Hủy bỏ"></MISAButton>
-        <MISAButton buttonTitle="Đồng ý"></MISAButton>
+        <MISAButton buttonTitle="Đồng ý" @click="onSubmit"></MISAButton>
       </div>
     </div>
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
   async beforeMount() {
     this.pageSize = 20;
@@ -101,13 +119,53 @@ export default {
   },
   methods: {
     /**
+     * Mô tả : Chọn tất cả sản phẩm
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 17:42 23/04/2022
+     */
+    onCheckedAll() {
+      // 1. Lọc danh sách những tàn sản đã chọn:
+      this.checkedaAssetList = this.assetData.filter(
+        (asset) => asset.checked == true
+      );
+
+      // 2. kiểm tra xem có tích hết chưa
+      // Nếu chưa chưa thì tích hết
+      if (this.checkedaAssetList.length != this.assetData.length) {
+        this.checkedAll = true;
+        this.assetData.forEach((asset) => (asset.checked = true));
+      }
+      // nếu tích hết rồi thì click thứ 2 sẽ bỏ hết tích đi
+      else {
+        this.checkedAll = false;
+        this.assetData.forEach((asset) => (asset.checked = false));
+      }
+    },
+
+    /**
      * Mô tả : Ấn vào hàng để tích checkbox
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 21:12 09/06/2022
      */
-    onRowClick() {},
+    onRowClick(asset) {
+      // 1. Lọc danh sách những tàn sản đã chọn:
+      this.checkedaAssetList = this.assetData.filter(
+        (asset) => asset.checked == true
+      );
+      //3. Tích vào ô cần tích:
+      if (asset.checked == true) {
+        asset.checked = false;
+      } else {
+        asset.checked = true;
+      }
+      // 2. Kiểm tra xem có check hết không:
+      this.checkedAll =
+        this.checkedaAssetList.length != this.assetData.length ? false : true;
+    },
 
     /**
      * Mô tả : Lấy về danh sách tài sản đã phân trang
@@ -119,7 +177,7 @@ export default {
     async filterAsset() {
       this.isLoading = true;
       try {
-        const res = await axios.get("FixedAssets/Filter", {
+        const res = await axios.get('FixedAssets/Filter', {
           params: {
             FixedAssetFilter: this.searchBox,
             pageIndex: this.pageIndex,
@@ -131,13 +189,40 @@ export default {
           element.checked = false;
         });
         // Gán vào data
-        this.assetData = [...res.data.FilterList];
+        this.assetData = res.data.FilterList;
         // Lấy tổng số bản ghi
         this.assetLength = res.data.FilterCount;
         this.isLoading = false;
       } catch (error) {
         console.log(error);
       }
+    },
+
+    /**
+     * Mô tả : Ấn đồng ý, lấy ra list đã chọn
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:47 09/06/2022
+     */
+    onSubmit() {
+      // 1. Lọc danh sách những tàn sản đã chọn:
+      this.checkedaAssetList = this.assetData.filter(
+        (asset) => asset.checked == true
+      );
+      this.$emit('getChoseAsset', this.checkedaAssetList);
+    },
+
+    /**
+     * Mô tả : format tiền ttrong bảng
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 21:30 09/06/2022
+     */
+    currencyFormat(value) {
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      return format;
     },
   },
 
@@ -146,7 +231,9 @@ export default {
       isLoading: false,
       assetLength: 0,
       assetData: [],
-      searchBox: "",
+      checkedaAssetList: [],
+      searchBox: '',
+      checkedAll: false,
     };
   },
 };

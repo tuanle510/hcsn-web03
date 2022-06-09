@@ -98,3 +98,7 @@ ul li {
   color: #ccc;
   width: 100%;
 }
+
+.visible-none {
+  visibility: hidden;
+}

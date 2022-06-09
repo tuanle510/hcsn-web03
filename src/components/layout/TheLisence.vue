@@ -81,17 +81,17 @@
                 <td class="text-align-right" style="width: 100px">
                   Tổng nguyên giá
                 </td>
-                <td class="text-align-left" style="position: relative">
+                <td class="text-align-left">
                   <span>Nội dung</span>
-                  <div class="m-function-box" style="display: none">
-                    <div class="icon-box-36">
-                      <div class="edit"></div>
-                    </div>
-                    <div class="icon-box-36">
-                      <div class="remove-red"></div>
-                    </div>
-                  </div>
                 </td>
+                <div class="m-function-box" style="display: none">
+                  <div class="icon-box-36">
+                    <div class="edit"></div>
+                  </div>
+                  <div class="icon-box-36">
+                    <div class="remove-red"></div>
+                  </div>
+                </div>
               </tr>
             </tbody>
           </table>
@@ -154,21 +154,40 @@
       </div>
     </div>
 
-    <!-- lisence dialog -->
+    <!-- chi tiết chứng từ dialog -->
     <MISALisenceDialog
       v-if="isLisenceShow"
       @lisenceDialogShow="lisenceDialogShow"
       @choseAssetDialogShow="choseAssetDialogShow"
+      @editAssetDialogShow="editAssetDialogShow"
+      :choseAssetList="choseAssetList"
     ></MISALisenceDialog>
-    
-    <MISAChoseAssetDialog v-if="isChoseShow"></MISAChoseAssetDialog>
 
-    <!-- detail lisence dialog -->
+    <!-- Chọn tài sản thêm vào dialog -->
+    <MISAChoseAssetDialog
+      v-if="isChoseAssetShow"
+      @getChoseAsset="getChoseAsset"
+    ></MISAChoseAssetDialog>
+
+    <!-- Sửa tàn sản dialog -->
+    <MISAEditAssetDialog v-if="isEditAssetShow"></MISAEditAssetDialog>
   </div>
 </template>
 <script>
 export default {
   methods: {
+    /**
+     * Mô tả : Nhận asset List từ ChoseAssetDialog
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:51 09/06/2022
+     */
+    getChoseAsset(list) {
+      this.choseAssetList = list;
+      console.log(this.choseAssetList);
+      this.showEditLisence();
+    },
     /**
      * Mô tả : HIển thị lisence dialog sửa
      * @param
@@ -180,21 +199,37 @@ export default {
       this.lisenceDialogShow(true);
     },
 
-    // Tắt mở lisence dialog
+    // Tắt mở dialog chi tiết chứng từ
     lisenceDialogShow(value) {
+      if (value == true) {
+        this.choseAssetDialogShow(false);
+      }
       this.isLisenceShow = value;
     },
 
-    // Tắt mở chose dialog
+    // Tắt mở dialog thêm tài sản
     choseAssetDialogShow(value) {
-      this.isChoseShow = value;
+      if (value == true) {
+        this.lisenceDialogShow(false);
+      }
+      this.isChoseAssetShow = value;
+    },
+
+    // Tắt mở dialog sủa tài sản:
+    editAssetDialogShow(value) {
+      if (value == true) {
+        this.lisenceDialogShow(false);
+      }
+      this.isEditAssetShow = value;
     },
   },
 
   data() {
     return {
       isLisenceShow: false,
-      isChoseShow: false,
+      isChoseAssetShow: false,
+      isEditAssetShow: true,
+      choseAssetList: [],
     };
   },
 };

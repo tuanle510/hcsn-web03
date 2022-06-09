@@ -54,10 +54,18 @@
   gap: 16px;
   margin-bottom: 16px;
 }
-
+/*  */
 .m-modal-centent .modal-field {
   position: relative;
   width: calc((100% - 32px) / 3);
+}
+
+.m-modal-centent .modal-field.modal-field-long {
+  width: calc(((100% - 32px) / 3) * 2 + 16px);
+}
+
+.m-modal-centent .modal-field.modal-field-full {
+  width: 100%;
 }
 
 .m-modal-centent .modal-field .spin-button-container {
@@ -73,14 +81,6 @@
   justify-content: center;
 }
 
-.m-modal-centent .modal-field.modal-field-long {
-  width: calc(((100% - 32px) / 3) * 2 + 16px);
-}
-
-.m-modal-centent .modal-field.modal-field-full {
-  width: 100%;
-}
-
 .m-modal-centent .modal-field label {
   display: inline-block;
   margin-bottom: 8px;
@@ -88,6 +88,11 @@
 
 .m-modal-centent .modal-field label span {
   color: red;
+}
+
+/*  */
+.edit-field {
+  width: 65% !important;
 }
 
 .m-modal-footer {
@@ -137,9 +142,11 @@
 
 /* chose-asset */
 .lisence-dialog .chose-asset-content {
-  padding: 0 0 10px 0;
+  padding: 0;
 }
 
 .lisence-dialog .chose-asset-content .chose-asset-toolbar {
   padding: 16px 0 16px 16px;
 }
+
+/* edit-asset */
