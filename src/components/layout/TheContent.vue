@@ -65,7 +65,7 @@
               <th class="max-w-50" style="padding-left: 16px">
                 <MISACheckbox
                   @click="onCheckedAll"
-                  :checked="checkedAll"
+                  :checked="this.checkedAll"
                 ></MISACheckbox>
               </th>
               <th class="text-align-left max-w-50">STT</th>
@@ -96,9 +96,8 @@
               class="m-tr"
             >
               <td style="padding-left: 16px">
-                <MISACheckbox
-                  :checked="checkedaAssetList.includes(asset)"
-                ></MISACheckbox>
+                <!-- :checked="checkedaAssetList.includes(asset)" -->
+                <MISACheckbox :checked="asset.checked"></MISACheckbox>
               </td>
               <td class="text-align-left">{{ index + 1 }}</td>
               <td class="text-align-left">
@@ -424,6 +423,7 @@ export default {
       // thực hiện filter theo pageIndex
       await this.filterAsset();
     },
+
     /**
      * Mô tả : Debounce để search
      * @param
@@ -458,7 +458,13 @@ export default {
             pageSize: this.pageSize,
           },
         });
-        this.assetData = res.data.FilterList;
+        // Thêm trường checkd vào obj
+        res.data.FilterList.map((element) => {
+          element.checked = false;
+        });
+        // Gán vào data
+        this.assetData = [...res.data.FilterList];
+
         this.assetLength = res.data.FilterCount;
         this.isLoading = false;
       } catch (error) {
@@ -555,6 +561,11 @@ export default {
      * Created date: 17:42 23/04/2022
      */
     onCheckedAll() {
+      // 1. Lọc danh sách những tàn sản đã chọn:
+      this.checkedaAssetList = this.assetData.filter(
+        (asset) => asset.checked == true
+      );
+
       //  Kiểm tra xem assetData có dữ liệu không
       if (this.assetData == 0) {
         this.alertShow(true, remove_msg.ASSET_LIST_EMPTY);
@@ -562,12 +573,13 @@ export default {
         //kiểm tra xem có tích hết chưa
         // Nếu chưa chưa thì tích hết
         if (this.checkedaAssetList.length != this.assetData.length) {
-          // thay đổi
-          this.checkedaAssetList = [...this.assetData];
+          this.checkedAll = true;
+          this.assetData.forEach((asset) => (asset.checked = true));
         }
         // nếu tích hết rồi thì click thứ 2 sẽ bỏ hết tích đi
         else {
-          this.checkedaAssetList = [];
+          this.checkedAll = false;
+          this.assetData.forEach((asset) => (asset.checked = false));
         }
       }
     },
@@ -590,25 +602,19 @@ export default {
       }
       // Nếu ấn vào cả dòng
       else {
-        // const rowClick = () => {
-        // Kiểm tra xem đã tích sản phẩm trước đó chưa
-        if (this.checkedaAssetList.includes(asset)) {
-          // Nếu tích r thì bỏ tích
-          // Lấy index của sản phẩm được chọn
-          const selecedIndex = this.checkedaAssetList.findIndex(
-            (prd) => prd.FixedAssetId == asset.FixedAssetId
-          );
-          // Xóa theo index splice(start, deleteCount)
-          this.checkedaAssetList.splice(selecedIndex, 1);
+        // Kiểm tra xem có check hết không:
+        // Nếu có thì ô checkedALl sẽ tích không thì xóa tích đi:
+        if (this.checkedaAssetList.length != this.assetData.length) {
+          this.checkedAll = false;
         } else {
-          // Nếu chưa thì add vào list
-          this.checkedaAssetList.push(asset);
+          this.checkedAll = true;
         }
-        // };
-
-        // debount 0.5 giây mới thực hiện ( Tránh trường hợp dbCLick )
-        // clearTimeout(this.clickTimeout);
-        // this.clickTimeout = setTimeout(rowClick, 200);
+        // Tích vào ô cần tích:
+        if (asset.checked == true) {
+          asset.checked = false;
+        } else {
+          asset.checked = true;
+        }
       }
     },
 
@@ -669,10 +675,16 @@ export default {
      */
     btnRemove() {
       this.setCloseOnly(true);
+      // 1. Lọc danh sách những tàn sản đã chọn:
+      this.checkedaAssetList = this.assetData.filter(
+        (asset) => asset.checked == true
+      );
+      // 2. Hiển thị thông báo:
+      // 2.1 Nếu chưa chọn tài sản nào:
       if (this.checkedaAssetList.length == 0) {
         this.alertShow(true, remove_msg.ASSET_REMOVE_EMPTY);
-        // alert("bạn chưa chọn sản phẩm để xóa");
       } else {
+        // 2.2 Nếu đã chọn:
         var length = this.checkedaAssetList.length;
         var title = "";
         // hiển thị title cảnh báo
@@ -816,6 +828,7 @@ export default {
       pageIndex: null,
       pageSize: null,
       scrollBar: null,
+      checkedAll: false,
     };
   },
 };

@@ -138,8 +138,8 @@ export default {
      * Created date: 22:58 08/06/2022
      */
     showAssetDialog() {
-      this.$emit('choseAssetDialogShow', true);
-      this.$emit('lisenceDialogShow', false);
+      this.$emit("choseAssetDialogShow", true);
+      this.$emit("lisenceDialogShow", false);
     },
 
     /**

@@ -160,6 +160,7 @@
       @lisenceDialogShow="lisenceDialogShow"
       @choseAssetDialogShow="choseAssetDialogShow"
     ></MISALisenceDialog>
+    
     <MISAChoseAssetDialog v-if="isChoseShow"></MISAChoseAssetDialog>
 
     <!-- detail lisence dialog -->
