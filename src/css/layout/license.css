@@ -1,31 +1,31 @@
-.m-lisence .l-icon-container {
+.m-license .l-icon-container {
   display: flex;
   align-items: center;
   background-color: #fff;
   border-radius: 3px;
 }
 
-.m-lisence .m-lisence-toolbar {
+.m-license .m-license-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
 }
 
-.m-lisence .m-lisence-toolbar .l-toolbar-left p {
+.m-license .m-license-toolbar .l-toolbar-left p {
   font-size: 20px;
   font-weight: bold;
   padding-left: 16px;
 }
 
-.m-lisence .m-lisence-toolbar .l-toolbar-right {
+.m-license .m-license-toolbar .l-toolbar-right {
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
 /* Main */
-.m-lisence .m-lisence-main {
+.m-license .m-license-main {
   background-color: #fff;
   width: 100%;
   border-radius: 3px;
@@ -33,33 +33,39 @@
   /* 100% trừ height của toolbar */
 }
 
-.m-lisence .m-lisence-main .main-header {
+.m-license .m-license-main .main-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 0 16px 16px;
 }
 
-.m-lisence .m-lisence-main .main-header .l-search {
+.m-license .m-license-main .main-header .l-search {
   width: 300px;
 }
 
-.m-lisence .m-lisence-main .main-table-container {
-  height: calc(100% - 56px);
+.m-license .m-license-main .main-table-container {
+  height: calc(100% - 68px);
   /* 100% trừ height của header */
 }
 
-.m-lisence table thead {
+.m-license table thead {
   border-bottom: 1px solid rgba(175, 175, 175, 0.6);
 }
 
-.m-lisence .m-lisence-main .main-table-container .m-lisence-table {
+.m-license .edit-asset-form {
+  background-color: #fff;
+  border-radius: 3px;
+  padding: 16px;
+}
+
+.m-license .m-license-main .main-table-container .m-license-table {
   height: calc(55% - 76px);
   /* Trừ height bảng total và phân trang */
   overflow-y: scroll;
 }
 
-.m-lisence-total {
+.m-license-total {
   height: 38px;
   display: flex;
   align-items: center;
@@ -67,13 +73,23 @@
   padding-left: 16px;
 }
 
+.text-width {
+  position: relative;
+  padding-left: 10px;
+  min-width: 300px;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .total-text {
-  width: 650px;
+  width: 620px;
   text-align: right;
   font-weight: bold;
 }
 
-.lisence-paging {
+.license-paging {
   height: 40px;
   display: flex;
   align-items: center;
@@ -81,21 +97,21 @@
   border-top: 1px solid rgba(175, 175, 175, 0.6);
 }
 
-.m-lisence .m-lisence-main .main-table-container .mouse-draw {
+.m-license .m-license-main .main-table-container .mouse-draw {
   height: 5px;
   width: 100%;
   background-color: #f4f7ff;
   cursor: row-resize;
 }
 
-.m-lisence .m-lisence-main .main-table-container .m-detail-container {
+.m-license .m-license-main .main-table-container .m-detail-container {
   height: calc(45% - 5px);
   /* Trừ height của mouse-draw */
   border-radius: 3px;
 }
 
-.m-lisence
-  .m-lisence-main
+.m-license
+  .m-license-main
   .main-table-container
   .m-detail-container
   .detail-header {

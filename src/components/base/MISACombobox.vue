@@ -174,9 +174,10 @@ export default {
      * Created date: 16:54 06/05/2022
      */
     validateRequired() {
+      var value = this.$refs.input.value;
       if (
         this.required &&
-        (this.modelValue === undefined || this.modelValue.trim() === "")
+        (value === undefined || value.toString().trim() === "")
       ) {
         this.$refs.input.classList.add("m-input-error");
       } else {

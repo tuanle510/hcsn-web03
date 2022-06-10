@@ -1,122 +1,129 @@
 <template>
-  <div class="m-dialog lisence-dialog">
-    <div class="m-modal lisence-modal">
-      <div
-        class="m-modal-title lisence-title"
-        style="border-bottom: 1px solid #c7c7c7"
-      >
-        Chọn tài sản ghi tăng
-      </div>
-      <div class="m-modal-close">
-        <div class="close"></div>
-      </div>
-      <div class="m-modal-centent chose-asset-content">
-        <!-- toolbar -->
-        <div class="chose-asset-toolbar">
-          <div class="search-field" style="width: 300px">
-            <input
-              placeholder="Tìm kiếm theo số chứng từ, nội dung"
-              ref="searchInput"
-              class="m-search"
-              @input="searchInput"
-            />
-            <div class="search-icon">
-              <div class="search"></div>
-            </div>
+  <div class="m-modal license-modal w-950">
+    <div
+      class="m-modal-title license-title"
+      style="border-bottom: 1px solid #c7c7c7"
+    >
+      Chọn tài sản ghi tăng
+    </div>
+    <div class="m-modal-close" @click="onCancel">
+      <div class="close"></div>
+    </div>
+    <div class="m-modal-centent chose-asset-content">
+      <!-- toolbar -->
+      <div class="chose-asset-toolbar">
+        <div class="modal-field search-field">
+          <input
+            placeholder="Tìm kiếm theo mã, tên tài sản"
+            ref="searchInput"
+            class="m-search"
+            @input="searchInput"
+          />
+          <div class="search-icon">
+            <div class="search"></div>
           </div>
         </div>
-        <!-- Bảng -->
-        <div class="m-detail-table" style="height: 422px">
-          <table class="m-table">
-            <thead>
-              <tr>
-                <th style="padding-left: 16px">
-                  <MISACheckbox
-                    @click="onCheckedAll"
-                    :checked="this.checkedAll"
-                  ></MISACheckbox>
-                </th>
-                <th class="text-align-center">STT</th>
-                <th class="text-align-left">Mã tài sản</th>
-                <th class="text-align-left">Tên tài sản</th>
-                <th class="text-align-left">Bộ phận sử dụng</th>
-                <th class="text-align-right">Nguyên giá</th>
-                <th class="text-align-right">Hao mòn năm</th>
-                <th class="text-align-right">Giá trị còn lại</th>
-              </tr>
-            </thead>
-            <MISALoading v-if="isLoading"></MISALoading>
-            <tbody v-else>
-              <tr
-                @click="onRowClick(asset)"
-                v-for="(asset, index) in assetData"
-                :key="index"
-                :class="[{ 'm-tr-seleced': asset.checked }, 'm-tr']"
-              >
-                <!-- class="m-tr" -->
-                <td style="width: 40px; padding-left: 16px">
-                  <MISACheckbox :checked="asset.checked"></MISACheckbox>
-                </td>
-                <td class="text-align-center" style="width: 50px">
-                  {{ index + 1 }}
-                </td>
-                <td class="text-align-left" style="width: 110px">
-                  {{ asset.FixedAssetCode }}
-                </td>
-                <td class="text-align-left" style="width: 170px">
-                  {{ asset.FixedAssetName }}
-                </td>
-                <td class="text-align-left" style="width: 170px">
-                  {{ asset.DepartmentName }}
-                </td>
-                <td class="text-align-right" style="width: 105px">
-                  {{ currencyFormat(asset.Cost) }}
-                </td>
-                <td class="text-align-right" style="width: 100px">
-                  {{ currencyFormat(asset.DepreciationValue) }}
-                </td>
-                <td class="text-align-right" style="width: 100px">
-                  Giá trị còn lại
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      </div>
+      <!-- Bảng -->
+      <div class="m-detail-table" style="height: 425px">
+        <table class="m-table">
+          <thead>
+            <tr>
+              <th style="padding-left: 16px">
+                <MISACheckbox
+                  @click="onCheckedAll"
+                  :checked="this.checkedAll"
+                ></MISACheckbox>
+              </th>
+              <th class="text-align-center">STT</th>
+              <th class="text-align-left">Mã tài sản</th>
+              <th class="text-align-left">Tên tài sản</th>
+              <th class="text-align-left">Bộ phận sử dụng</th>
+              <th class="text-align-right">Nguyên giá</th>
+              <th class="text-align-right">Hao mòn năm</th>
+              <th class="text-align-right">Giá trị còn lại</th>
+            </tr>
+          </thead>
+          <MISALoading v-if="isLoading"></MISALoading>
+          <tbody v-else>
+            <tr
+              @click="onRowClick(asset)"
+              v-for="(asset, index) in assetData"
+              :key="index"
+              :class="[{ 'm-tr-seleced': asset.checked }, 'm-tr']"
+            >
+              <!-- class="m-tr" -->
+              <td style="width: 40px; padding-left: 16px">
+                <MISACheckbox :checked="asset.checked"></MISACheckbox>
+              </td>
+              <td class="text-align-center" style="width: 50px">
+                {{ index + 1 }}
+              </td>
+              <td class="text-align-left" style="width: 110px">
+                {{ asset.FixedAssetCode }}
+              </td>
+              <td class="text-align-left" style="width: 170px">
+                {{ asset.FixedAssetName }}
+              </td>
+              <td class="text-align-left" style="width: 170px">
+                {{ asset.DepartmentName }}
+              </td>
+              <td class="text-align-right" style="width: 105px">
+                {{ currencyFormat(asset.Cost) }}
+              </td>
+              <td class="text-align-right" style="width: 100px">
+                {{ currencyFormat(asset.DepreciationValue) }}
+              </td>
+              <td class="text-align-right" style="width: 100px">
+                Giá trị còn lại
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- paging -->
+      <div class="license-paging">
+        <div class="m-total-number">
+          Tổng số:
+          <strong>{{ this.assetLength }}</strong> bản ghi
         </div>
-        <!-- paging -->
-        <div class="lisence-paging">
-          <div class="m-total-number">
-            Tổng số:
-            <strong>{{ this.assetLength }}</strong> bản ghi
-          </div>
-          <!-- :defaultValue="this.pageSize"
+        <!-- :defaultValue="this.pageSize"
             @onChose="getPageSize" -->
-          <MISADropdown></MISADropdown>
-          <MISAPaginate
-            :pageCount="1"
-            :prev-text="'pre'"
-            :prev-link-class="'prev-link-class'"
-            :next-text="'next'"
-            :next-link-class="'next-link-class'"
-            :container-class="'m-paging-list'"
-            :prev-class="'prev-class'"
-          ></MISAPaginate>
-          <!-- :click-handler="getPageIndex" -->
-        </div>
+        <MISADropdown></MISADropdown>
+        <MISAPaginate
+          :pageCount="1"
+          :prev-text="'pre'"
+          :prev-link-class="'prev-link-class'"
+          :next-text="'next'"
+          :next-link-class="'next-link-class'"
+          :container-class="'m-paging-list'"
+          :prev-class="'prev-class'"
+        ></MISAPaginate>
+        <!-- :click-handler="getPageIndex" -->
       </div>
-      <div class="m-modal-footer">
-        <MISAButton type="outline-button" buttonTitle="Hủy bỏ"></MISAButton>
-        <MISAButton buttonTitle="Đồng ý" @click="onSubmit"></MISAButton>
-      </div>
+    </div>
+    <div class="m-modal-footer">
+      <MISAButton
+        type="outline-button"
+        buttonTitle="Hủy bỏ"
+        @click="onCancel"
+      ></MISAButton>
+      <MISAButton buttonTitle="Đồng ý" @click="onSubmit"></MISAButton>
     </div>
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   async beforeMount() {
     this.pageSize = 20;
     await this.filterAsset();
   },
+
+  mounted() {
+    this.$refs.searchInput.focus();
+  },
+
   methods: {
     /**
      * Mô tả : Chọn tất cả sản phẩm
@@ -163,8 +170,8 @@ export default {
         asset.checked = true;
       }
       // 2. Kiểm tra xem có check hết không:
-      this.checkedAll =
-        this.checkedaAssetList.length != this.assetData.length ? false : true;
+      // this.checkedAll =
+      //   this.checkedaAssetList.length != this.assetData.length ? false : true;
     },
 
     /**
@@ -177,7 +184,7 @@ export default {
     async filterAsset() {
       this.isLoading = true;
       try {
-        const res = await axios.get('FixedAssets/Filter', {
+        const res = await axios.get("FixedAssets/Filter", {
           params: {
             FixedAssetFilter: this.searchBox,
             pageIndex: this.pageIndex,
@@ -210,7 +217,18 @@ export default {
       this.checkedaAssetList = this.assetData.filter(
         (asset) => asset.checked == true
       );
-      this.$emit('getChoseAsset', this.checkedaAssetList);
+      this.$emit("getChoseAsset", this.checkedaAssetList);
+    },
+
+    /**
+     * Mô tả : Ấn hủy
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:29 10/06/2022
+     */
+    onCancel() {
+      this.$emit("choseAssetDialogShow", false);
     },
 
     /**
@@ -221,7 +239,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
   },
@@ -232,7 +250,7 @@ export default {
       assetLength: 0,
       assetData: [],
       checkedaAssetList: [],
-      searchBox: '',
+      searchBox: "",
       checkedAll: false,
     };
   },

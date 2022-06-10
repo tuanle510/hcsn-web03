@@ -1,8 +1,8 @@
 <template>
   <div class="datepicker-container">
+    <!-- locale="vi" -->
     <Datepicker
       ref="datepicker"
-      locale="vi"
       cancelText="Hủy"
       selectText="Chọn"
       format="dd/MM/yyyy"

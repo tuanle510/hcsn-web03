@@ -62,22 +62,22 @@
         <table class="m-table">
           <thead>
             <tr>
-              <th class="max-w-50" style="padding-left: 16px">
+              <th class="w-50" style="padding-left: 16px">
                 <MISACheckbox
                   @click="onCheckedAll"
                   :checked="this.checkedAll"
                 ></MISACheckbox>
               </th>
-              <th class="text-align-left max-w-50">STT</th>
-              <th class="text-align-left max-w-130">Mã tài sản</th>
+              <th class="text-align-center w-50">STT</th>
+              <th class="text-align-left w-130">Mã tài sản</th>
               <th class="text-align-left max-w-150">Tên tài sản</th>
               <th class="text-align-left max-w-150">Loại tài sản</th>
               <th class="text-align-left max-w-130">Bộ phận sử dụng</th>
-              <th class="text-align-right max-w-60">Số lượng</th>
-              <th class="text-align-right min-max-w-130">Nguyên giá</th>
-              <th class="text-align-right min-max-w-130">HM/KH lũy kế</th>
-              <th class="text-align-right min-max-w-130">Giá trị còn lại</th>
-              <th class="text-align-center max-w-90">Chức năng</th>
+              <th class="text-align-right w-60">Số lượng</th>
+              <th class="text-align-right w-130">Nguyên giá</th>
+              <th class="text-align-right w-130">HM/KH lũy kế</th>
+              <th class="text-align-right w-130">Giá trị còn lại</th>
+              <th class="text-align-center w-90">Chức năng</th>
             </tr>
           </thead>
           <div v-if="isLostConnection" class="table-msg">
@@ -98,7 +98,7 @@
               <td style="padding-left: 16px">
                 <MISACheckbox :checked="asset.checked"></MISACheckbox>
               </td>
-              <td class="text-align-left">{{ index + 1 }}</td>
+              <td class="text-align-center">{{ index + 1 }}</td>
               <td class="text-align-left">
                 {{ asset.FixedAssetCode }}
               </td>
@@ -130,7 +130,7 @@
               <td class="text-align-right">
                 {{ currencyFormat(asset.Cost - asset.Accumulated) }}
               </td>
-              <td>
+              <td style="position: relative">
                 <div class="m-function-box" style="display: none">
                   <div class="icon-box-36">
                     <div class="edit"></div>
@@ -156,7 +156,7 @@
         <table class="m-table-footer">
           <tbody>
             <tr>
-              <td style="min-width: 630px">
+              <td style="min-width: 660px">
                 <div class="m-paging-left">
                   <div class="m-total-number">
                     Tổng số:
@@ -180,19 +180,19 @@
                   ></MISAPaginate>
                 </div>
               </td>
-              <td class="text-align-right max-w-60">
+              <td class="text-align-right w-60">
                 {{ quantityTotal }}
               </td>
-              <td class="text-align-right min-max-w-130">
+              <td class="text-align-right w-130">
                 {{ currencyFormat(costTotal) }}
               </td>
-              <td class="text-align-right min-max-w-130">
+              <td class="text-align-right w-130">
                 {{ currencyFormat(accumulatedTotal) }}
               </td>
-              <td class="text-align-right min-max-w-130">
+              <td class="text-align-right w-130">
                 {{ currencyFormat(costTotal - accumulatedTotal) }}
               </td>
-              <td class="max-w-90"></td>
+              <td class="w-90"></td>
             </tr>
           </tbody>
         </table>
@@ -235,11 +235,11 @@
 </template>
 <script>
 /* eslint-disable */
-import axios from 'axios';
-import { remove_msg, toast_msg } from '../../assets/resource/ResourceMsg';
+import axios from "axios";
+import { remove_msg, toast_msg } from "../../assets/resource/ResourceMsg";
 
 export default {
-  name: 'the-content',
+  name: "the-content",
 
   watch: {
     /**
@@ -250,13 +250,13 @@ export default {
      * Created date: 10:34 06/06/2022
      */
     searchDepartment(newValue) {
-      if (newValue == '' || newValue == null) {
+      if (newValue == "" || newValue == null) {
         this.filterAsset();
       }
     },
 
     searchCategory(newValue) {
-      if (newValue == '' || newValue == null) {
+      if (newValue == "" || newValue == null) {
         this.filterAsset();
       }
     },
@@ -333,7 +333,7 @@ export default {
      * Created date: 22:01 27/04/2022
      */
     try {
-      const res = await axios.get('Departments');
+      const res = await axios.get("Departments");
       this.departmentData = res.data;
     } catch (error) {
       console.log(error);
@@ -347,7 +347,7 @@ export default {
      * Created date: 13:33 29/04/2022
      */
     try {
-      const res = await axios.get('FixedAssetCategories');
+      const res = await axios.get("FixedAssetCategories");
       this.categoryData = res.data;
     } catch (error) {
       console.log(error);
@@ -428,7 +428,7 @@ export default {
     async filterAsset() {
       this.isLoading = true;
       try {
-        const res = await axios.get('FixedAssets/Filter', {
+        const res = await axios.get("FixedAssets/Filter", {
           params: {
             FixedAssetFilter: this.searchBox,
             FixedAssetCategoryName: this.searchCategory,
@@ -460,7 +460,7 @@ export default {
      */
     async getAssetData() {
       try {
-        const res = await axios.get('FixedAssets');
+        const res = await axios.get("FixedAssets");
         this.totalAssetListLength = res.data.length;
       } catch (error) {
         console.log(error);
@@ -475,7 +475,7 @@ export default {
      * Created date: 09:55 01/05/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
 
@@ -489,7 +489,7 @@ export default {
     async getNewAssetCode() {
       this.isDialogLoading = true;
       try {
-        var res = await axios.get('FixedAssets/NewFixedAssetCode');
+        var res = await axios.get("FixedAssets/NewFixedAssetCode");
         // Gán dữ liệu trả về vào asset Code mới
         this.newAssetCode = res.data;
       } catch (error) {
@@ -572,11 +572,11 @@ export default {
      */
     onRowClick(asset, $event) {
       //Nếu ấn vào edit
-      if ($event.target.classList.contains('edit')) {
+      if ($event.target.classList.contains("edit")) {
         this.showEditDialog(asset);
       }
       // Nếu ấn vào copy
-      else if ($event.target.classList.contains('copy')) {
+      else if ($event.target.classList.contains("copy")) {
         this.showCloneDialog(asset.FixedAssetId);
       }
       // Nếu ấn vào cả dòng
@@ -661,7 +661,7 @@ export default {
       } else {
         // 2.2 Nếu đã chọn:
         var length = this.checkedaAssetList.length;
-        var title = '';
+        var title = "";
         // hiển thị title cảnh báo
         if (length == 1) {
           title = `${remove_msg.ASSET_REMOVE} ${this.checkedaAssetList[0].FixedAssetCode} - ${this.checkedaAssetList[0].FixedAssetName}?`;
@@ -670,7 +670,7 @@ export default {
         } else {
           title = `${length} ${remove_msg.ASSETS_REMOVE}`;
         }
-        this.alertShow(true, title, 'remove');
+        this.alertShow(true, title, "remove");
       }
     },
 
@@ -693,7 +693,7 @@ export default {
         const res = await axios.delete(`FixedAssets/DeleteMulti`, {
           data: JSON.stringify(idList),
           headers: {
-            'content-type': 'application/json',
+            "content-type": "application/json",
           },
         });
         // Load lại bảng
@@ -775,13 +775,13 @@ export default {
       isEditing: null,
       isCloseOnly: false,
       toast: {
-        title: '',
+        title: "",
         isShow: false,
       },
       alert: {
-        title: '',
+        title: "",
         isShow: false,
-        type: '',
+        type: "",
       },
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
@@ -790,7 +790,7 @@ export default {
       assetData: [], //dữ liệu lấy về từ api
       departmentData: [], //Dữ liệu bộ phận sử dụng
       categoryData: [], // Dữ liệu loại tài sản
-      newAssetCode: '',
+      newAssetCode: "",
       searchTimeout: null,
       clickTimeout: null,
       assetLength: null,

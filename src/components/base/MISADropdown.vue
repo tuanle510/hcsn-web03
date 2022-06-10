@@ -10,24 +10,26 @@
         <div :class="[this.isOptionShow ? 'up' : 'down']"></div>
       </div>
     </div>
-    <ul
-      v-if="isOptionShow"
-      class="m-dropdown-option"
-      :style="{
-        top: this.optionPos.top + 'px',
-        left: this.optionPos.left + 'px',
-      }"
-    >
-      <li
-        v-for="(option, index) in optionList"
-        :key="index"
-        @click="onChose(option)"
-        class="option-item"
-        :class="[this.optionChose == option ? 'option-item-seleced ' : '']"
+    <Teleport to="body">
+      <ul
+        v-if="isOptionShow"
+        class="m-dropdown-option"
+        :style="{
+          top: this.optionPos.top + 'px',
+          left: this.optionPos.left + 'px',
+        }"
       >
-        {{ option }}
-      </li>
-    </ul>
+        <li
+          v-for="(option, index) in optionList"
+          :key="index"
+          @click="onChose(option)"
+          class="option-item"
+          :class="[this.optionChose == option ? 'option-item-seleced ' : '']"
+        >
+          {{ option }}
+        </li>
+      </ul>
+    </Teleport>
   </div>
 </template>
 <script>

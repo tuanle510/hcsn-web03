@@ -3,7 +3,7 @@ import Home from "../page/BaseHome.vue";
 import Login from "../page/BaseLogin.vue";
 import store from "../store/store";
 import MISAContent from "../components/layout/TheContent.vue";
-import MISALisence from "../components/layout/TheLisence.vue";
+import MISALicense from "../components/layout/TheLicense.vue";
 
 const routes = [
   {
@@ -13,7 +13,7 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { path: "/asset", component: MISAContent },
-      { path: "/lisence", component: MISALisence },
+      { path: "/license", component: MISALicense },
     ],
   },
   {

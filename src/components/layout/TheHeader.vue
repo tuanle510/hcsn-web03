@@ -2,7 +2,6 @@
   <div class="m-header">
     <div class="header-left">Danh sách tài sản</div>
     <div class="header-right">
-      <MISAButton buttonTitle="Log out" @click.prevent="logout"> </MISAButton>
       <div class="header-right-title">Sở tài chính</div>
       <!-- option -->
       <div class="header-year">
@@ -23,7 +22,9 @@
       <div class="header-icon">
         <div class="question"></div>
       </div>
-      <div class="header-icon-user">
+      <div class="header-icon-user" @click="dropdown">
+        <MISAButton buttonTitle="Log out" @click.prevent="logout"> </MISAButton>
+
         <div class="header-icon">
           <div class="user-logo"></div>
         </div>
@@ -34,20 +35,20 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { mapGetters, mapMutations } from 'vuex';
+import axios from "axios";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
   computed: {
-    ...mapGetters(['user']),
+    ...mapGetters(["user"]),
   },
 
   methods: {
-    ...mapMutations(['setUser']),
+    ...mapMutations(["setUser"]),
     async logout() {
       try {
-        const res = await axios.get('Users/Logout');
-        this.$router.push('/login');
+        const res = await axios.get("Users/Logout");
+        this.$router.push("/login");
         this.setUser(res.data);
       } catch (error) {
         console.log(error);

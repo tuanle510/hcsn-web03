@@ -103,10 +103,10 @@ export default {
     },
 
     validateRequired() {
+      var value = this.$refs.input.value;
       if (
         this.required &&
-        (this.modelValue === undefined ||
-          this.modelValue.toString().trim() === "")
+        (value === undefined || value.toString().trim() === "")
       ) {
         this.$refs.input.classList.add("m-input-error");
       } else {

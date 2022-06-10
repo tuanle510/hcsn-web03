@@ -46,8 +46,8 @@
 </template>
 <script>
 export default {
-  name: 'the-navbar',
-  props: ['navBarWidth'],
+  name: "the-navbar",
+  props: ["navBarWidth"],
 
   beforeMount() {
     this.navBarSeleced = this.navBarList[1];
@@ -56,7 +56,7 @@ export default {
   methods: {
     onClickToggleNavBar() {
       this.isNavBarClose = !this.isNavBarClose;
-      this.$emit('onCloseNavBar', this.isNavBarClose);
+      this.$emit("onCloseNavBar", this.isNavBarClose);
     },
 
     /**
@@ -80,15 +80,15 @@ export default {
         //   icon: 'home',
         // },
         {
-          title: 'Tài sản',
-          icon: 'asset',
-          link: 'asset',
-          childList: [{ childTitle: 'Tổng quan 1' }],
+          title: "Tài sản",
+          icon: "asset",
+          link: "asset",
+          childList: [{ childTitle: "Tổng quan 1" }],
         },
         {
-          title: 'Ghi tăng',
-          icon: 'setting',
-          link: 'lisence',
+          title: "Ghi tăng",
+          icon: "setting",
+          link: "license",
         },
         // {
         //   title: 'Tài sản HT-ĐB',

@@ -1,13 +1,13 @@
 <template>
-  <div class="m-content m-lisence">
+  <div class="m-content m-license">
     <!-- toolbar -->
-    <div class="m-lisence-toolbar">
+    <div class="m-license-toolbar">
       <div class="l-toolbar-left"><p>Ghi tăng tài sản</p></div>
       <div class="l-toolbar-right">
-        <MISAButton buttonTitle="Thêm"></MISAButton>
+        <MISAButton buttonTitle="Thêm" @click="showAddLicense"></MISAButton>
         <div class="l-icon-container">
           <div class="icon-box-36">
-            <div class="lisence"></div>
+            <div class="license"></div>
           </div>
           <div class="icon-box-36">
             <div class="arrow-down"></div>
@@ -17,7 +17,7 @@
     </div>
 
     <!-- table-->
-    <div class="m-lisence-main">
+    <div class="m-license-main">
       <div class="main-header">
         <div class="search-field" style="width: 300px">
           <input
@@ -42,64 +42,57 @@
 
       <div class="main-table-container">
         <!-- Table ghi tăng -->
-        <div class="m-lisence-table">
+        <div class="m-license-table">
           <table class="m-table">
             <thead>
               <tr>
-                <th class="max-w-50" style="padding-left: 16px">
+                <th class="w-50" style="padding-left: 16px">
                   <MISACheckbox></MISACheckbox>
                 </th>
-                <th class="text-align-center max-w-50">STT</th>
-                <th class="text-align-left max-w-130">Số chứng từ</th>
-                <th class="text-align-center" style="width: 130px">
-                  Ngày chứng từ
-                </th>
-                <th class="text-align-center" style="width: 130px">
-                  Ngày ghi tăng
-                </th>
-                <th class="text-align-right" style="width: 130px">
-                  Tổng nguyên giá
-                </th>
+                <th class="text-align-center w-50">STT</th>
+                <th class="text-align-left max-w-150">Số chứng từ</th>
+                <th class="text-align-center w-130">Ngày chứng từ</th>
+                <th class="text-align-center w-130">Ngày ghi tăng</th>
+                <th class="text-align-right w-130">Tổng nguyên giá</th>
                 <th class="text-align-left">Nội dung</th>
               </tr>
             </thead>
             <tbody>
-              <tr class="m-tr" @dblclick="showEditLisence">
-                <td style="width: 50px">
+              <tr
+                v-for="(license, index) in licenseData"
+                :key="index"
+                class="m-tr"
+                @dblclick="showEditLicense(license)"
+              >
+                <td style="padding-left: 16px">
                   <MISACheckbox></MISACheckbox>
                 </td>
-                <td class="text-align-center" style="width: 100px">STT</td>
-                <td class="text-align-left" style="width: 100px">
-                  Số chứng từ
-                </td>
-                <td class="text-align-center" style="width: 100px">
-                  Ngày chứng từ
-                </td>
-                <td class="text-align-center" style="width: 100px">
-                  Ngày ghi tăng
-                </td>
-                <td class="text-align-right" style="width: 100px">
-                  Tổng nguyên giá
-                </td>
-                <td class="text-align-left">
+                <td class="text-align-center w-50">STT</td>
+                <td class="text-align-left w-150">Số chứng từ</td>
+                <td class="text-align-center w-130">Ngày chứng từ</td>
+                <td class="text-align-center w-130">Ngày ghi tăng</td>
+                <td class="text-align-right w-130">Tổng nguyên giá</td>
+                <td class="text-align-left text-width">
                   <span>Nội dung</span>
+                  <div class="m-function-box" style="display: none">
+                    <div class="icon-box-36">
+                      <div class="edit"></div>
+                    </div>
+                    <div class="icon-box-36">
+                      <div class="remove-red"></div>
+                    </div>
+                  </div>
                 </td>
-                <div class="m-function-box" style="display: none">
-                  <div class="icon-box-36">
-                    <div class="edit"></div>
-                  </div>
-                  <div class="icon-box-36">
-                    <div class="remove-red"></div>
-                  </div>
-                </div>
               </tr>
             </tbody>
           </table>
         </div>
-        <div class="m-lisence-total">
+        <!-- Tổng tiền -->
+        <div class="m-license-total">
           <div class="total-text">305.845.345</div>
         </div>
-        <div class="lisence-paging">
+        <!-- Tổng số bảng ghi -->
+        <div class="license-paging">
           <div class="m-total-number">
             Tổng số:
             <strong>31</strong> bản ghi
@@ -128,7 +121,7 @@
             <table class="m-table">
               <thead>
                 <tr>
-                  <th class="text-align-center max-w-50">STT</th>
+                  <th class="text-align-center w-50">STT</th>
                   <th class="text-align-left">Mã tài sản</th>
                   <th class="text-align-left">Tên tài sản</th>
                   <th class="text-align-left">Bộ phận sử dụng</th>
@@ -155,81 +148,54 @@
     </div>
 
     <!-- chi tiết chứng từ dialog -->
-    <MISALisenceDialog
-      v-if="isLisenceShow"
-      @lisenceDialogShow="lisenceDialogShow"
-      @choseAssetDialogShow="choseAssetDialogShow"
-      @editAssetDialogShow="editAssetDialogShow"
-      :choseAssetList="choseAssetList"
-    ></MISALisenceDialog>
-
-    <!-- Chọn tài sản thêm vào dialog -->
-    <MISAChoseAssetDialog
-      v-if="isChoseAssetShow"
-      @getChoseAsset="getChoseAsset"
-    ></MISAChoseAssetDialog>
-
-    <!-- Sửa tàn sản dialog -->
-    <MISAEditAssetDialog v-if="isEditAssetShow"></MISAEditAssetDialog>
+    <MISALicenseDialog
+      v-if="isLicenseShow"
+      @licenseDialogShow="licenseDialogShow"
+    ></MISALicenseDialog>
   </div>
 </template>
 <script>
 export default {
   methods: {
     /**
-     * Mô tả : Nhận asset List từ ChoseAssetDialog
+     * Mô tả : Hiển thị form thêm mới chứng từ
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 22:51 09/06/2022
+     * Created date: 15:36 10/06/2022
      */
-    getChoseAsset(list) {
-      this.choseAssetList = list;
-      console.log(this.choseAssetList);
-      this.showEditLisence();
+    showAddLicense() {
+      this.licenseDialogShow(true);
     },
+
     /**
-     * Mô tả : HIển thị lisence dialog sửa
+     * Mô tả : HIển thị form sửa chứng từ
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 09:35 08/06/2022
      */
-    showEditLisence() {
-      this.lisenceDialogShow(true);
+    showEditLicense(license) {
+      console.log(license);
+      this.licenseDialogShow(true);
     },
 
-    // Tắt mở dialog chi tiết chứng từ
-    lisenceDialogShow(value) {
-      if (value == true) {
-        this.choseAssetDialogShow(false);
-      }
-      this.isLisenceShow = value;
-    },
-
-    // Tắt mở dialog thêm tài sản
-    choseAssetDialogShow(value) {
-      if (value == true) {
-        this.lisenceDialogShow(false);
-      }
-      this.isChoseAssetShow = value;
-    },
-
-    // Tắt mở dialog sủa tài sản:
-    editAssetDialogShow(value) {
-      if (value == true) {
-        this.lisenceDialogShow(false);
-      }
-      this.isEditAssetShow = value;
+    /**
+     * Mô tả : Tắt mở form chi tiết chứng từ
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 15:36 10/06/2022
+     */
+    licenseDialogShow(value) {
+      this.isLicenseShow = value;
     },
   },
 
   data() {
     return {
-      isLisenceShow: false,
-      isChoseAssetShow: false,
-      isEditAssetShow: true,
-      choseAssetList: [],
+      isLicenseShow: false,
+      licenseData: [], // danh sách chứng từ gọi từ API
     };
   },
 };
