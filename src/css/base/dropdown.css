@@ -32,7 +32,6 @@
 .m-dropdown-option {
   max-height: 100px;
   position: fixed;
-  width: 59px;
   overflow: auto;
   border-radius: 2.5px;
   background-color: #fff;

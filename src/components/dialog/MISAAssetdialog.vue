@@ -211,7 +211,7 @@
           @click="onCancel"
           buttonTitle="Hủy"
         ></MISAButton>
-        <MISAButton buttonTitle="Lưu"></MISAButton>
+        <MISAButton buttonTitle="Lưu" @click.prevent="onSubmit"></MISAButton>
       </div>
     </div>
   </div>

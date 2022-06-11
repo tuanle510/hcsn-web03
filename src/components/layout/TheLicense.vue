@@ -50,11 +50,11 @@
                   <MISACheckbox></MISACheckbox>
                 </th>
                 <th class="text-align-center w-50">STT</th>
-                <th class="text-align-left max-w-150">Số chứng từ</th>
+                <th class="text-align-left w-150">Số chứng từ</th>
                 <th class="text-align-center w-130">Ngày chứng từ</th>
                 <th class="text-align-center w-130">Ngày ghi tăng</th>
-                <th class="text-align-right w-130">Tổng nguyên giá</th>
-                <th class="text-align-left">Nội dung</th>
+                <th class="text-align-right w-150">Tổng nguyên giá</th>
+                <th class="text-align-left text-width">Nội dung</th>
               </tr>
             </thead>
             <tbody>
@@ -71,7 +71,7 @@
                 <td class="text-align-left w-150">Số chứng từ</td>
                 <td class="text-align-center w-130">Ngày chứng từ</td>
                 <td class="text-align-center w-130">Ngày ghi tăng</td>
-                <td class="text-align-right w-130">Tổng nguyên giá</td>
+                <td class="text-align-right w-150">Tổng nguyên giá</td>
                 <td class="text-align-left text-width">
                   <span>Nội dung</span>
                   <div class="m-function-box" style="display: none">

@@ -6,33 +6,15 @@
     </div>
 
     <ul class="m-navbar-list">
-      <li
-        v-for="(navbar, index) in navBarList"
-        @click="onClickNavBar(navbar)"
-        :key="index"
-        class="navbar-item"
-        :class="{ 'navbar-selected': this.navBarSeleced == navbar }"
-      >
-        <div class="navbar-logo">
-          <div
-            v-if="this.navBarSeleced == navbar"
-            :class="`${navbar.icon}-active`"
-          ></div>
-          <div v-else :class="navbar.icon"></div>
-        </div>
-
-        <div class="navbar-item-title">
-          <router-link
-            :to="'/' + navbar.link"
-            style="line-height: 20px; padding: 10px 90px 10px 44px; z-index: 20"
-          >
-            <p v-show="!isNavBarClose">{{ navbar.title }}</p>
-          </router-link>
-          <div class="navbar-down" v-show="navbar.hasOwnProperty('childList')">
-            <div class="dropdown"></div>
+      <li v-for="(router, index) in routerList" :key="index">
+        <router-link class="m-link" :to="{ path: router.link }">
+          <div class="navbar-logo">
+            <!-- this.refs.router.classList.includes("router-link-exact-active") ?
+              router.class : `${router.class}-active`  -->
+            <div :class="router.icon"></div>
           </div>
-        </div>
-        <!-- <ul class="navbar-child"></ul> -->
+          <p v-if="!isNavBarClose">{{ router.name }}</p>
+        </router-link>
       </li>
     </ul>
 
@@ -46,78 +28,32 @@
 </template>
 <script>
 export default {
-  name: "the-navbar",
-  props: ["navBarWidth"],
-
-  beforeMount() {
-    this.navBarSeleced = this.navBarList[1];
-  },
+  name: 'the-navbar',
+  props: ['navBarWidth'],
 
   methods: {
     onClickToggleNavBar() {
       this.isNavBarClose = !this.isNavBarClose;
-      this.$emit("onCloseNavBar", this.isNavBarClose);
-    },
-
-    /**
-     * Mô tả : Ấn vào từng dòng trong navbar
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 14:11 02/06/2022
-     */
-    onClickNavBar(navbar) {
-      this.navBarSeleced = navbar;
+      this.$emit('onCloseNavBar', this.isNavBarClose);
     },
   },
   data() {
     return {
       isNavBarClose: false, //đóng mở navbar
-      navBarSeleced: {},
-      navBarList: [
-        // {
-        //   title: 'Tổng quan',
-        //   icon: 'home',
-        // },
+      routerList: [
         {
-          title: "Tài sản",
-          icon: "asset",
-          link: "asset",
-          childList: [{ childTitle: "Tổng quan 1" }],
+          link: '/asset',
+          icon: 'asset',
+          name: 'Tài sản',
         },
         {
-          title: "Ghi tăng",
-          icon: "setting",
-          link: "license",
+          link: '/license',
+          icon: 'setting',
+          name: 'Ghi tăng',
         },
-        // {
-        //   title: 'Tài sản HT-ĐB',
-        //   icon: 'line',
-        //   childList: [{ childTitle: 'Tổng quan 1' }],
-        // },
-        // {
-        //   title: 'Công cụ dụng cụ',
-        //   icon: 'tool',
-        //   childList: [{ childTitle: 'Tổng quan 1' }],
-        // },
-        // { title: 'Danh mục', icon: 'category' },
-        // {
-        //   title: 'Tra cứu',
-        //   icon: 'search',
-        //   childList: [{ childTitle: 'Tổng quan 1' }],
-        // },
-        // {
-        //   title: 'Báo cáo',
-        //   icon: 'report',
-        //   childList: [{ childTitle: 'Tổng quan 1' }],
-        // },
       ],
     };
   },
 };
 </script>
-<style>
-.text-show {
-  visibility: hidden;
-}
-</style>
+<style></style>

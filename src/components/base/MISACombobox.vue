@@ -1,10 +1,5 @@
 <template>
-  <div
-    v-on:clickout="tab"
-    class="m-combobox"
-    ref="combobox"
-    @click.prevent="onClickCombobox"
-  >
+  <div v-on:clickout="tab" class="m-combobox" ref="combobox">
     <div class="combobox-contaner">
       <div v-if="hasIcon" class="combobox-icon">
         <div class="filter"></div>
@@ -60,22 +55,26 @@
   </div>
 </template>
 <script>
-import "clickout-event";
+import 'clickout-event';
 export default {
-  name: "the-combobox",
-  emits: ["blur", "keydown", "update:modelValue", "selectItem"],
+  name: 'the-combobox',
+  emits: ['blur', 'keydown', 'update:modelValue', 'selectItem'],
 
   props: [
-    "hasIcon",
-    "placeholder",
-    "filterby",
-    "optionList",
-    "modelValue",
-    "name",
-    "required",
-    "title",
-    "maxlength",
+    'hasIcon',
+    'placeholder',
+    'filterby',
+    'optionList',
+    'modelValue',
+    'name',
+    'required',
+    'title',
+    'maxlength',
   ],
+
+  created() {
+    window.addEventListener('resize', this.resizeHandler);
+  },
 
   watch: {
     /**
@@ -87,28 +86,47 @@ export default {
      */
     isFocus: function (newValue) {
       if (newValue == false) {
-        this.$refs.input.classList.remove("input-focus");
+        this.$refs.input.classList.remove('input-focus');
 
         this.validateRequired();
       } else {
-        this.$refs.input.classList.add("input-focus");
+        this.$refs.input.classList.add('input-focus');
       }
     },
 
+    /**
+     * Mô tả : Theo dõi sự thay đổi của selecedIndex
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:36 11/06/2022
+     */
     selecedIndex: function (newValue, oldValue) {
       if (newValue != oldValue) {
         this.scrollToItem();
       }
     },
 
+    /**
+     * Mô tả : Lọc danh sách option theo input
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:38 11/06/2022
+     */
     // Theo dõi giá trị mới của input để hiển thị optionList
     modelValue: function (newValue) {
       // Hiển thị option list:
+      this.comboboxPos = this.$refs.combobox.getBoundingClientRect();
+      // Lấy vị trí combobox
+      this.setPosCombobox();
       this.isOptionShow = true;
+
       // Gán index về 0:
       this.selecedIndex = 0;
 
-      if (newValue == undefined || newValue == "") {
+      // Lọc
+      if (newValue == undefined || newValue == '') {
         this.matches = this.optionList;
       } else {
         this.matches = this.optionList.filter((item) =>
@@ -122,25 +140,34 @@ export default {
 
   methods: {
     /**
+     * Mô tả : Xử lí khi window thay đổi (reponsive)
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:42 11/06/2022
+     */
+    resizeHandler() {
+      if (this.isOptionShow == true) {
+        this.comboboxPos = this.$refs.combobox.getBoundingClientRect();
+        this.setPosCombobox();
+      }
+    },
+
+    /**
      * Mô tả : Lấy vị trí combobox
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 11:08 11/06/2022
      */
-    onClickCombobox() {
-      console.log("second");
-      let combobox = this.$refs.combobox.getBoundingClientRect();
-      console.log(combobox);
+    setPosCombobox() {
       this.optionPos = {
-        top: combobox.top + combobox.height,
-        left: combobox.left,
-        width: combobox.width,
+        top: this.comboboxPos.top + this.comboboxPos.height,
+        left: this.comboboxPos.left,
+        width: this.comboboxPos.width,
       };
-
-      this.isToggle = false;
-      this.setFocus();
     },
+
     /**
      * Mô tả : chọn ô input thì bôi đen chữ
      * @param
@@ -162,7 +189,7 @@ export default {
     onChangeHandler(e) {
       e.preventDefault();
       //gán lại giá trị
-      this.$emit("update:modelValue", e.target.value);
+      this.$emit('update:modelValue', e.target.value);
     },
 
     /**
@@ -175,14 +202,17 @@ export default {
     setFocus() {
       this.isFocus = true;
       // Nếu chưa nhập gì thì matches list hiển thị tất cả
-      if (this.$refs.input.value == null || this.$refs.input.value == "") {
+      if (this.$refs.input.value == null || this.$refs.input.value == '') {
         this.matches = this.optionList;
       }
 
       if (this.isToggle == true) {
-        // Hiển thị option List:
         this.isOptionShow = !this.isOptionShow;
       } else {
+        // Hiển thị option List:
+        this.comboboxPos = this.$refs.combobox.getBoundingClientRect();
+
+        this.setPosCombobox();
         this.isOptionShow = true;
       }
 
@@ -192,10 +222,6 @@ export default {
       // Bôi đen tất cả text
       this.$refs.input.select();
     },
-
-    // outFocus() {
-    //   this.isFocus = false;
-    // },
 
     /**
      * Mô tả : Validate required
@@ -208,27 +234,13 @@ export default {
       var value = this.$refs.input.value;
       if (
         this.required &&
-        (value === undefined || value.toString().trim() === "")
+        (value === undefined || value.toString().trim() === '')
       ) {
-        this.$refs.input.classList.add("m-input-error");
+        this.$refs.input.classList.add('m-input-error');
       } else {
-        this.$refs.input.classList.remove("m-input-error");
+        this.$refs.input.classList.remove('m-input-error');
       }
     },
-
-    /**
-    //  * Mô tả : clear input
-    //  * @param
-    //  * @return
-    //  * Created by: Lê Thiện Tuấn - MF1118
-    //  * Created date: 14:52 28/04/2022
-    //  */
-    // clearInput() {
-    //   this.$emit("update:modelValue");
-    //   this.isOptionShow = false;
-    //   // this.validateRequired();
-    //   this.selecedIndex = 0;
-    // },
 
     /**
      * Mô tả : xử lí sự kiện onClick vào optionList
@@ -256,7 +268,7 @@ export default {
       this.selecedItem = this.matches[this.selecedIndex];
       // 1.2 Cập nhật giá trị vào input
       await this.$emit(
-        "update:modelValue",
+        'update:modelValue',
         this.matches[this.selecedIndex][this.filterby]
       );
 
@@ -269,11 +281,12 @@ export default {
       this.matches = [...this.optionList];
 
       //  truyền cả obj lên cho component cha:
-      this.$emit("selectItem", this.selecedItem);
+      this.$emit('selectItem', this.selecedItem);
       // Validate lại dữ liệu:
       this.isOptionShow = false;
       // Bôi đen chữ
-      this.$refs.input.select();
+      this.$refs.input.blur();
+      this.isFocus = false;
     },
 
     /**
@@ -328,6 +341,9 @@ export default {
      */
     toggleOptionList() {
       this.isToggle = true;
+      this.comboboxPos = this.$refs.combobox.getBoundingClientRect();
+
+      this.setPosCombobox();
       // this.isOptionShow = false;
       this.$refs.input.focus();
     },
@@ -357,6 +373,7 @@ export default {
       isOptionShow: false,
       isToggle: false,
       optionPos: {},
+      comboboxPos: {},
     };
   },
 };

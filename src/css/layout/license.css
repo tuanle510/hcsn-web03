@@ -76,15 +76,15 @@
 .text-width {
   position: relative;
   padding-left: 10px;
-  min-width: 300px;
-  max-width: 300px;
+  min-width: 500px;
+  max-width: 750px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .total-text {
-  width: 620px;
+  width: 640px;
   text-align: right;
   font-weight: bold;
 }
