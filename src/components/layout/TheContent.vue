@@ -130,8 +130,8 @@
               <td class="text-align-right">
                 {{ currencyFormat(asset.Cost - asset.Accumulated) }}
               </td>
-              <td style="position: relative">
-                <div class="m-function-box" style="display: none">
+              <td>
+                <div class="m-function-box">
                   <div class="icon-box-36">
                     <div class="edit"></div>
                   </div>

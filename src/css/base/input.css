@@ -3,12 +3,6 @@ input:disabled {
   color: black;
 }
 
-.input-container {
-  position: relative;
-  border: none;
-  outline: none;
-}
-
 input.m-input {
   position: relative;
   height: 36px;
@@ -52,8 +46,9 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.m-error {
+.m-input-msg {
   position: absolute;
+  bottom: -16px;
   color: #ec4b4b;
   font-size: 12px;
 }

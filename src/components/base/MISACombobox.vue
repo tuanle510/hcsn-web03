@@ -1,5 +1,10 @@
 <template>
-  <div v-on:clickout="tab" class="m-combobox" ref="combobox">
+  <div
+    v-on:clickout="tab"
+    class="m-combobox"
+    ref="combobox"
+    @click.prevent="onClickCombobox"
+  >
     <div class="combobox-contaner">
       <div v-if="hasIcon" class="combobox-icon">
         <div class="filter"></div>
@@ -13,7 +18,6 @@
         :title="title"
         :maxlength="maxlength"
         :placeholder="placeholder"
-        @click="onClick"
         @keydown.tab="tab"
         @focus="setFocus"
         @blur="outFocus"
@@ -24,28 +28,35 @@
         :value="this.modelValue"
       />
 
-      <div
-        style="position: absolute; right: 0"
-        @click="toggleOptionList()"
-        class="icon-combobox"
-      >
+      <div @click="toggleOptionList()" class="icon-combobox">
         <div v-if="isOptionShow" class="up"></div>
         <div v-else class="down"></div>
       </div>
     </div>
-    <ul class="m-option-list" v-if="isOptionShow" ref="optionList">
-      <li
-        v-for="(option, index) in matches"
-        :key="index"
-        class="m-option-item"
-        @click="choseOption(index, option)"
-        :class="{ 'm-item-selected': this.selecedIndex == index }"
+    <Teleport to="body">
+      <ul
+        class="m-option-list"
+        v-if="isOptionShow"
+        ref="optionList"
+        :style="{
+          top: this.optionPos.top + 'px',
+          left: this.optionPos.left + 'px',
+          width: this.optionPos.width + 'px',
+        }"
       >
-        <div class="item-text-limit">
-          {{ option[this.filterby] }}
-        </div>
-      </li>
-    </ul>
+        <li
+          v-for="(option, index) in matches"
+          :key="index"
+          class="m-option-item"
+          @click="choseOption(index, option)"
+          :class="{ 'm-item-selected': this.selecedIndex == index }"
+        >
+          <div class="item-text-limit">
+            {{ option[this.filterby] }}
+          </div>
+        </li>
+      </ul>
+    </Teleport>
   </div>
 </template>
 <script>
@@ -110,6 +121,26 @@ export default {
   },
 
   methods: {
+    /**
+     * Mô tả : Lấy vị trí combobox
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:08 11/06/2022
+     */
+    onClickCombobox() {
+      console.log("second");
+      let combobox = this.$refs.combobox.getBoundingClientRect();
+      console.log(combobox);
+      this.optionPos = {
+        top: combobox.top + combobox.height,
+        left: combobox.left,
+        width: combobox.width,
+      };
+
+      this.isToggle = false;
+      this.setFocus();
+    },
     /**
      * Mô tả : chọn ô input thì bôi đen chữ
      * @param
@@ -325,6 +356,7 @@ export default {
       isFocus: false,
       isOptionShow: false,
       isToggle: false,
+      optionPos: {},
     };
   },
 };

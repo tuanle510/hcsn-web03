@@ -102,3 +102,7 @@ ul li {
 .visible-none {
   visibility: hidden;
 }
+
+.bgc-none {
+  background-color: transparent;
+}

@@ -86,7 +86,7 @@ export default {
   },
 
   data() {
-    return { date: this.modelValue, inputClassName: null };
+    return { date: new Date(), inputClassName: null };
   },
 };
 </script>

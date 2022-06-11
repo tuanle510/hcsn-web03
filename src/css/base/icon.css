@@ -295,3 +295,15 @@
   width: 11px;
   height: 8px;
 }
+
+.plus {
+  background: url("/src/assets/icon/qlts-icon.png") no-repeat -375px -419px;
+  width: 18px;
+  height: 18px;
+}
+
+.minus {
+  background: url("/src/assets/icon/qlts-icon.png") no-repeat -375px -463px;
+  width: 18px;
+  height: 18px;
+}

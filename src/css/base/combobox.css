@@ -61,7 +61,7 @@
 }
 
 .m-option-list {
-  position: absolute;
+  position: fixed;
   top: 36px;
   border-radius: 2.5px;
   background-color: #fff;
@@ -127,6 +127,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: absolute;
+  right: 0;
 }
 
 .m-option-list::-webkit-scrollbar {
