@@ -9,9 +9,7 @@
       <li v-for="(router, index) in routerList" :key="index">
         <router-link class="m-link" :to="{ path: router.link }">
           <div class="navbar-logo">
-            <!-- this.refs.router.classList.includes("router-link-exact-active") ?
-              router.class : `${router.class}-active`  -->
-            <div :class="router.icon"></div>
+            <div :class="[router.icon, `${router.icon}-active`]"></div>
           </div>
           <p v-if="!isNavBarClose">{{ router.name }}</p>
         </router-link>
