@@ -186,6 +186,7 @@
       v-if="isChoseAssetShow"
       @getChoseAsset="getChoseAsset"
       @choseAssetDialogShow="choseAssetDialogShow"
+      :assetList="assetList"
     ></MISAChoseAssetDialog>
 
     <!-- Sửa tàn sản dialog -->
@@ -241,7 +242,7 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 11:02 10/06/2022
      */
-    showAddAsset() {
+    async showAddAsset() {
       this.choseAssetDialogShow(true);
     },
 

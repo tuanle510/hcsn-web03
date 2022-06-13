@@ -67,14 +67,21 @@
                 <td style="padding-left: 16px">
                   <MISACheckbox></MISACheckbox>
                 </td>
-                <td class="text-align-center w-50">STT</td>
-                <td class="text-align-left w-150">Số chứng từ</td>
-                <td class="text-align-center w-130">Ngày chứng từ</td>
-                <td class="text-align-center w-130">Ngày ghi tăng</td>
-                <td class="text-align-right w-150">Tổng nguyên giá</td>
-                <td class="text-align-left text-width">
-                  <span>Nội dung</span>
-                  <div class="m-function-box" style="display: none">
+                <td class="text-align-center w-50">{{ index + 1 }}</td>
+                <td class="text-align-left w-150">{{ license.LicenseCode }}</td>
+                <td class="text-align-center w-130">
+                  {{ dateTimeFormat(license.UseDate) }}
+                </td>
+                <td class="text-align-center w-130">
+                  {{ dateTimeFormat(license.WriteUpDate) }}
+                </td>
+                <td class="text-align-right w-150">{{ license.Total }}</td>
+                <td class="text-align-left text-width last-td">
+                  {{ license.Description }}
+                  <div
+                    class="m-function-box last-td-icon"
+                    style="display: none"
+                  >
                     <div class="icon-box-36">
                       <div class="edit"></div>
                     </div>
@@ -155,8 +162,25 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+import moment from "moment";
 export default {
+  async beforeMount() {
+    const res = await await axios.get("Licenses");
+    this.licenseData = res.data;
+  },
+
   methods: {
+    /**
+     * Mô tả : format ngày tháng năm
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 15:35 13/06/2022
+     */
+    dateTimeFormat(value) {
+      return moment(value).format("DD/MM/YYYY");
+    },
     /**
      * Mô tả : Hiển thị form thêm mới chứng từ
      * @param

@@ -118,6 +118,16 @@ table.m-table {
   height: 40px;
 }
 
+.last-td {
+  position: relative;
+}
+
+.last-td-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .m-function-box.box-show {
   display: block;
 }

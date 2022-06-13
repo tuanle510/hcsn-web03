@@ -114,7 +114,9 @@
 </template>
 <script>
 import axios from "axios";
+import qs from "qs";
 export default {
+  props: ["assetList"],
   async beforeMount() {
     this.pageSize = 20;
     await this.filterAsset();
@@ -183,14 +185,28 @@ export default {
      */
     async filterAsset() {
       this.isLoading = true;
+      var idList = this.assetList.map((asset) => asset.FixedAssetId);
+      var res = null;
       try {
-        const res = await axios.get("FixedAssets/Filter", {
-          params: {
-            FixedAssetFilter: this.searchBox,
-            pageIndex: this.pageIndex,
-            pageSize: this.pageSize,
-          },
-        });
+        if (this.assetList.length == 0) {
+          res = await axios.get("FixedAssets/Filter", {
+            params: {
+              FixedAssetFilter: this.searchBox,
+              pageIndex: this.pageIndex,
+              pageSize: this.pageSize,
+            },
+          });
+        } else {
+          res = await axios.get("FixedAssets/GetRestAsetList", {
+            params: {
+              fixedAssetList: idList,
+            },
+            paramsSerializer: (params) => {
+              return qs.stringify(params);
+            },
+          });
+        }
+
         // Thêm trường checkd vào obj
         res.data.FilterList.map((element) => {
           element.checked = false;
