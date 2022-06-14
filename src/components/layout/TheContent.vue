@@ -235,11 +235,11 @@
 </template>
 <script>
 /* eslint-disable */
-import axios from 'axios';
-import { remove_msg, toast_msg } from '../../assets/resource/ResourceMsg';
+import axios from "axios";
+import { remove_msg, toast_msg } from "../../assets/resource/ResourceMsg";
 
 export default {
-  name: 'the-content',
+  name: "the-content",
 
   watch: {
     /**
@@ -250,13 +250,13 @@ export default {
      * Created date: 10:34 06/06/2022
      */
     searchDepartment(newValue) {
-      if (newValue == '' || newValue == null) {
+      if (newValue == "" || newValue == null) {
         this.filterAsset();
       }
     },
 
     searchCategory(newValue) {
-      if (newValue == '' || newValue == null) {
+      if (newValue == "" || newValue == null) {
         this.filterAsset();
       }
     },
@@ -332,7 +332,7 @@ export default {
      * Created date: 22:01 27/04/2022
      */
     try {
-      const res = await axios.get('Departments');
+      const res = await axios.get("Departments");
       this.departmentData = res.data;
     } catch (error) {
       console.log(error);
@@ -346,7 +346,7 @@ export default {
      * Created date: 13:33 29/04/2022
      */
     try {
-      const res = await axios.get('FixedAssetCategories');
+      const res = await axios.get("FixedAssetCategories");
       this.categoryData = res.data;
     } catch (error) {
       console.log(error);
@@ -427,7 +427,7 @@ export default {
     async filterAsset() {
       this.isLoading = true;
       try {
-        const res = await axios.get('FixedAssets/Filter', {
+        const res = await axios.get("FixedAssets/Filter", {
           params: {
             FixedAssetFilter: this.searchBox,
             FixedAssetCategoryName: this.searchCategory,
@@ -436,14 +436,16 @@ export default {
             pageSize: this.pageSize,
           },
         });
+
+        console.log(res.data);
         // Thêm trường checkd vào obj
-        res.data.FilterList.map((element) => {
+        res.data.List.map((element) => {
           element.checked = false;
         });
         // Gán vào data
-        this.assetData = [...res.data.FilterList];
+        this.assetData = [...res.data.List];
 
-        this.assetLength = res.data.FilterCount;
+        this.assetLength = res.data.Count;
         this.isLoading = false;
       } catch (error) {
         this.isLostConnection = true;
@@ -459,7 +461,7 @@ export default {
      */
     async getAssetData() {
       try {
-        const res = await axios.get('FixedAssets');
+        const res = await axios.get("FixedAssets");
         this.totalAssetListLength = res.data.length;
       } catch (error) {
         console.log(error);
@@ -474,7 +476,7 @@ export default {
      * Created date: 09:55 01/05/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
 
@@ -487,7 +489,7 @@ export default {
      */
     async getNewAssetCode() {
       try {
-        var res = await axios.get('FixedAssets/GetNewCode');
+        var res = await axios.get("FixedAssets/GetNewCode");
         // Gán dữ liệu trả về vào asset Code mới
         this.newAssetCode = res.data;
       } catch (error) {
@@ -570,11 +572,11 @@ export default {
      */
     onRowClick(asset, $event) {
       //Nếu ấn vào edit
-      if ($event.target.classList.contains('edit')) {
+      if ($event.target.classList.contains("edit")) {
         this.showEditDialog(asset);
       }
       // Nếu ấn vào copy
-      else if ($event.target.classList.contains('copy')) {
+      else if ($event.target.classList.contains("copy")) {
         this.showCloneDialog(asset.FixedAssetId);
       }
       // Nếu ấn vào cả dòng
@@ -659,7 +661,7 @@ export default {
       } else {
         // 2.2 Nếu đã chọn:
         var length = this.checkedaAssetList.length;
-        var title = '';
+        var title = "";
         // hiển thị title cảnh báo
         if (length == 1) {
           title = `${remove_msg.ASSET_REMOVE} ${this.checkedaAssetList[0].FixedAssetCode} - ${this.checkedaAssetList[0].FixedAssetName}?`;
@@ -668,7 +670,7 @@ export default {
         } else {
           title = `${length} ${remove_msg.ASSETS_REMOVE}`;
         }
-        this.alertShow(true, title, 'remove');
+        this.alertShow(true, title, "remove");
       }
     },
 
@@ -691,7 +693,7 @@ export default {
         const res = await axios.delete(`FixedAssets/DeleteMulti`, {
           data: JSON.stringify(idList),
           headers: {
-            'content-type': 'application/json',
+            "content-type": "application/json",
           },
         });
         // Load lại bảng
@@ -773,13 +775,13 @@ export default {
       isEditing: null,
       isCloseOnly: false,
       toast: {
-        title: '',
+        title: "",
         isShow: false,
       },
       alert: {
-        title: '',
+        title: "",
         isShow: false,
-        type: '',
+        type: "",
       },
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
@@ -788,7 +790,7 @@ export default {
       assetData: [], //dữ liệu lấy về từ api
       departmentData: [], //Dữ liệu bộ phận sử dụng
       categoryData: [], // Dữ liệu loại tài sản
-      newAssetCode: '',
+      newAssetCode: "",
       searchTimeout: null,
       clickTimeout: null,
       assetLength: null,

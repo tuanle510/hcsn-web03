@@ -113,10 +113,10 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
-import qs from 'qs';
+import axios from "axios";
+import qs from "qs";
 export default {
-  props: ['assetList'],
+  props: ["assetList"],
   async beforeMount() {
     this.pageSize = 20;
     await this.filterAsset();
@@ -171,9 +171,6 @@ export default {
       } else {
         asset.checked = true;
       }
-      // 2. Kiểm tra xem có check hết không:
-      // this.checkedAll =
-      //   this.checkedaAssetList.length != this.assetData.length ? false : true;
     },
 
     /**
@@ -185,11 +182,11 @@ export default {
      */
     async filterAsset() {
       this.isLoading = true;
+      // Lấy ra danh sách Id để lọc trên API
       var idList = this.assetList.map((asset) => asset.FixedAssetId);
-      var res = null;
       try {
         {
-          res = await axios.get('FixedAssets/GetRestAsetList', {
+          var res = await axios.get("FixedAssets/GetRestAsetList", {
             params: {
               fixedAssetList: idList,
             },
@@ -200,13 +197,13 @@ export default {
         }
 
         // Thêm trường checkd vào obj
-        res.data.FilterList.map((element) => {
+        res.data.List.map((element) => {
           element.checked = false;
         });
         // Gán vào data
-        this.assetData = res.data.FilterList;
+        this.assetData = [...res.data.List];
         // Lấy tổng số bản ghi
-        this.assetLength = res.data.FilterCount;
+        this.assetLength = res.data.Count;
         this.isLoading = false;
       } catch (error) {
         console.log(error);
@@ -225,7 +222,7 @@ export default {
       this.checkedaAssetList = this.assetData.filter(
         (asset) => asset.checked == true
       );
-      this.$emit('getChoseAsset', this.checkedaAssetList);
+      this.$emit("getChoseAsset", this.checkedaAssetList);
     },
 
     /**
@@ -236,7 +233,7 @@ export default {
      * Created date: 11:29 10/06/2022
      */
     onCancel() {
-      this.$emit('choseAssetDialogShow', false);
+      this.$emit("choseAssetDialogShow", false);
     },
 
     /**
@@ -247,7 +244,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
   },
@@ -258,7 +255,7 @@ export default {
       assetLength: 0,
       assetData: [],
       checkedaAssetList: [],
-      searchBox: '',
+      searchBox: "",
       checkedAll: false,
     };
   },

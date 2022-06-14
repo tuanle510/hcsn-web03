@@ -52,7 +52,8 @@
               <input
                 placeholder="Tìm kiếm theo mã, tên tài sản"
                 class="m-search"
-                @change="searchInput($event)"
+                ref="searchBox"
+                @change="searchInput()"
               />
               <div class="search-icon">
                 <div class="search"></div>
@@ -160,21 +161,22 @@
           <div class="license-paging" style="border-top: none">
             <div class="m-total-number">
               Tổng số:
-              <strong>31</strong> bản ghi
+              <strong>{{ this.assetList.length }}</strong> bản ghi
             </div>
-            <MISADropdown></MISADropdown>
-            <!-- :defaultValue="this.pageSize"
-              @onChose="getPageSize" -->
+            <MISADropdown
+              :defaultValue="20"
+              @onChose="getPageSize"
+            ></MISADropdown>
             <MISAPaginate
-              :pageCount="1"
+              :pageCount="totalPageIndex"
               :prev-text="'pre'"
               :prev-link-class="'prev-link-class'"
               :next-text="'next'"
               :next-link-class="'next-link-class'"
               :container-class="'m-paging-list'"
               :prev-class="'prev-class'"
+              :click-handler="getPageIndex"
             ></MISAPaginate>
-            <!-- :click-handler="getPageIndex" -->
           </div>
         </div>
       </div>
@@ -208,7 +210,20 @@
 </template>
 <script>
 export default {
-  props: ['choseAssetList', 'licenseSelected'],
+  props: ["choseAssetList", "licenseSelected"],
+
+  computed: {
+    /**
+     * Mô tả : Tính tổng số trang
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:54 14/06/2022
+     */
+    totalPageIndex: function () {
+      return Math.ceil(this.fitlerAssetList.length / this.pageSize);
+    },
+  },
 
   beforeMount() {
     this.license = this.licenseSelected;
@@ -227,15 +242,47 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 16:11 10/06/2022
      */
-    searchInput($event) {
-      var inputValue = $event.target.value;
-      this.fitlerAssetList = this.assetList.filter(
-        (asset) =>
-          asset.FixedAssetCode.toLowerCase().includes(
-            inputValue.toLowerCase()
-          ) ||
-          asset.FixedAssetName.toLowerCase().includes(inputValue.toLowerCase())
-      );
+    searchInput() {
+      var inputValue = this.$refs.searchBox.value;
+      this.fitlerAssetList = this.assetList
+        .filter(
+          (asset) =>
+            asset.FixedAssetCode.toLowerCase().includes(
+              inputValue.toLowerCase()
+            ) ||
+            asset.FixedAssetName.toLowerCase().includes(
+              inputValue.toLowerCase()
+            )
+        )
+        .slice(
+          (this.pageIndex - 1) * this.pageSize,
+          (this.pageIndex - 1) * this.pageSize + this.pageSize
+        );
+
+      console.log(this.fitlerAssetList);
+    },
+    /**
+     * Mô tả : Lấy thông tin số trang
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:56 14/06/2022
+     */
+    getPageIndex(pageNum) {
+      this.pageIndex = pageNum;
+      this.searchInput();
+    },
+
+    /**
+     * Mô tả : Lấy pagesize
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:58 14/06/2022
+     */
+    getPageSize(option) {
+      this.pageSize = option;
+      this.searchInput();
     },
     /**
      * Mô tả : Nhận danh sách đã chọn từ ChoseAssetDialog
@@ -246,6 +293,7 @@ export default {
      */
     getChoseAsset(list) {
       this.assetList = this.assetList.concat(list);
+      this.searchInput();
       this.choseAssetDialogShow(false);
     },
 
@@ -271,7 +319,6 @@ export default {
       this.isChoseAssetShow = value;
       if (value == false) {
         this.$refs.licenseInput.setFocus();
-        this.fitlerAssetList = this.assetList;
       }
     },
 
@@ -296,7 +343,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
 
@@ -329,12 +376,12 @@ export default {
       // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
         // Kiểm tra giá trị của input
-        if (element.required && element.value.trim() == '') {
+        if (element.required && element.value.trim() == "") {
           if (first) {
             first = false;
             this.firstEmptyElement = element;
           }
-          element.classList.add('m-input-error');
+          element.classList.add("m-input-error");
           this.errorList.push(`${element.name} không được để trống`);
 
           this.isAlertShow = true;
@@ -350,7 +397,7 @@ export default {
      * Created date: 11:33 10/06/2022
      */
     onCancel() {
-      this.$emit('licenseDialogShow', false);
+      this.$emit("licenseDialogShow", false);
     },
 
     /**
@@ -363,19 +410,6 @@ export default {
     onSumbit() {
       this.validateForm();
     },
-
-    /**
-     * Mô tả : ẩn hiện alert
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 23:29 13/06/2022
-     */
-    alertShow(alert, title, type) {
-      this.alert.isShow = alert;
-      this.alert.title = title;
-      this.alert.type = type;
-    },
   },
 
   data() {
@@ -387,6 +421,9 @@ export default {
       license: {},
       errorList: [],
       isAlertShow: false,
+      // Phân trang:
+      pageIndex: 1,
+      pageSize: 20,
     };
   },
 };
