@@ -486,9 +486,8 @@ export default {
      * Created date: 16:52 13/05/2022
      */
     async getNewAssetCode() {
-      this.isDialogLoading = true;
       try {
-        var res = await axios.get('FixedAssets/NewFixedAssetCode');
+        var res = await axios.get('FixedAssets/GetNewCode');
         // Gán dữ liệu trả về vào asset Code mới
         this.newAssetCode = res.data;
       } catch (error) {

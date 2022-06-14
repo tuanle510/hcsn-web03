@@ -17,15 +17,22 @@
                 ref="licenseInput"
                 :required="true"
                 name="Mã chứng từ"
+                v-model="license.LicenseCode"
               ></MISAInput>
             </div>
             <div class="modal-field">
               <label>Ngày bắt đầu sử dụng <span>*</span></label>
-              <MISADatepicker :required="true"></MISADatepicker>
+              <MISADatepicker
+                :required="true"
+                v-model="license.UseDate"
+              ></MISADatepicker>
             </div>
             <div class="modal-field">
               <label>Ngày ghi tăng <span>*</span></label>
-              <MISADatepicker :required="true"></MISADatepicker>
+              <MISADatepicker
+                :required="true"
+                v-model="license.WriteUpDate"
+              ></MISADatepicker>
             </div>
           </div>
           <div class="modal-row" style="margin-bottom: 0">
@@ -178,7 +185,7 @@
           buttonTitle="Hủy"
           @click="onCancel"
         ></MISAButton>
-        <MISAButton buttonTitle="Lưu"></MISAButton>
+        <MISAButton buttonTitle="Lưu" @click="onSumbit"></MISAButton>
       </div>
     </div>
     <!-- Chọn tài sản thêm vào dialog -->
@@ -194,11 +201,18 @@
       v-if="isEditAssetShow"
       @editAssetDialogShow="editAssetDialogShow"
     ></MISAEditAssetDialog>
+
+    <!-- Alert -->
+    <MISAAlert v-if="isAlertShow" :alertTitle="this.errorList[0]"></MISAAlert>
   </div>
 </template>
 <script>
 export default {
-  props: ["choseAssetList"],
+  props: ['choseAssetList', 'licenseSelected'],
+
+  beforeMount() {
+    this.license = this.licenseSelected;
+  },
 
   mounted() {
     // focus vào ô đầu tiên
@@ -282,7 +296,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -294,8 +308,38 @@ export default {
      * Created date: 16:10 10/06/2022
      */
     onDbClick(asset) {
-      //
+      console.log(asset);
       this.editAssetDialogShow(true);
+    },
+
+    /**
+     * Mô tả : Validate form
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 23:20 13/06/2022
+     */
+    validateForm() {
+      // Gắn lại giá trị cho erorr list về rỗng
+      this.errorList = [];
+      var first = true;
+
+      // 1. Validate input rỗng:
+      var form = this.$refs.form;
+      // Vòng lặp trong form để lấy các input
+      Array.from(form.elements).forEach((element) => {
+        // Kiểm tra giá trị của input
+        if (element.required && element.value.trim() == '') {
+          if (first) {
+            first = false;
+            this.firstEmptyElement = element;
+          }
+          element.classList.add('m-input-error');
+          this.errorList.push(`${element.name} không được để trống`);
+
+          this.isAlertShow = true;
+        }
+      });
     },
 
     /**
@@ -306,7 +350,31 @@ export default {
      * Created date: 11:33 10/06/2022
      */
     onCancel() {
-      this.$emit("licenseDialogShow", false);
+      this.$emit('licenseDialogShow', false);
+    },
+
+    /**
+     * Mô tả : Ấn nút lưu
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:31 13/06/2022
+     */
+    onSumbit() {
+      this.validateForm();
+    },
+
+    /**
+     * Mô tả : ẩn hiện alert
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 23:29 13/06/2022
+     */
+    alertShow(alert, title, type) {
+      this.alert.isShow = alert;
+      this.alert.title = title;
+      this.alert.type = type;
     },
   },
 
@@ -316,6 +384,9 @@ export default {
       isEditAssetShow: false,
       assetList: [],
       fitlerAssetList: [],
+      license: {},
+      errorList: [],
+      isAlertShow: false,
     };
   },
 };

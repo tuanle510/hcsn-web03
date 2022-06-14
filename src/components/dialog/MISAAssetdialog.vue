@@ -500,7 +500,6 @@ export default {
           if (first) {
             first = false;
             this.firstEmptyElement = element;
-            console.log(this.firstEmptyElement);
           }
           element.classList.add('m-input-error');
           this.errorList.push(`${error_msg.EMPTY_VALUE}${element.name}`);

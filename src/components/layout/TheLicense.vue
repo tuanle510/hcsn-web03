@@ -158,19 +158,36 @@
     <MISALicenseDialog
       v-if="isLicenseShow"
       @licenseDialogShow="licenseDialogShow"
+      :licenseSelected="licenseSelected"
     ></MISALicenseDialog>
   </div>
 </template>
 <script>
-import axios from "axios";
-import moment from "moment";
+import axios from 'axios';
+import moment from 'moment';
 export default {
   async beforeMount() {
-    const res = await await axios.get("Licenses");
+    const res = await await axios.get('Licenses');
     this.licenseData = res.data;
   },
 
   methods: {
+    /**
+     * Mô tả : Lấy mã mới
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:13 13/06/2022
+     */
+    async getNewCode() {
+      try {
+        var res = await axios.get('Licenses/GetNewCode');
+        this.newLicenseCode = res.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     /**
      * Mô tả : format ngày tháng năm
      * @param
@@ -179,8 +196,9 @@ export default {
      * Created date: 15:35 13/06/2022
      */
     dateTimeFormat(value) {
-      return moment(value).format("DD/MM/YYYY");
+      return moment(value).format('DD/MM/YYYY');
     },
+
     /**
      * Mô tả : Hiển thị form thêm mới chứng từ
      * @param
@@ -188,7 +206,13 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 15:36 10/06/2022
      */
-    showAddLicense() {
+    async showAddLicense() {
+      await this.getNewCode();
+      this.licenseSelected = {
+        LicenseCode: this.newLicenseCode,
+        UseDate: new Date(),
+        WriteUpDate: new Date(),
+      };
       this.licenseDialogShow(true);
     },
 
@@ -220,6 +244,8 @@ export default {
     return {
       isLicenseShow: false,
       licenseData: [], // danh sách chứng từ gọi từ API
+      newLicenseCode: '',
+      licenseSelected: {},
     };
   },
 };
