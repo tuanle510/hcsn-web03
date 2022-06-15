@@ -121,6 +121,7 @@
 }
 
 .m-detail-table {
+  position: relative;
   height: calc(100% - 40px); /* 100% trừ height header */
   overflow-y: scroll;
 }

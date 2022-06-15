@@ -68,7 +68,7 @@
                 :key="index"
                 :class="[{ 'm-tr-seleced': license.checked }, 'm-tr']"
                 @dblclick="showEditLicense(license)"
-                @click="getAsssetList(license)"
+                @click="onRowClick(license, $event)"
               >
                 <td style="padding-left: 16px">
                   <MISACheckbox :checked="license.checked"></MISACheckbox>
@@ -90,10 +90,10 @@
                     class="m-function-box last-td-icon"
                     style="display: none"
                   >
-                    <div class="icon-box-36">
+                    <div class="icon-box-36 edit-btn">
                       <div class="edit"></div>
                     </div>
-                    <div class="icon-box-36">
+                    <div class="icon-box-36 remove-btn">
                       <div class="remove-red"></div>
                     </div>
                   </div>
@@ -148,7 +148,8 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(asset, index) in assetList" :key="index">
+                <MISALoading v-if="isAssetListLoading"></MISALoading>
+                <tr v-else v-for="(asset, index) in assetList" :key="index">
                   <td class="text-align-center">{{ index + 1 }}</td>
                   <td class="text-align-left">{{ asset.FixedAssetCode }}</td>
                   <td class="text-align-left">{{ asset.FixedAssetName }}</td>
@@ -177,22 +178,39 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import moment from "moment";
+import axios from 'axios';
+import moment from 'moment';
 export default {
   async beforeMount() {
     try {
-      const res = await axios.get("Licenses");
+      const res = await axios.get('Licenses');
       this.licenseData = res.data;
       res.data.map((element) => {
         element.checked = false;
       });
       // Gán vào data
       this.licenseData = [...res.data];
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   methods: {
+    async onRowClick(license, $event) {
+      // Nếu ấn edit:
+      if ($event.target.classList.contains('edit-btn')) {
+        this.showEditLicense(license);
+      }
+      // Nếu ấn xóa (icon xóa):
+      else if ($event.target.classList.contains('remove-btn')) {
+        console.log('remove');
+      }
+      // Nếu ấn vào cả dòng:
+      else {
+        this.isAssetListLoading = true;
+        await this.getAsssetList(license);
+      }
+    },
     /**
      * Mô tả : Lấy danh sách tài sản khi click vào bảng ghi tăng
      * @param
@@ -210,8 +228,19 @@ export default {
           license.checked = !license.checked;
         }
       });
-      // Hiển thị danh sách sản phẩm có trong chứng từ:
-      await this.getLicenseDetail(license.LicenseId);
+
+      // first clear  time
+      clearTimeout(this.time);
+      // Debount 3s
+      this.time = await setTimeout(() => {
+        // Nếu đang tích thì sẽ gọi lại API, nếu không tích thì không gọi (Tránh trường hợp gọi lại API)
+        if (license.checked == true) {
+          // Hiển thị danh sách sản phẩm có trong chứng từ:
+          this.getLicenseDetail(license.LicenseId);
+        } else {
+          this.isAssetListLoading = false;
+        }
+      }, 300);
     },
 
     /**
@@ -223,7 +252,7 @@ export default {
      */
     async getNewCode() {
       try {
-        var res = await axios.get("Licenses/GetNewCode");
+        var res = await axios.get('Licenses/GetNewCode');
         this.newLicenseCode = res.data;
       } catch (error) {
         console.log(error);
@@ -261,7 +290,9 @@ export default {
       try {
         const res = await axios.get(`Licenses/GetLicense/${id}`);
         this.licenseSelected = res.data;
+        console.log('first');
         this.assetList = this.licenseSelected.FixedAssetList;
+        this.isAssetListLoading = false;
       } catch (error) {
         console.log(error);
       }
@@ -275,6 +306,8 @@ export default {
      * Created date: 09:35 08/06/2022
      */
     async showEditLicense(license) {
+      // Xóa debout
+      clearTimeout(this.time);
       await this.getLicenseDetail(license.LicenseId);
       this.licenseDialogShow(true);
     },
@@ -298,7 +331,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -310,7 +343,7 @@ export default {
      * Created date: 15:35 13/06/2022
      */
     dateTimeFormat(value) {
-      return moment(value).format("DD/MM/YYYY");
+      return moment(value).format('DD/MM/YYYY');
     },
   },
 
@@ -319,8 +352,10 @@ export default {
       isLicenseShow: false,
       licenseData: [], // danh sách chứng từ gọi từ API
       assetList: [],
-      newLicenseCode: "",
+      newLicenseCode: '',
       licenseSelected: [],
+      time: null,
+      isAssetListLoading: false,
     };
   },
 };
