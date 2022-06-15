@@ -35,7 +35,7 @@
             <div class="export"></div>
           </div>
           <div class="icon-box-36">
-            <div class="more"></div>
+            <div class="more-vertical"></div>
           </div>
         </div>
       </div>
@@ -54,18 +54,24 @@
                 <th class="text-align-center w-130">Ngày chứng từ</th>
                 <th class="text-align-center w-130">Ngày ghi tăng</th>
                 <th class="text-align-right w-150">Tổng nguyên giá</th>
-                <th class="text-align-left text-width">Nội dung</th>
+                <th
+                  class="text-align-left text-width"
+                  style="padding-left: 15px"
+                >
+                  Nội dung
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="(license, index) in licenseData"
                 :key="index"
-                class="m-tr"
+                :class="[{ 'm-tr-seleced': license.checked }, 'm-tr']"
                 @dblclick="showEditLicense(license)"
+                @click="getAsssetList(license)"
               >
                 <td style="padding-left: 16px">
-                  <MISACheckbox></MISACheckbox>
+                  <MISACheckbox :checked="license.checked"></MISACheckbox>
                 </td>
                 <td class="text-align-center w-50">{{ index + 1 }}</td>
                 <td class="text-align-left w-150">{{ license.LicenseCode }}</td>
@@ -75,7 +81,9 @@
                 <td class="text-align-center w-130">
                   {{ dateTimeFormat(license.WriteUpDate) }}
                 </td>
-                <td class="text-align-right w-150">{{ license.Total }}</td>
+                <td class="text-align-right w-150">
+                  {{ currencyFormat(license.Total) }}
+                </td>
                 <td class="text-align-left text-width last-td">
                   {{ license.Description }}
                   <div
@@ -119,8 +127,10 @@
             :prev-class="'prev-class'"
           ></MISAPaginate>
         </div>
+
         <!-- border  -->
         <div class="mouse-draw"></div>
+
         <!-- table detail -->
         <div class="m-detail-container">
           <div class="detail-header">Thông tin chi tiết</div>
@@ -138,13 +148,17 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td class="text-align-center">STT</td>
-                  <td class="text-align-left">Mã tài sản</td>
-                  <td class="text-align-left">Tên tài sản</td>
-                  <td class="text-align-left">Bộ phận sử dụng</td>
-                  <td class="text-align-right">Nguyên giá</td>
-                  <td class="text-align-right">Hao mòn năm</td>
+                <tr v-for="(asset, index) in assetList" :key="index">
+                  <td class="text-align-center">{{ index + 1 }}</td>
+                  <td class="text-align-left">{{ asset.FixedAssetCode }}</td>
+                  <td class="text-align-left">{{ asset.FixedAssetName }}</td>
+                  <td class="text-align-left">{{ asset.DepartmentName }}</td>
+                  <td class="text-align-right">
+                    {{ currencyFormat(asset.Cost) }}
+                  </td>
+                  <td class="text-align-right">
+                    {{ currencyFormat(asset.DepreciationValue) }}
+                  </td>
                   <td class="text-align-right">Giá trị còn lại</td>
                 </tr>
               </tbody>
@@ -163,15 +177,43 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
-import moment from 'moment';
+import axios from "axios";
+import moment from "moment";
 export default {
   async beforeMount() {
-    const res = await await axios.get('Licenses');
-    this.licenseData = res.data;
+    try {
+      const res = await axios.get("Licenses");
+      this.licenseData = res.data;
+      res.data.map((element) => {
+        element.checked = false;
+      });
+      // Gán vào data
+      this.licenseData = [...res.data];
+    } catch (error) {}
   },
 
   methods: {
+    /**
+     * Mô tả : Lấy danh sách tài sản khi click vào bảng ghi tăng
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 16:30 15/06/2022
+     */
+    async getAsssetList(license) {
+      // Gỡ tích tất cả:
+      this.licenseData.forEach((item) => {
+        if (item.LicenseId != license.LicenseId) {
+          item.checked = false;
+        } else {
+          // Tích vào dòng vừa chọn:
+          license.checked = !license.checked;
+        }
+      });
+      // Hiển thị danh sách sản phẩm có trong chứng từ:
+      await this.getLicenseDetail(license.LicenseId);
+    },
+
     /**
      * Mô tả : Lấy mã mới
      * @param
@@ -181,22 +223,11 @@ export default {
      */
     async getNewCode() {
       try {
-        var res = await axios.get('Licenses/GetNewCode');
+        var res = await axios.get("Licenses/GetNewCode");
         this.newLicenseCode = res.data;
       } catch (error) {
         console.log(error);
       }
-    },
-
-    /**
-     * Mô tả : format ngày tháng năm
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 15:35 13/06/2022
-     */
-    dateTimeFormat(value) {
-      return moment(value).format('DD/MM/YYYY');
     },
 
     /**
@@ -209,22 +240,42 @@ export default {
     async showAddLicense() {
       await this.getNewCode();
       this.licenseSelected = {
-        LicenseCode: this.newLicenseCode,
-        UseDate: new Date(),
-        WriteUpDate: new Date(),
+        License: {
+          LicenseCode: this.newLicenseCode,
+          UseDate: new Date(),
+          WriteUpDate: new Date(),
+        },
+        FixedAssetList: [],
       };
       this.licenseDialogShow(true);
     },
 
     /**
-     * Mô tả : HIển thị form sửa chứng từ
+     * Mô tả : Lấy thông tin chi tiết chứng từ theo id
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 16:33 15/06/2022
+     */
+    async getLicenseDetail(id) {
+      try {
+        const res = await axios.get(`Licenses/GetLicense/${id}`);
+        this.licenseSelected = res.data;
+        this.assetList = this.licenseSelected.FixedAssetList;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    /**
+     * Mô tả : Hiển thị form sửa chứng từ
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 09:35 08/06/2022
      */
-    showEditLicense(license) {
-      this.licenseSelected = license;
+    async showEditLicense(license) {
+      await this.getLicenseDetail(license.LicenseId);
       this.licenseDialogShow(true);
     },
 
@@ -238,14 +289,38 @@ export default {
     licenseDialogShow(value) {
       this.isLicenseShow = value;
     },
+
+    /**
+     * Mô tả : format tiền ttrong bảng
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 21:30 09/06/2022
+     */
+    currencyFormat(value) {
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      return format;
+    },
+
+    /**
+     * Mô tả : format ngày tháng năm
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 15:35 13/06/2022
+     */
+    dateTimeFormat(value) {
+      return moment(value).format("DD/MM/YYYY");
+    },
   },
 
   data() {
     return {
       isLicenseShow: false,
       licenseData: [], // danh sách chứng từ gọi từ API
-      newLicenseCode: '',
-      licenseSelected: {},
+      assetList: [],
+      newLicenseCode: "",
+      licenseSelected: [],
     };
   },
 };

@@ -92,7 +92,7 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(asset, index) in fitlerAssetList"
+                  v-for="(asset, index) in showList"
                   @dblclick="onDbClick(asset)"
                   :key="index"
                   class="m-tr"
@@ -209,12 +209,17 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
-  props: ['licenseSelected'],
+  props: ["licenseSelected"],
 
   beforeMount() {
-    // Gán license bằng giá trị gọi từ API từ component cha
-    this.license = this.licenseSelected;
+    // Gán giá trị license
+    this.license = this.licenseSelected.License;
+    // Gán giá trị danh sách asset
+    this.assetList = this.licenseSelected.FixedAssetList;
+
+    this.paginationAsset();
   },
 
   mounted() {
@@ -232,13 +237,18 @@ export default {
      */
     searchAsset() {
       var inputValue = this.$refs.searchInput.value;
-      this.fitlerAssetList = this.assetList.filter(
+      // Tìm kiếm:
+      this.searchAssetList = this.assetList.filter(
         (asset) =>
           asset.FixedAssetCode.toLowerCase().includes(
             inputValue.toLowerCase()
           ) ||
           asset.FixedAssetName.toLowerCase().includes(inputValue.toLowerCase())
       );
+      // Gán lại pageIndex bằng 1 => trở lại trang đầu:
+      this.pageIndex = 1;
+      // Phân trang
+      this.paginationAsset();
     },
 
     /**
@@ -248,15 +258,21 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 23:43 14/06/2022
      */
-    paginationAsset(list) {
-      this.totalPageIndex = Math.ceil(list.length / this.pageSize);
+    paginationAsset() {
+      var paginationList = [];
+      if (this.searchAssetList.length == 0) {
+        paginationList = this.assetList;
+      } else {
+        paginationList = this.searchAssetList;
+      }
+      this.totalPageIndex = Math.ceil(paginationList.length / this.pageSize);
 
-      this.fitlerAssetList = list.slice(
+      this.showList = paginationList.slice(
         (this.pageIndex - 1) * this.pageSize,
         (this.pageIndex - 1) * this.pageSize + this.pageSize
       );
 
-      console.log(this.fitlerAssetList);
+      console.log(paginationList);
     },
 
     /**
@@ -268,7 +284,7 @@ export default {
      */
     getPageIndex(pageNum) {
       this.pageIndex = pageNum;
-      this.searchAsset();
+      this.paginationAsset();
     },
 
     /**
@@ -280,7 +296,7 @@ export default {
      */
     getPageSize(option) {
       this.pageSize = option;
-      this.searchAsset();
+      this.paginationAsset();
     },
 
     /**
@@ -293,13 +309,15 @@ export default {
     getChoseAsset(list) {
       this.choseAssetDialogShow(false);
       // Gán lại giá trị cho ô tìm kiếm:
-      this.$refs.searchInput.value = '';
+      this.$refs.searchInput.value = "";
       // Thêm vào danh sách tài sản đã có sẵn:
       this.assetList = this.assetList.concat(list);
-
-      this.fitlerAssetList = this.assetList;
+      // Gán search list bằng list tổng để phân trang:
+      this.searchAssetList = [...this.assetList];
+      // Trở về trang 1:
+      this.pageIndex = 1;
       // Phân trang:
-      this.searchAsset();
+      this.paginationAsset();
     },
 
     /**
@@ -349,7 +367,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
 
@@ -382,12 +400,12 @@ export default {
       // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
         // Kiểm tra giá trị của input
-        if (element.required && element.value.trim() == '') {
+        if (element.required && element.value.trim() == "") {
           if (first) {
             first = false;
             this.firstEmptyElement = element;
           }
-          element.classList.add('m-input-error');
+          element.classList.add("m-input-error");
           this.errorList.push(`${element.name} không được để trống`);
 
           this.isAlertShow = true;
@@ -403,7 +421,7 @@ export default {
      * Created date: 11:33 10/06/2022
      */
     onCancel() {
-      this.$emit('licenseDialogShow', false);
+      this.$emit("licenseDialogShow", false);
     },
 
     /**
@@ -413,8 +431,26 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 22:31 13/06/2022
      */
-    onSumbit() {
-      this.validateForm();
+    async onSumbit() {
+      // this.validateForm();
+      var InsertNewLicense = {
+        license: this.license,
+        licenseDetails: this.assetList.map((asset) => {
+          return {
+            fixedAssetId: asset.FixedAssetId,
+          };
+        }),
+      };
+      console.log(InsertNewLicense);
+      try {
+        var res = await axios.post(
+          "Licenses/InsertNewLicense",
+          InsertNewLicense
+        );
+        console.log(res.data);
+      } catch (error) {
+        console.log(error.response.data);
+      }
     },
   },
 
@@ -423,12 +459,13 @@ export default {
       isChoseAssetShow: false,
       isEditAssetShow: false,
       assetList: [], // Danh dách tất cả tài sản => Tổng số tài sản
-      fitlerAssetList: [], // Danh sách lọc khi search => Lọc sản phẩm và phân trang
-      totalPageIndex: 0,
-      license: {},
+      searchAssetList: [], // Danh sách lọc khi search
+      showList: [], // Danh sách hiển thị lên UI
+      license: {}, // Chi tiết chứng từ
       errorList: [],
       isAlertShow: false,
       // Phân trang:
+      totalPageIndex: 0,
       pageIndex: 1,
       pageSize: 20,
     };

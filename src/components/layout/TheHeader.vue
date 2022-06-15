@@ -23,7 +23,7 @@
         <div class="question"></div>
       </div>
       <div class="header-icon-user" @click="dropdown">
-        <MISAButton buttonTitle="Log out" @click.prevent="logout"> </MISAButton>
+        <!-- <MISAButton buttonTitle="Log out" @click.prevent="logout"> </MISAButton> -->
 
         <div class="header-icon">
           <div class="user-logo"></div>
