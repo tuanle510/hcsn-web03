@@ -114,8 +114,6 @@ table.m-table {
 .m-table tbody tr .m-function-box {
   display: flex;
   align-items: center;
-
-  height: 40px;
 }
 
 .last-td {
@@ -126,10 +124,6 @@ table.m-table {
   position: absolute;
   top: 0;
   right: 0;
-}
-
-.m-function-box.box-show {
-  display: block;
 }
 
 /* tfoot */
@@ -180,13 +174,13 @@ table.m-table {
 }
 .m-paging-list .prev-class {
   cursor: pointer;
-  background: url("/src/assets/icon/qlts-icon.png") no-repeat -29px -246px;
+  background: url('/src/assets/icon/qlts-icon.png') no-repeat -29px -246px;
   width: 7px;
   height: 12px;
 }
 .m-paging-list .page-item:last-child {
   cursor: pointer;
-  background: url("/src/assets/icon/qlts-icon.png") no-repeat -73px -246px;
+  background: url('/src/assets/icon/qlts-icon.png') no-repeat -73px -246px;
   width: 7px;
   height: 12px;
 }

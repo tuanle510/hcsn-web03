@@ -224,7 +224,7 @@ export default {
      * Created date: 09:35 08/06/2022
      */
     showEditLicense(license) {
-      console.log(license);
+      this.licenseSelected = license;
       this.licenseDialogShow(true);
     },
 

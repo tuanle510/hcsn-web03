@@ -38,7 +38,7 @@
           <div class="modal-row" style="margin-bottom: 0">
             <div class="modal-field modal-field-full">
               <label>Ghi chú</label>
-              <MISAInput></MISAInput>
+              <MISAInput v-model="license.Description"></MISAInput>
             </div>
           </div>
         </form>
@@ -52,8 +52,8 @@
               <input
                 placeholder="Tìm kiếm theo mã, tên tài sản"
                 class="m-search"
-                ref="searchBox"
-                @change="searchInput()"
+                ref="searchInput"
+                @change="searchAsset()"
               />
               <div class="search-icon">
                 <div class="search"></div>
@@ -210,22 +210,10 @@
 </template>
 <script>
 export default {
-  props: ["choseAssetList", "licenseSelected"],
-
-  computed: {
-    /**
-     * Mô tả : Tính tổng số trang
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 10:54 14/06/2022
-     */
-    totalPageIndex: function () {
-      return Math.ceil(this.fitlerAssetList.length / this.pageSize);
-    },
-  },
+  props: ['licenseSelected'],
 
   beforeMount() {
+    // Gán license bằng giá trị gọi từ API từ component cha
     this.license = this.licenseSelected;
   },
 
@@ -236,31 +224,41 @@ export default {
 
   methods: {
     /**
-     * Mô tả : Tìm kiếm theo tên hoặc mã tài sản
+     * Mô tả : Tìm kiếm và phân trang
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 16:11 10/06/2022
      */
-    searchInput() {
-      var inputValue = this.$refs.searchBox.value;
-      this.fitlerAssetList = this.assetList
-        .filter(
-          (asset) =>
-            asset.FixedAssetCode.toLowerCase().includes(
-              inputValue.toLowerCase()
-            ) ||
-            asset.FixedAssetName.toLowerCase().includes(
-              inputValue.toLowerCase()
-            )
-        )
-        .slice(
-          (this.pageIndex - 1) * this.pageSize,
-          (this.pageIndex - 1) * this.pageSize + this.pageSize
-        );
+    searchAsset() {
+      var inputValue = this.$refs.searchInput.value;
+      this.fitlerAssetList = this.assetList.filter(
+        (asset) =>
+          asset.FixedAssetCode.toLowerCase().includes(
+            inputValue.toLowerCase()
+          ) ||
+          asset.FixedAssetName.toLowerCase().includes(inputValue.toLowerCase())
+      );
+    },
+
+    /**
+     * Mô tả : Phân trang
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 23:43 14/06/2022
+     */
+    paginationAsset(list) {
+      this.totalPageIndex = Math.ceil(list.length / this.pageSize);
+
+      this.fitlerAssetList = list.slice(
+        (this.pageIndex - 1) * this.pageSize,
+        (this.pageIndex - 1) * this.pageSize + this.pageSize
+      );
 
       console.log(this.fitlerAssetList);
     },
+
     /**
      * Mô tả : Lấy thông tin số trang
      * @param
@@ -270,7 +268,7 @@ export default {
      */
     getPageIndex(pageNum) {
       this.pageIndex = pageNum;
-      this.searchInput();
+      this.searchAsset();
     },
 
     /**
@@ -282,8 +280,9 @@ export default {
      */
     getPageSize(option) {
       this.pageSize = option;
-      this.searchInput();
+      this.searchAsset();
     },
+
     /**
      * Mô tả : Nhận danh sách đã chọn từ ChoseAssetDialog
      * @param
@@ -292,9 +291,15 @@ export default {
      * Created date: 22:51 09/06/2022
      */
     getChoseAsset(list) {
-      this.assetList = this.assetList.concat(list);
-      this.searchInput();
       this.choseAssetDialogShow(false);
+      // Gán lại giá trị cho ô tìm kiếm:
+      this.$refs.searchInput.value = '';
+      // Thêm vào danh sách tài sản đã có sẵn:
+      this.assetList = this.assetList.concat(list);
+
+      this.fitlerAssetList = this.assetList;
+      // Phân trang:
+      this.searchAsset();
     },
 
     /**
@@ -335,6 +340,7 @@ export default {
         this.$refs.licenseInput.setFocus();
       }
     },
+
     /**
      * Mô tả : format tiền ttrong bảng
      * @param
@@ -343,7 +349,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -376,12 +382,12 @@ export default {
       // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
         // Kiểm tra giá trị của input
-        if (element.required && element.value.trim() == "") {
+        if (element.required && element.value.trim() == '') {
           if (first) {
             first = false;
             this.firstEmptyElement = element;
           }
-          element.classList.add("m-input-error");
+          element.classList.add('m-input-error');
           this.errorList.push(`${element.name} không được để trống`);
 
           this.isAlertShow = true;
@@ -397,7 +403,7 @@ export default {
      * Created date: 11:33 10/06/2022
      */
     onCancel() {
-      this.$emit("licenseDialogShow", false);
+      this.$emit('licenseDialogShow', false);
     },
 
     /**
@@ -416,8 +422,9 @@ export default {
     return {
       isChoseAssetShow: false,
       isEditAssetShow: false,
-      assetList: [],
-      fitlerAssetList: [],
+      assetList: [], // Danh dách tất cả tài sản => Tổng số tài sản
+      fitlerAssetList: [], // Danh sách lọc khi search => Lọc sản phẩm và phân trang
+      totalPageIndex: 0,
       license: {},
       errorList: [],
       isAlertShow: false,
