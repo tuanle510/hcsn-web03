@@ -91,10 +91,10 @@
                     style="display: none"
                   >
                     <div class="icon-box-36 edit-btn">
-                      <div class="edit"></div>
+                      <div class="edit edit-btn"></div>
                     </div>
                     <div class="icon-box-36 remove-btn">
-                      <div class="remove-red"></div>
+                      <div class="remove-red remove-btn"></div>
                     </div>
                   </div>
                 </td>
@@ -197,8 +197,10 @@ export default {
 
   methods: {
     async onRowClick(license, $event) {
+      console.log($event.target.classList);
       // Nếu ấn edit:
       if ($event.target.classList.contains('edit-btn')) {
+        console.log('vào');
         this.showEditLicense(license);
       }
       // Nếu ấn xóa (icon xóa):
@@ -290,7 +292,6 @@ export default {
       try {
         const res = await axios.get(`Licenses/GetLicense/${id}`);
         this.licenseSelected = res.data;
-        console.log('first');
         this.assetList = this.licenseSelected.FixedAssetList;
         this.isAssetListLoading = false;
       } catch (error) {
@@ -306,6 +307,7 @@ export default {
      * Created date: 09:35 08/06/2022
      */
     async showEditLicense(license) {
+      console.log('first');
       // Xóa debout
       clearTimeout(this.time);
       await this.getLicenseDetail(license.LicenseId);
