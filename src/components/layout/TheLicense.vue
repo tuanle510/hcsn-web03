@@ -171,6 +171,7 @@
 
     <!-- chi tiết chứng từ dialog -->
     <MISALicenseDialog
+      :isEditing="isEditing"
       v-if="isLicenseShow"
       @licenseDialogShow="licenseDialogShow"
       :licenseSelected="licenseSelected"
@@ -178,12 +179,12 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
-import moment from 'moment';
+import axios from "axios";
+import moment from "moment";
 export default {
   async beforeMount() {
     try {
-      const res = await axios.get('Licenses');
+      const res = await axios.get("Licenses");
       this.licenseData = res.data;
       res.data.map((element) => {
         element.checked = false;
@@ -197,15 +198,14 @@ export default {
 
   methods: {
     async onRowClick(license, $event) {
-      console.log($event.target.classList);
       // Nếu ấn edit:
-      if ($event.target.classList.contains('edit-btn')) {
-        console.log('vào');
+      if ($event.target.classList.contains("edit-btn")) {
+        console.log("vào");
         this.showEditLicense(license);
       }
       // Nếu ấn xóa (icon xóa):
-      else if ($event.target.classList.contains('remove-btn')) {
-        console.log('remove');
+      else if ($event.target.classList.contains("remove-btn")) {
+        console.log("remove");
       }
       // Nếu ấn vào cả dòng:
       else {
@@ -254,7 +254,7 @@ export default {
      */
     async getNewCode() {
       try {
-        var res = await axios.get('Licenses/GetNewCode');
+        var res = await axios.get("Licenses/GetNewCode");
         this.newLicenseCode = res.data;
       } catch (error) {
         console.log(error);
@@ -269,6 +269,7 @@ export default {
      * Created date: 15:36 10/06/2022
      */
     async showAddLicense() {
+      this.isEditing = false;
       await this.getNewCode();
       this.licenseSelected = {
         License: {
@@ -307,7 +308,7 @@ export default {
      * Created date: 09:35 08/06/2022
      */
     async showEditLicense(license) {
-      console.log('first');
+      this.isEditing = true;
       // Xóa debout
       clearTimeout(this.time);
       await this.getLicenseDetail(license.LicenseId);
@@ -333,7 +334,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
 
@@ -345,16 +346,17 @@ export default {
      * Created date: 15:35 13/06/2022
      */
     dateTimeFormat(value) {
-      return moment(value).format('DD/MM/YYYY');
+      return moment(value).format("DD/MM/YYYY");
     },
   },
 
   data() {
     return {
+      isEditing: false,
       isLicenseShow: false,
       licenseData: [], // danh sách chứng từ gọi từ API
       assetList: [],
-      newLicenseCode: '',
+      newLicenseCode: "",
       licenseSelected: [],
       time: null,
       isAssetListLoading: false,

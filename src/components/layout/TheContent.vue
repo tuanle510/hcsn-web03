@@ -437,7 +437,6 @@ export default {
           },
         });
 
-        console.log(res.data);
         // Thêm trường checkd vào obj
         res.data.List.map((element) => {
           element.checked = false;

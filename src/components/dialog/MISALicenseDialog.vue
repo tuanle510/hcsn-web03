@@ -1,7 +1,9 @@
 <template>
   <div :class="[{ 'bgc-none': isEditAssetShow }, 'm-dialog', 'license-dialog']">
     <div class="m-modal license-modal w-950">
-      <div class="m-modal-title license-title">Thêm chứng từ ghi tăng</div>
+      <div class="m-modal-title license-title">
+        {{ isEditing ? "Sửa chứng từ ghi tăng" : "Thêm chứng từ ghi tăng" }}
+      </div>
       <div class="m-modal-close" @click="onCancel">
         <div class="close"></div>
       </div>
@@ -211,14 +213,14 @@
 <script>
 import axios from "axios";
 export default {
-  props: ["licenseSelected"],
+  props: ["licenseSelected", "isEditing"],
 
   beforeMount() {
     // Gán giá trị license
     this.license = this.licenseSelected.License;
     // Gán giá trị danh sách asset
     this.assetList = this.licenseSelected.FixedAssetList;
-
+    // Phân trang
     this.paginationAsset();
   },
 
@@ -271,8 +273,6 @@ export default {
         (this.pageIndex - 1) * this.pageSize,
         (this.pageIndex - 1) * this.pageSize + this.pageSize
       );
-
-      console.log(paginationList);
     },
 
     /**
@@ -412,6 +412,55 @@ export default {
         }
       });
     },
+    /**
+     * Mô tả : Thêm thông tin còn thiếu
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 15:11 16/06/2022
+     */
+    autoFieldData() {
+      // Ngày tạo
+      if (!this.isEditing) {
+        this.license.CreatedDate = new Date();
+      }
+      // Ngày sứa
+      this.license.ModifiedDate = new Date();
+    },
+
+    /**
+     * Mô tả : Xử lí Thêm mới chứng từ
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 15:09 16/06/2022
+     */
+    async addLicense() {
+      this.autoFieldData();
+      // Tạo obj dữ liệu gửi lên API: (Thông tin chứng từ, danh sách tài sản trong chứng từ):
+      var InsertNewLicense = {
+        license: this.license,
+        licenseDetails: this.assetList.map((asset) => {
+          return {
+            fixedAssetId: asset.FixedAssetId,
+          };
+        }),
+      };
+      // Gửi lên API
+      try {
+        const res = await axios.post(
+          "Licenses/InsertNewLicense",
+          InsertNewLicense
+        );
+        if (res.status == 200) {
+          this.$emit("licenseDialogShow", false);
+          console.log("first");
+        }
+      } catch (error) {
+        console.log(error.response.data);
+      }
+      console.log("second");
+    },
 
     /**
      * Mô tả : Ấn nút hủy
@@ -433,27 +482,13 @@ export default {
      */
     async onSumbit() {
       // this.validateForm();
-      var InsertNewLicense = {
-        license: this.license,
-        licenseDetails: this.assetList.map((asset) => {
-          return {
-            fixedAssetId: asset.FixedAssetId,
-          };
-        }),
-      };
-      console.log(InsertNewLicense);
-      try {
-        var res = await axios.post(
-          "Licenses/InsertNewLicense",
-          InsertNewLicense
-        );
-        console.log(res.data);
-      } catch (error) {
-        console.log(error.response.data);
+      if (this.isEditing == true) {
+        console.log("Sửa");
+      } else {
+        await this.addLicense();
       }
     },
   },
-
   data() {
     return {
       isChoseAssetShow: false,
