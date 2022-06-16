@@ -148,8 +148,8 @@
                 </tr>
               </thead>
               <tbody>
-                <MISALoading v-if="isAssetListLoading"></MISALoading>
-                <tr v-else v-for="(asset, index) in assetList" :key="index">
+                <!-- <MISALoading v-if="isAssetListLoading"></MISALoading> -->
+                <tr v-for="(asset, index) in assetList" :key="index">
                   <td class="text-align-center">{{ index + 1 }}</td>
                   <td class="text-align-left">{{ asset.FixedAssetCode }}</td>
                   <td class="text-align-left">{{ asset.FixedAssetName }}</td>
@@ -179,12 +179,12 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import moment from "moment";
+import axios from 'axios';
+import moment from 'moment';
 export default {
   async beforeMount() {
     try {
-      const res = await axios.get("Licenses");
+      const res = await axios.get('Licenses');
       this.licenseData = res.data;
       res.data.map((element) => {
         element.checked = false;
@@ -199,17 +199,16 @@ export default {
   methods: {
     async onRowClick(license, $event) {
       // Nếu ấn edit:
-      if ($event.target.classList.contains("edit-btn")) {
-        console.log("vào");
+      if ($event.target.classList.contains('edit-btn')) {
+        console.log('vào');
         this.showEditLicense(license);
       }
       // Nếu ấn xóa (icon xóa):
-      else if ($event.target.classList.contains("remove-btn")) {
-        console.log("remove");
+      else if ($event.target.classList.contains('remove-btn')) {
+        console.log('remove');
       }
       // Nếu ấn vào cả dòng:
       else {
-        this.isAssetListLoading = true;
         await this.getAsssetList(license);
       }
     },
@@ -240,7 +239,7 @@ export default {
           // Hiển thị danh sách sản phẩm có trong chứng từ:
           this.getLicenseDetail(license.LicenseId);
         } else {
-          this.isAssetListLoading = false;
+          this.assetList = [];
         }
       }, 300);
     },
@@ -254,7 +253,7 @@ export default {
      */
     async getNewCode() {
       try {
-        var res = await axios.get("Licenses/GetNewCode");
+        var res = await axios.get('Licenses/GetNewCode');
         this.newLicenseCode = res.data;
       } catch (error) {
         console.log(error);
@@ -290,11 +289,13 @@ export default {
      * Created date: 16:33 15/06/2022
      */
     async getLicenseDetail(id) {
+      // this.isAssetListLoading = true;
+
       try {
         const res = await axios.get(`Licenses/GetLicense/${id}`);
         this.licenseSelected = res.data;
         this.assetList = this.licenseSelected.FixedAssetList;
-        this.isAssetListLoading = false;
+        // this.isAssetListLoading = false;
       } catch (error) {
         console.log(error);
       }
@@ -309,9 +310,13 @@ export default {
      */
     async showEditLicense(license) {
       this.isEditing = true;
+      // Focus vào dòng vừa chọn
+      license.checked = true;
       // Xóa debout
       clearTimeout(this.time);
+      // Gọi API gửi dữ liệu về
       await this.getLicenseDetail(license.LicenseId);
+      // Hiển thị dialog
       this.licenseDialogShow(true);
     },
 
@@ -334,7 +339,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -346,7 +351,7 @@ export default {
      * Created date: 15:35 13/06/2022
      */
     dateTimeFormat(value) {
-      return moment(value).format("DD/MM/YYYY");
+      return moment(value).format('DD/MM/YYYY');
     },
   },
 
@@ -356,10 +361,10 @@ export default {
       isLicenseShow: false,
       licenseData: [], // danh sách chứng từ gọi từ API
       assetList: [],
-      newLicenseCode: "",
+      newLicenseCode: '',
       licenseSelected: [],
       time: null,
-      isAssetListLoading: false,
+      // isAssetListLoading: false,
     };
   },
 };

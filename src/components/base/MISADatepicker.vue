@@ -1,6 +1,5 @@
 <template>
   <div class="datepicker-container">
-    <!-- locale="vi" -->
     <Datepicker
       ref="datepicker"
       cancelText="Hủy"

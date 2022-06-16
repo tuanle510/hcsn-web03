@@ -2,7 +2,7 @@
   <div :class="[{ 'bgc-none': isEditAssetShow }, 'm-dialog', 'license-dialog']">
     <div class="m-modal license-modal w-950">
       <div class="m-modal-title license-title">
-        {{ isEditing ? "Sửa chứng từ ghi tăng" : "Thêm chứng từ ghi tăng" }}
+        {{ isEditing ? 'Sửa chứng từ ghi tăng' : 'Thêm chứng từ ghi tăng' }}
       </div>
       <div class="m-modal-close" @click="onCancel">
         <div class="close"></div>
@@ -211,9 +211,9 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
-  props: ["licenseSelected", "isEditing"],
+  props: ['licenseSelected', 'isEditing'],
 
   beforeMount() {
     // Gán giá trị license
@@ -309,7 +309,7 @@ export default {
     getChoseAsset(list) {
       this.choseAssetDialogShow(false);
       // Gán lại giá trị cho ô tìm kiếm:
-      this.$refs.searchInput.value = "";
+      this.$refs.searchInput.value = '';
       // Thêm vào danh sách tài sản đã có sẵn:
       this.assetList = this.assetList.concat(list);
       // Gán search list bằng list tổng để phân trang:
@@ -340,6 +340,7 @@ export default {
      */
     choseAssetDialogShow(value) {
       this.isChoseAssetShow = value;
+      // Đóng dialog chọn tài sản thì focus vào input Mã chứng từ:
       if (value == false) {
         this.$refs.licenseInput.setFocus();
       }
@@ -367,7 +368,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -400,32 +401,17 @@ export default {
       // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
         // Kiểm tra giá trị của input
-        if (element.required && element.value.trim() == "") {
+        if (element.required && element.value.trim() == '') {
           if (first) {
             first = false;
             this.firstEmptyElement = element;
           }
-          element.classList.add("m-input-error");
+          element.classList.add('m-input-error');
           this.errorList.push(`${element.name} không được để trống`);
 
           this.isAlertShow = true;
         }
       });
-    },
-    /**
-     * Mô tả : Thêm thông tin còn thiếu
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 15:11 16/06/2022
-     */
-    autoFieldData() {
-      // Ngày tạo
-      if (!this.isEditing) {
-        this.license.CreatedDate = new Date();
-      }
-      // Ngày sứa
-      this.license.ModifiedDate = new Date();
     },
 
     /**
@@ -436,7 +422,6 @@ export default {
      * Created date: 15:09 16/06/2022
      */
     async addLicense() {
-      this.autoFieldData();
       // Tạo obj dữ liệu gửi lên API: (Thông tin chứng từ, danh sách tài sản trong chứng từ):
       var InsertNewLicense = {
         license: this.license,
@@ -449,17 +434,48 @@ export default {
       // Gửi lên API
       try {
         const res = await axios.post(
-          "Licenses/InsertNewLicense",
+          'Licenses/InsertNewLicense',
           InsertNewLicense
         );
         if (res.status == 200) {
-          this.$emit("licenseDialogShow", false);
-          console.log("first");
+          console.log('Asded');
+          this.$emit('licenseDialogShow', false);
         }
       } catch (error) {
         console.log(error.response.data);
       }
-      console.log("second");
+    },
+
+    /**
+     * Mô tả : Xử lí sửa chứng từ
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 21:34 16/06/2022
+     */
+    async updateLicense() {
+      var UpdateLicense = {
+        license: this.license,
+        licenseDetails: this.assetList.map((asset) => {
+          return {
+            fixedAssetId: asset.FixedAssetId,
+          };
+        }),
+      };
+      console.log(UpdateLicense);
+      // Gửi lên API
+      try {
+        const res = await axios.put(
+          `Licenses/UpdateLicense/${this.license.LicenseId}`,
+          UpdateLicense
+        );
+        if (res.status == 200) {
+          console.log(res.data);
+          this.$emit('licenseDialogShow', false);
+        }
+      } catch (error) {
+        console.log(error.response.data);
+      }
     },
 
     /**
@@ -470,7 +486,7 @@ export default {
      * Created date: 11:33 10/06/2022
      */
     onCancel() {
-      this.$emit("licenseDialogShow", false);
+      this.$emit('licenseDialogShow', false);
     },
 
     /**
@@ -483,7 +499,7 @@ export default {
     async onSumbit() {
       // this.validateForm();
       if (this.isEditing == true) {
-        console.log("Sửa");
+        await this.updateLicense();
       } else {
         await this.addLicense();
       }

@@ -385,12 +385,6 @@ export default {
      * Created date: 09:31 24/05/2022
      */
     autoFieldData() {
-      // Ngày tạo
-      if (!this.isEditing) {
-        this.asset.CreatedDate = new Date();
-      }
-      // Ngày sứa
-      this.asset.ModifiedDate = new Date();
       // Tính Năm sử dụng(Năm hiện tại - năm ngày bắt đầu sử dụng)
       this.asset.ProductionYear =
         this.asset.TrackedYear - new Date(this.asset.UseDate).getFullYear();
