@@ -15,9 +15,10 @@
         <div class="modal-field search-field">
           <input
             placeholder="Tìm kiếm theo mã, tên tài sản"
-            ref="searchInput"
             class="m-search"
-            @input="searchInput"
+            ref="searchInput"
+            @change="onSearchAsset"
+            v-model="searchValue"
           />
           <div class="search-icon">
             <div class="search"></div>
@@ -87,19 +88,21 @@
           Tổng số:
           <strong>{{ this.assetLength }}</strong> bản ghi
         </div>
-        <!-- :defaultValue="this.pageSize"
-            @onChose="getPageSize" -->
-        <MISADropdown></MISADropdown>
+        <MISADropdown
+          :defaultValue="this.pageSize"
+          @onChose="getPageSize"
+        ></MISADropdown>
         <MISAPaginate
-          :pageCount="1"
+          :pageCount="totalPageIndex"
           :prev-text="'pre'"
           :prev-link-class="'prev-link-class'"
           :next-text="'next'"
           :next-link-class="'next-link-class'"
           :container-class="'m-paging-list'"
           :prev-class="'prev-class'"
+          :click-handler="getPageIndex"
+          v-model="pageIndex"
         ></MISAPaginate>
-        <!-- :click-handler="getPageIndex" -->
       </div>
     </div>
     <div class="m-modal-footer">
@@ -117,16 +120,96 @@ import axios from "axios";
 import qs from "qs";
 export default {
   props: ["assetList"],
+
+  computed: {
+    totalPageIndex: function () {
+      return Math.ceil(this.assetLength / this.pageSize);
+    },
+  },
+
   async beforeMount() {
-    this.pageSize = 20;
     await this.filterAsset();
   },
 
   mounted() {
+    //Focus vào ô đầu tiên
     this.$refs.searchInput.focus();
   },
 
   methods: {
+    /**
+     * Mô tả : Tìm kiếm
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:32 17/06/2022
+     */
+    async onSearchAsset() {
+      this.pageIndex = 1;
+      await this.filterAsset();
+    },
+
+    /**
+     * Mô tả : Phân trang, tìm kiếm tài sản
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:34 17/06/2022
+     */
+    async filterAsset() {
+      this.isLoading = true;
+      // Lấy ra danh sách Id để lọc trên API
+      var idList = this.assetList.map((asset) => asset.FixedAssetId);
+      try {
+        const res = await axios.get("FixedAssets/GetRestAsetList", {
+          params: {
+            fixedAssetList: idList,
+            searchAsset: this.searchValue,
+            pageIndex: this.pageIndex,
+            pageSize: this.pageSize,
+          },
+          paramsSerializer: (params) => {
+            return qs.stringify(params);
+          },
+        });
+        res.data.List.map((element) => {
+          element.checked = false;
+        });
+        // Gán vào data
+        this.assetData = [...res.data.List];
+        // Lấy tổng số bản ghi
+        this.assetLength = res.data.Count;
+        this.isLoading = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    /**
+     * Mô tả : Chọn số bản ghi
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 12:26 17/06/2022
+     */
+    async getPageSize(option) {
+      this.pageSize = option;
+      this.pageIndex = 1;
+      await this.filterAsset();
+    },
+
+    /**
+     * Mô tả : Chọn số trang
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 12:27 17/06/2022
+     */
+    async getPageIndex(pageIndex) {
+      this.pageIndex = pageIndex;
+      await this.filterAsset();
+    },
+
     /**
      * Mô tả : Chọn tất cả sản phẩm
      * @param
@@ -180,35 +263,35 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 21:12 09/06/2022
      */
-    async filterAsset() {
-      this.isLoading = true;
-      // Lấy ra danh sách Id để lọc trên API
-      var idList = this.assetList.map((asset) => asset.FixedAssetId);
-      try {
-        {
-          var res = await axios.get("FixedAssets/GetRestAsetList", {
-            params: {
-              fixedAssetList: idList,
-            },
-            paramsSerializer: (params) => {
-              return qs.stringify(params);
-            },
-          });
-        }
+    // async filterAsset() {
+    //   this.isLoading = true;
+    //   // Lấy ra danh sách Id để lọc trên API
+    //   var idList = this.assetList.map((asset) => asset.FixedAssetId);
+    //   try {
+    //     {
+    //       var res = await axios.get("FixedAssets/GetRestAsetList", {
+    //         params: {
+    //           fixedAssetList: idList,
+    //         },
+    //         paramsSerializer: (params) => {
+    //           return qs.stringify(params);
+    //         },
+    //       });
+    //     }
 
-        // Thêm trường checkd vào obj
-        res.data.List.map((element) => {
-          element.checked = false;
-        });
-        // Gán vào data
-        this.assetData = [...res.data.List];
-        // Lấy tổng số bản ghi
-        this.assetLength = res.data.Count;
-        this.isLoading = false;
-      } catch (error) {
-        console.log(error);
-      }
-    },
+    //     // Thêm trường checkd vào obj
+    //     res.data.List.map((element) => {
+    //       element.checked = false;
+    //     });
+    //     // Gán vào data
+    //     this.assetData = [...res.data.List];
+    //     // Lấy tổng số bản ghi
+    //     this.assetLength = res.data.Count;
+    //     this.isLoading = false;
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // },
 
     /**
      * Mô tả : Ấn đồng ý, lấy ra list đã chọn
@@ -257,6 +340,11 @@ export default {
       checkedaAssetList: [],
       searchBox: "",
       checkedAll: false,
+
+      // Phân trang
+      searchValue: "", // Ô tìm kiếm
+      pageIndex: 1,
+      pageSize: 20,
     };
   },
 };

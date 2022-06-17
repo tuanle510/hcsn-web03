@@ -22,9 +22,9 @@
         <div class="search-field" style="width: 300px">
           <input
             placeholder="Tìm kiếm theo số chứng từ, nội dung"
-            ref="searchInput"
             class="m-search"
-            @input="searchInput"
+            @change="onSearchLicense"
+            v-model="searchValue"
           />
           <div class="search-icon">
             <div class="search"></div>
@@ -62,7 +62,8 @@
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <MISALoading v-if="isLicnesLoading"></MISALoading>
+            <tbody v-else>
               <tr
                 v-for="(license, index) in licenseData"
                 :key="index"
@@ -74,7 +75,9 @@
                   <MISACheckbox :checked="license.checked"></MISACheckbox>
                 </td>
                 <td class="text-align-center w-50">{{ index + 1 }}</td>
-                <td class="text-align-left w-150">{{ license.LicenseCode }}</td>
+                <td class="text-align-left w-150" style="color: #1aa4c8">
+                  {{ license.LicenseCode }}
+                </td>
                 <td class="text-align-center w-130">
                   {{ dateTimeFormat(license.UseDate) }}
                 </td>
@@ -84,10 +87,17 @@
                 <td class="text-align-right w-150">
                   {{ currencyFormat(license.Total) }}
                 </td>
-                <td class="text-align-left text-width last-td">
+                <td
+                  class="text-align-left text-width last-td"
+                  style="padding-left: 15px"
+                >
                   {{ license.Description }}
                   <div
-                    class="m-function-box last-td-icon"
+                    :class="[
+                      { 'm-function-box-show': license.checked },
+                      'm-function-box',
+                      'last-td-icon',
+                    ]"
                     style="display: none"
                   >
                     <div class="icon-box-36 edit-btn">
@@ -104,27 +114,28 @@
         </div>
         <!-- Tổng tiền -->
         <div class="m-license-total">
-          <div class="total-text">305.845.345</div>
+          <div class="total-text">{{ currencyFormat(quantityCost) }}</div>
         </div>
         <!-- Tổng số bảng ghi -->
         <div class="license-paging">
           <div class="m-total-number">
             Tổng số:
-            <strong>31</strong> bản ghi
+            <strong>{{ this.totalLicenseLength }}</strong> bản ghi
           </div>
-          <!-- :defaultValue="this.pageSize"
-            @onChose="getPageSize" -->
-          <MISADropdown></MISADropdown>
-          <!-- v-model="pageIndex" -->
-          <!-- :click-handler="getPageIndex" -->
+          <MISADropdown
+            :defaultValue="this.pageSize"
+            @onChose="getPageSize"
+          ></MISADropdown>
           <MISAPaginate
-            :pageCount="1"
+            :pageCount="totalPageIndex"
             :prev-text="'pre'"
             :prev-link-class="'prev-link-class'"
             :next-text="'next'"
             :next-link-class="'next-link-class'"
             :container-class="'m-paging-list'"
             :prev-class="'prev-class'"
+            v-model="pageIndex"
+            :click-handler="getPageIndex"
           ></MISAPaginate>
         </div>
 
@@ -148,8 +159,8 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- <MISALoading v-if="isAssetListLoading"></MISALoading> -->
-                <tr v-for="(asset, index) in assetList" :key="index">
+                <MISALoading v-if="isAssetLoading"></MISALoading>
+                <tr v-else v-for="(asset, index) in assetList" :key="index">
                   <td class="text-align-center">{{ index + 1 }}</td>
                   <td class="text-align-left">{{ asset.FixedAssetCode }}</td>
                   <td class="text-align-left">{{ asset.FixedAssetName }}</td>
@@ -174,44 +185,173 @@
       :isEditing="isEditing"
       v-if="isLicenseShow"
       @licenseDialogShow="licenseDialogShow"
+      @filterLicense="filterLicense"
       :licenseSelected="licenseSelected"
     ></MISALicenseDialog>
   </div>
 </template>
 <script>
-import axios from 'axios';
-import moment from 'moment';
+import axios from "axios";
+import moment from "moment";
 export default {
+  computed: {
+    /**
+     * Mô tả : Tính tổng số trang
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:39 17/06/2022
+     */
+    totalPageIndex: function () {
+      return Math.ceil(this.filterLicenseLength / this.pageSize);
+    },
+
+    /**
+     * Mô tả : Tính tổng nguyên giá
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 13:50 17/06/2022
+     */
+    quantityCost: function () {
+      const quantityCost = this.licenseData.reduce((currentValue, item) => {
+        return currentValue + Number(item.Total);
+      }, 0);
+      return quantityCost;
+    },
+  },
+
   async beforeMount() {
-    try {
-      const res = await axios.get('Licenses');
-      this.licenseData = res.data;
-      res.data.map((element) => {
-        element.checked = false;
-      });
-      // Gán vào data
-      this.licenseData = [...res.data];
-    } catch (error) {
-      console.log(error);
-    }
+    //
+    await this.filterLicense();
+    //
+    await this.getAllLicense();
   },
 
   methods: {
+    /**
+     * Mô tả : Tìm kiếm
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:15 17/06/2022
+     */
+    async onSearchLicense() {
+      this.pageIndex = 1;
+      await this.filterLicense();
+    },
+    /**
+     * Mô tả : Lấy tất cả dữ liệu => tổng số bảng ghi
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 11:15 17/06/2022
+     */
+    async getAllLicense() {
+      try {
+        const res = await axios.get("Licenses");
+        this.totalLicenseLength = res.data.length;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    /**
+     * Mô tả : Gọi dữ liệu từ API và phân trang
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:10 17/06/2022
+     */
+    async filterLicense() {
+      this.isLicnesLoading = true;
+      try {
+        const res = await axios.get("Licenses/FilterLicense", {
+          params: {
+            searchLicense: this.searchValue,
+            pageIndex: this.pageIndex,
+            pageSize: this.pageSize,
+          },
+        });
+        res.data.List.map((element) => {
+          element.checked = false;
+        });
+        // Gán vào biến:
+        this.filterLicenseLength = res.data.Count; // Tổng bản ghi
+        this.licenseData = [...res.data.List]; // Danh sách chứng từ
+        this.isLicnesLoading = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    /**
+     * Mô tả : Chọn số trang
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:36 17/06/2022
+     */
+    async getPageIndex(pageIndex) {
+      this.pageIndex = pageIndex;
+      await this.filterLicense();
+    },
+
+    /**
+     * Mô tả : Chọn số bản ghi trong 1 trang
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:36 17/06/2022
+     */
+    async getPageSize(option) {
+      this.pageSize = option;
+      this.pageIndex = 1;
+      await this.filterLicense();
+    },
+
+    /**
+     * Mô tả : Xử lí sự kiện click 1 lần vào row
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:09 17/06/2022
+     */
     async onRowClick(license, $event) {
       // Nếu ấn edit:
-      if ($event.target.classList.contains('edit-btn')) {
-        console.log('vào');
+      if ($event.target.classList.contains("edit-btn")) {
         this.showEditLicense(license);
       }
       // Nếu ấn xóa (icon xóa):
-      else if ($event.target.classList.contains('remove-btn')) {
-        console.log('remove');
+      else if ($event.target.classList.contains("remove-btn")) {
+        this.removeLicense(license);
       }
       // Nếu ấn vào cả dòng:
       else {
         await this.getAsssetList(license);
       }
     },
+
+    /**
+     * Mô tả : Xóa chứng từ
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:48 17/06/2022
+     */
+    async removeLicense(license) {
+      try {
+        const res = await axios.delete(`Licenses/${license.LicenseId}`);
+        if (res.status == 200) {
+          console.log("Hiển thị toast");
+          // Gọi lại API lấy dữ liệu
+          this.filterLicense();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     /**
      * Mô tả : Lấy danh sách tài sản khi click vào bảng ghi tăng
      * @param
@@ -229,6 +369,7 @@ export default {
           license.checked = !license.checked;
         }
       });
+      this.isAssetLoading = license.checked ? true : false;
 
       // first clear  time
       clearTimeout(this.time);
@@ -253,7 +394,7 @@ export default {
      */
     async getNewCode() {
       try {
-        var res = await axios.get('Licenses/GetNewCode');
+        var res = await axios.get("Licenses/GetNewCode");
         this.newLicenseCode = res.data;
       } catch (error) {
         console.log(error);
@@ -289,13 +430,15 @@ export default {
      * Created date: 16:33 15/06/2022
      */
     async getLicenseDetail(id) {
-      // this.isAssetListLoading = true;
-
       try {
         const res = await axios.get(`Licenses/GetLicense/${id}`);
-        this.licenseSelected = res.data;
-        this.assetList = this.licenseSelected.FixedAssetList;
-        // this.isAssetListLoading = false;
+        if (res.status == 200) {
+          // gán licenseSelected để truyền xuống dialog khi dbClick
+          this.licenseSelected = res.data;
+          // Gán vào danh sách tài sản để hiên thị lên UI
+          this.assetList = this.licenseSelected.FixedAssetList;
+          this.isAssetLoading = false;
+        }
       } catch (error) {
         console.log(error);
       }
@@ -339,7 +482,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
 
@@ -351,7 +494,7 @@ export default {
      * Created date: 15:35 13/06/2022
      */
     dateTimeFormat(value) {
-      return moment(value).format('DD/MM/YYYY');
+      return moment(value).format("DD/MM/YYYY");
     },
   },
 
@@ -361,10 +504,19 @@ export default {
       isLicenseShow: false,
       licenseData: [], // danh sách chứng từ gọi từ API
       assetList: [],
-      newLicenseCode: '',
+      newLicenseCode: "",
       licenseSelected: [],
       time: null,
-      // isAssetListLoading: false,
+      // Loading
+      isAssetLoading: false,
+      isLicnesLoading: false,
+      //Tổng số bản ghi
+      filterLicenseLength: null, // Tổng số bản ghi theo tìm kiếm
+      totalLicenseLength: null, // Tổng số bản ghi chưa phân trang
+      // Phân trang
+      searchValue: "", // Ô tìm kiếm
+      pageIndex: 1,
+      pageSize: 20,
     };
   },
 };

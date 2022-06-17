@@ -230,6 +230,14 @@
       @setCloseOnly="setCloseOnly"
     >
     </MISAAlert>
+
+    <!-- <MISAAlert2
+      alertType="2btn"
+      leftBtnTitle="Không"
+      rightBtnTitle="Xóa"
+      alert="Bạn có muốn xóa"
+      @rightBtnClick="this.removeAsset"
+    ></MISAAlert2> -->
     <MISAToast v-if="toast.isShow" :title="toast.title"> </MISAToast>
   </div>
 </template>

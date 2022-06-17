@@ -59,6 +59,7 @@
 }
 
 .m-license .m-license-main .main-table-container .m-license-table {
+  position: relative;
   height: calc(55% - 76px);
   /* Trừ height bảng total và phân trang */
   overflow-y: scroll;
@@ -115,7 +116,7 @@
   .m-detail-container
   .detail-header {
   height: 40px;
-  font-size: 20px;
+  font-size: 1.5rem;
   line-height: 40px;
   padding-left: 16px;
 }
@@ -123,5 +124,5 @@
 .m-detail-table {
   position: relative;
   height: calc(100% - 40px); /* 100% trừ height header */
-  overflow-y: scroll;
+  overflow-y: auto;
 }

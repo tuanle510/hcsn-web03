@@ -2,7 +2,7 @@
   <div :class="[{ 'bgc-none': isEditAssetShow }, 'm-dialog', 'license-dialog']">
     <div class="m-modal license-modal w-950">
       <div class="m-modal-title license-title">
-        {{ isEditing ? 'Sửa chứng từ ghi tăng' : 'Thêm chứng từ ghi tăng' }}
+        {{ isEditing ? "Sửa chứng từ ghi tăng" : "Thêm chứng từ ghi tăng" }}
       </div>
       <div class="m-modal-close" @click="onCancel">
         <div class="close"></div>
@@ -71,7 +71,7 @@
           <!-- bảng -->
           <div class="m-detail-table" style="height: 150px; overflow-y: auto">
             <table class="m-table">
-              <thead>
+              <thead style="z-index: 2">
                 <tr>
                   <th class="text-align-center" style="width: 50px">STT</th>
                   <th class="text-align-left" style="width: 120px">
@@ -115,20 +115,22 @@
                     {{ currencyFormat(asset.Cost) }}
                   </td>
                   <td class="text-align-right">
-                    {{ currencyFormat(asset.DepreciationValue) }}
+                    {{ currencyFormat(asset.Accumulated) }}
                   </td>
-                  <!-- style="position: relative" -->
-                  <td class="text-align-right">
-                    20.000
+                  <td class="text-align-right last-td">
+                    {{ currencyFormat(asset.Cost - asset.Accumulated) }}
 
-                    <!-- <div class="m-function-box" style="display: none">
-                      <div class="icon-box-36 btn-edit" @click="btnEditAsset">
+                    <div
+                      class="m-function-box last-td-icon"
+                      style="display: none"
+                    >
+                      <div class="icon-box-36" @click="btnEditAsset">
                         <div class="edit"></div>
                       </div>
-                      <div class="icon-box-36 btn-remove">
+                      <div class="icon-box-36" @click="btnRemoveAsset(asset)">
                         <div class="remove-red"></div>
                       </div>
-                    </div> -->
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -145,16 +147,18 @@
               <thead>
                 <tr>
                   <th class="text-align-center" style="width: 50px"></th>
-                  <th class="text-align-left" style="width: 90px"></th>
-                  <th class="text-align-left" style="width: 180px"></th>
+                  <th class="text-align-left" style="width: 120px"></th>
+                  <th class="text-align-left" style="width: 170px"></th>
                   <th class="text-align-left" style="width: 180px"></th>
                   <th class="text-align-right" style="width: 130px">
-                    Nguyên giá
+                    {{ currencyFormat(quantityCost) }}
                   </th>
                   <th class="text-align-right" style="width: 130px">
-                    Hao mòn năm
+                    {{ currencyFormat(quantityAccumulated) }}
                   </th>
-                  <th class="text-align-right">Giá trị còn lại</th>
+                  <th class="text-align-right">
+                    {{ currencyFormat(quantityCost - quantityAccumulated) }}
+                  </th>
                 </tr>
               </thead>
             </table>
@@ -189,7 +193,7 @@
           buttonTitle="Hủy"
           @click="onCancel"
         ></MISAButton>
-        <MISAButton buttonTitle="Lưu" @click="onSumbit"></MISAButton>
+        <MISAButton buttonTitle="Lưu" @click="onSubmit"></MISAButton>
       </div>
     </div>
     <!-- Chọn tài sản thêm vào dialog -->
@@ -207,13 +211,13 @@
     ></MISAEditAssetDialog>
 
     <!-- Alert -->
-    <MISAAlert v-if="isAlertShow" :alertTitle="this.errorList[0]"></MISAAlert>
+    <MISAAlert v-if="alert.isShow" :alertTitle="alert.title"></MISAAlert>
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  props: ['licenseSelected', 'isEditing'],
+  props: ["licenseSelected", "isEditing"],
 
   beforeMount() {
     // Gán giá trị license
@@ -221,7 +225,7 @@ export default {
     // Gán giá trị danh sách asset
     this.assetList = this.licenseSelected.FixedAssetList;
     // Phân trang
-    this.paginationAsset();
+    // this.paginationAsset();
   },
 
   mounted() {
@@ -229,7 +233,50 @@ export default {
     this.$refs.licenseInput.setFocus();
   },
 
+  computed: {
+    /**
+     * Mô tả : Tính tổng nguyên giá
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 13:49 17/06/2022
+     */
+    quantityCost: function () {
+      const quantityCost = this.showList.reduce((currentValue, item) => {
+        return currentValue + Number(item.Cost);
+      }, 0);
+      return quantityCost;
+    },
+
+    quantityAccumulated: function () {
+      const quantityAccumulated = this.showList.reduce((currentValue, item) => {
+        return currentValue + Number(item.Accumulated);
+      }, 0);
+      return quantityAccumulated;
+    },
+  },
+
+  watch: {
+    assetList(newValue) {
+      this.searchAssetList = newValue;
+      this.pageIndex = 1;
+      this.paginationAsset();
+    },
+  },
+
   methods: {
+    /**
+     * Mô tả : Xóa tài sản trong danh sách
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 09:06 17/06/2022
+     */
+    btnRemoveAsset(assetToRemove) {
+      this.assetList = this.assetList.filter(
+        (asset) => asset.FixedAssetId !== assetToRemove.FixedAssetId
+      );
+    },
     /**
      * Mô tả : Tìm kiếm và phân trang
      * @param
@@ -309,15 +356,9 @@ export default {
     getChoseAsset(list) {
       this.choseAssetDialogShow(false);
       // Gán lại giá trị cho ô tìm kiếm:
-      this.$refs.searchInput.value = '';
+      this.$refs.searchInput.value = "";
       // Thêm vào danh sách tài sản đã có sẵn:
       this.assetList = this.assetList.concat(list);
-      // Gán search list bằng list tổng để phân trang:
-      this.searchAssetList = [...this.assetList];
-      // Trở về trang 1:
-      this.pageIndex = 1;
-      // Phân trang:
-      this.paginationAsset();
     },
 
     /**
@@ -368,7 +409,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
 
@@ -401,17 +442,19 @@ export default {
       // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
         // Kiểm tra giá trị của input
-        if (element.required && element.value.trim() == '') {
+        if (element.required && element.value.trim() == "") {
           if (first) {
             first = false;
             this.firstEmptyElement = element;
           }
-          element.classList.add('m-input-error');
+          element.classList.add("m-input-error");
           this.errorList.push(`${element.name} không được để trống`);
-
-          this.isAlertShow = true;
         }
       });
+
+      if (this.assetList.length == 0) {
+        this.errorList.push("Chọn ít nhất 1 tài sản.");
+      }
     },
 
     /**
@@ -423,7 +466,7 @@ export default {
      */
     async addLicense() {
       // Tạo obj dữ liệu gửi lên API: (Thông tin chứng từ, danh sách tài sản trong chứng từ):
-      var InsertNewLicense = {
+      var InsertLicense = {
         license: this.license,
         licenseDetails: this.assetList.map((asset) => {
           return {
@@ -433,13 +476,10 @@ export default {
       };
       // Gửi lên API
       try {
-        const res = await axios.post(
-          'Licenses/InsertNewLicense',
-          InsertNewLicense
-        );
+        const res = await axios.post("Licenses/InsertLicense", InsertLicense);
         if (res.status == 200) {
-          console.log('Asded');
-          this.$emit('licenseDialogShow', false);
+          this.$emit("licenseDialogShow", false);
+          this.$emit("filterLicense");
         }
       } catch (error) {
         console.log(error.response.data);
@@ -454,6 +494,7 @@ export default {
      * Created date: 21:34 16/06/2022
      */
     async updateLicense() {
+      // tại đối tượng truyền lên API
       var UpdateLicense = {
         license: this.license,
         licenseDetails: this.assetList.map((asset) => {
@@ -462,7 +503,6 @@ export default {
           };
         }),
       };
-      console.log(UpdateLicense);
       // Gửi lên API
       try {
         const res = await axios.put(
@@ -470,8 +510,8 @@ export default {
           UpdateLicense
         );
         if (res.status == 200) {
-          console.log(res.data);
-          this.$emit('licenseDialogShow', false);
+          this.$emit("licenseDialogShow", false);
+          this.$emit("filterLicense");
         }
       } catch (error) {
         console.log(error.response.data);
@@ -486,7 +526,7 @@ export default {
      * Created date: 11:33 10/06/2022
      */
     onCancel() {
-      this.$emit('licenseDialogShow', false);
+      this.$emit("licenseDialogShow", false);
     },
 
     /**
@@ -496,17 +536,33 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 22:31 13/06/2022
      */
-    async onSumbit() {
-      // this.validateForm();
-      if (this.isEditing == true) {
-        await this.updateLicense();
+    async onSubmit() {
+      this.license.Total = this.quantityCost;
+      this.validateForm();
+      if (this.errorList.length == 0) {
+        if (this.isEditing == true) {
+          await this.updateLicense();
+        } else {
+          await this.addLicense();
+        }
       } else {
-        await this.addLicense();
+        this.alertShow(true, this.errorList[0]);
       }
+    },
+
+    alertShow(alert, title, type) {
+      this.alert.isShow = alert;
+      this.alert.title = title;
+      this.alert.type = type;
     },
   },
   data() {
     return {
+      alert: {
+        title: "",
+        isShow: false,
+        type: "",
+      },
       isChoseAssetShow: false,
       isEditAssetShow: false,
       assetList: [], // Danh dách tất cả tài sản => Tổng số tài sản

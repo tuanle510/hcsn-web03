@@ -77,6 +77,7 @@ table.m-table {
 }
 
 .m-table thead {
+  z-index: 2;
   position: sticky;
   top: 0;
   right: 0;
@@ -107,7 +108,8 @@ table.m-table {
   background-color: rgba(26, 164, 200, 0.2);
 }
 
-.m-table tbody .m-tr:hover .m-function-box {
+.m-table tbody .m-tr:hover .m-function-box,
+.m-table tbody .m-tr .m-function-box-show {
   display: flex !important;
 }
 
@@ -174,13 +176,13 @@ table.m-table {
 }
 .m-paging-list .prev-class {
   cursor: pointer;
-  background: url('/src/assets/icon/qlts-icon.png') no-repeat -29px -246px;
+  background: url("/src/assets/icon/qlts-icon.png") no-repeat -29px -246px;
   width: 7px;
   height: 12px;
 }
 .m-paging-list .page-item:last-child {
   cursor: pointer;
-  background: url('/src/assets/icon/qlts-icon.png') no-repeat -73px -246px;
+  background: url("/src/assets/icon/qlts-icon.png") no-repeat -73px -246px;
   width: 7px;
   height: 12px;
 }
