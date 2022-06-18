@@ -14,13 +14,13 @@
   align-items: center;
 }
 
-.room-out {
+.zoom-out {
   background: url('/src/assets/icon/qlts-icon.png') no-repeat -245px -333px;
   width: 14px;
   height: 14px;
 }
 
-.room-in {
+.zoom-in {
   background: url('/src/assets/icon/qlts-icon.png') no-repeat -289px -333px;
   width: 14px;
   height: 14px;
@@ -109,6 +109,12 @@
   background: url('/src/assets/icon/qlts-icon.png') no-repeat -110px -420px;
   width: 20px;
   height: 15px;
+}
+
+.license-full {
+  background: url('/src/assets/icon/qlts-icon.png') no-repeat -22px -421px;
+  width: 20px;
+  height: 14px;
 }
 
 .arrow-down {

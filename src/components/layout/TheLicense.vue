@@ -5,43 +5,91 @@
       <div class="l-toolbar-left"><p>Ghi tăng tài sản</p></div>
       <div class="l-toolbar-right">
         <MISAButton buttonTitle="Thêm" @click="showAddLicense"></MISAButton>
-        <div class="l-icon-container">
-          <div class="icon-box-36">
-            <div class="license"></div>
+        <div class="header-dropdown">
+          <div
+            class="l-icon-container"
+            @click="this.isOptionShow = !this.isOptionShow"
+          >
+            <div class="icon-box-36">
+              <div
+                v-if="this.mainTableHeight == 100"
+                class="license-full"
+              ></div>
+              <div v-else class="license"></div>
+            </div>
+            <div class="icon-box-36">
+              <div class="arrow-down"></div>
+            </div>
           </div>
-          <div class="icon-box-36">
-            <div class="arrow-down"></div>
-          </div>
+          <ul v-if="this.isOptionShow" class="option-list">
+            <li
+              @click="
+                this.mainTableHeight = 100;
+                this.isOptionShow = false;
+              "
+            >
+              <div class="icon-box-36">
+                <div class="license-full"></div>
+              </div>
+              <span>Giao diện dọc</span>
+            </li>
+            <li
+              @click="
+                this.mainTableHeight = 55;
+                this.isOptionShow = false;
+              "
+            >
+              <div class="icon-box-36">
+                <div class="license"></div>
+              </div>
+              <span>Giao diện ngang</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
 
     <!-- table-->
     <div class="m-license-main">
-      <div class="main-header">
-        <div class="search-field" style="width: 300px">
-          <input
-            placeholder="Tìm kiếm theo số chứng từ, nội dung"
-            class="m-search"
-            @change="onSearchLicense"
-            v-model="searchValue"
-          />
-          <div class="search-icon">
-            <div class="search"></div>
+      <!-- Table chứng từ -->
+      <div
+        v-if="this.mainTableHeight != 0"
+        class="main-table-container"
+        :style="{ height: this.mainTableHeight + '%' }"
+      >
+        <div class="main-header">
+          <div class="search-field" style="width: 300px">
+            <input
+              placeholder="Tìm kiếm theo số chứng từ, nội dung"
+              class="m-search"
+              @change="onSearchLicense"
+              v-model="searchValue"
+            />
+            <div class="search-icon">
+              <div class="search"></div>
+            </div>
+          </div>
+          <div class="l-icon-container">
+            <!-- <div v-if="this.checkedList.length > 0" class="icon-box-36">
+            <div class="remove-red"></div>
+          </div> -->
+            <div class="icon-box-36">
+              <div
+                style="position: relative"
+                class="export tooltip"
+                tooltip="In"
+              ></div>
+            </div>
+            <div
+              style="position: relative"
+              class="icon-box-36 tooltip"
+              tooltip="Xem thêm"
+            >
+              <div style="position: relative" class="more-vertical"></div>
+            </div>
           </div>
         </div>
-        <div class="l-icon-container">
-          <div class="icon-box-36">
-            <div class="export"></div>
-          </div>
-          <div class="icon-box-36">
-            <div class="more-vertical"></div>
-          </div>
-        </div>
-      </div>
 
-      <div class="main-table-container">
-        <!-- Table ghi tăng -->
         <div class="m-license-table">
           <table class="m-table">
             <thead>
@@ -87,11 +135,10 @@
                 <td class="text-align-right w-150">
                   {{ currencyFormat(license.Total) }}
                 </td>
-                <td
-                  class="text-align-left text-width last-td"
-                  style="padding-left: 15px"
-                >
-                  {{ license.Description }}
+                <td class="text-align-left last-td" style="padding-left: 15px">
+                  <div class="text-width">
+                    {{ license.Description }}
+                  </div>
                   <div
                     :class="[
                       { 'm-function-box-show': license.checked },
@@ -101,10 +148,16 @@
                     style="display: none"
                   >
                     <div class="icon-box-36 edit-btn">
-                      <div class="edit edit-btn"></div>
+                      <div
+                        class="edit edit-btn tooltip"
+                        tooltip="Thêm nguồn chi phí"
+                      ></div>
                     </div>
                     <div class="icon-box-36 remove-btn">
-                      <div class="remove-red remove-btn"></div>
+                      <div
+                        class="remove-red tooltip"
+                        tooltip="Xóa nguồn chi phí"
+                      ></div>
                     </div>
                   </div>
                 </td>
@@ -112,11 +165,11 @@
             </tbody>
           </table>
         </div>
-        <!-- Tổng tiền -->
+
         <div class="m-license-total">
           <div class="total-text">{{ currencyFormat(quantityCost) }}</div>
         </div>
-        <!-- Tổng số bảng ghi -->
+
         <div class="license-paging">
           <div class="m-total-number">
             Tổng số:
@@ -138,51 +191,68 @@
             :click-handler="getPageIndex"
           ></MISAPaginate>
         </div>
+      </div>
 
-        <!-- border  -->
-        <div class="mouse-draw"></div>
+      <!-- border  -->
+      <div
+        v-if="this.mainTableHeight != 0 || this.mainTableHeight != 100"
+        class="mouse-draw"
+      ></div>
 
-        <!-- table Chi tiết -->
-        <div class="m-detail-container">
-          <div class="detail-header">
-            <span> Thông tin chi tiết</span>
-            <div class="icon-box-36">
-              <div class="room-out" title="Phóng to"></div>
-            </div>
+      <!-- table Chi tiết -->
+      <div
+        class="m-detail-container"
+        :style="{ height: 'calc(100% - ' + this.mainTableHeight + '%)' }"
+      >
+        <div class="detail-header">
+          <span> Thông tin chi tiết</span>
+          <div class="icon-box-36" @click="zoom">
+            <div
+              v-if="this.mainTableHeight != 0"
+              style="position: relative"
+              class="zoom-out tooltip"
+              tooltip="Phóng to"
+            ></div>
+            <div
+              v-else
+              style="position: relative"
+              class="zoom-in tooltip"
+              tooltip="Thu nhỏ"
+            ></div>
           </div>
-          <div class="m-detail-table">
-            <table class="m-table">
-              <thead>
-                <tr>
-                  <th class="text-align-center w-50">STT</th>
-                  <th class="text-align-left w-130">Mã tài sản</th>
-                  <th class="text-align-left w-150">Tên tài sản</th>
-                  <th class="text-align-left w-150">Bộ phận sử dụng</th>
-                  <th class="text-align-right w-150">Nguyên giá</th>
-                  <th class="text-align-right w-150">Hao mòn năm</th>
-                  <th class="text-align-right w-130">Giá trị còn lại</th>
-                </tr>
-              </thead>
-              <tbody>
-                <MISALoading v-if="isAssetLoading"></MISALoading>
-                <tr v-else v-for="(asset, index) in assetList" :key="index">
-                  <td class="text-align-center">{{ index + 1 }}</td>
-                  <td class="text-align-left">{{ asset.FixedAssetCode }}</td>
-                  <td class="text-align-left">{{ asset.FixedAssetName }}</td>
-                  <td class="text-align-left">{{ asset.DepartmentName }}</td>
-                  <td class="text-align-right">
-                    {{ currencyFormat(asset.Cost) }}
-                  </td>
-                  <td class="text-align-right">
-                    {{ currencyFormat(asset.Accumulated) }}
-                  </td>
-                  <td class="text-align-right">
-                    {{ currencyFormat(asset.Cost - asset.Accumulated) }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        </div>
+        <div class="m-detail-table">
+          <table class="m-table">
+            <thead>
+              <tr>
+                <th class="text-align-center w-50">STT</th>
+                <th class="text-align-left w-130">Mã tài sản</th>
+                <th class="text-align-left w-150">Tên tài sản</th>
+                <th class="text-align-left w-150">Bộ phận sử dụng</th>
+                <th class="text-align-right w-150">Nguyên giá</th>
+                <th class="text-align-right w-150">Hao mòn năm</th>
+                <th class="text-align-right w-130">Giá trị còn lại</th>
+              </tr>
+            </thead>
+            <tbody>
+              <MISALoading v-if="isAssetLoading"></MISALoading>
+              <tr v-else v-for="(asset, index) in assetList" :key="index">
+                <td class="text-align-center">{{ index + 1 }}</td>
+                <td class="text-align-left">{{ asset.FixedAssetCode }}</td>
+                <td class="text-align-left">{{ asset.FixedAssetName }}</td>
+                <td class="text-align-left">{{ asset.DepartmentName }}</td>
+                <td class="text-align-right">
+                  {{ currencyFormat(asset.Cost) }}
+                </td>
+                <td class="text-align-right">
+                  {{ currencyFormat(asset.Accumulated) }}
+                </td>
+                <td class="text-align-right">
+                  {{ currencyFormat(asset.Cost - asset.Accumulated) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -236,6 +306,23 @@ export default {
   },
 
   methods: {
+    /**
+     * Mô tả : Chức năng phóng to, thu nhỏ
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 01:12 19/06/2022
+     */
+    zoom() {
+      // if (this.mainTableHeight == 55) {
+      //   this.mainTableHeight = 0;
+      // } else {
+      //   this.mainTableHeight = 55;
+      // }
+
+      this.mainTableHeight = this.mainTableHeight != 0 ? 0 : 55;
+      console.log(this.mainTableHeight);
+    },
     /**
      * Mô tả : Tìm kiếm
      * @param
@@ -524,6 +611,10 @@ export default {
       searchValue: '', // Ô tìm kiếm
       pageIndex: 1,
       pageSize: 20,
+
+      //resize
+      mainTableHeight: 55,
+      isOptionShow: false,
     };
   },
 };

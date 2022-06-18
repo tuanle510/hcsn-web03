@@ -6,7 +6,11 @@
     >
       Chọn tài sản ghi tăng
     </div>
-    <div class="m-modal-close" @click="onCancel">
+    <div
+      class="m-modal-close icon-box-24 tooltip"
+      tooltip="Hủy bỏ"
+      @click="onCancel"
+    >
       <div class="close"></div>
     </div>
     <div class="m-modal-centent chose-asset-content">
@@ -116,10 +120,10 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import qs from "qs";
+import axios from 'axios';
+import qs from 'qs';
 export default {
-  props: ["assetList"],
+  props: ['assetList'],
 
   computed: {
     totalPageIndex: function () {
@@ -161,7 +165,7 @@ export default {
       // Lấy ra danh sách Id để lọc trên API
       var idList = this.assetList.map((asset) => asset.FixedAssetId);
       try {
-        const res = await axios.get("FixedAssets/GetRestAsetList", {
+        const res = await axios.get('FixedAssets/GetRestAsetList', {
           params: {
             fixedAssetList: idList,
             searchAsset: this.searchValue,
@@ -305,7 +309,7 @@ export default {
       this.checkedaAssetList = this.assetData.filter(
         (asset) => asset.checked == true
       );
-      this.$emit("getChoseAsset", this.checkedaAssetList);
+      this.$emit('getChoseAsset', this.checkedaAssetList);
     },
 
     /**
@@ -316,7 +320,7 @@ export default {
      * Created date: 11:29 10/06/2022
      */
     onCancel() {
-      this.$emit("choseAssetDialogShow", false);
+      this.$emit('choseAssetDialogShow', false);
     },
 
     /**
@@ -327,7 +331,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
   },
@@ -338,11 +342,11 @@ export default {
       assetLength: 0,
       assetData: [],
       checkedaAssetList: [],
-      searchBox: "",
+      searchBox: '',
       checkedAll: false,
 
       // Phân trang
-      searchValue: "", // Ô tìm kiếm
+      searchValue: '', // Ô tìm kiếm
       pageIndex: 1,
       pageSize: 20,
     };

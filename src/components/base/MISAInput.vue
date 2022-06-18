@@ -112,10 +112,7 @@ export default {
      */
     validateRequired() {
       var value = this.$refs.input.value;
-      if (
-        this.required &&
-        (value === undefined || value.toString().trim() === '')
-      ) {
+      if (this.required && (value === undefined || value.toString() == '')) {
         this.$refs.input.classList.add('m-input-error');
         this.createErrorMsg();
       } else {

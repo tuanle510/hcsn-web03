@@ -2,7 +2,7 @@
   <div class="m-dialog license-dialog">
     <div class="m-modal license-modal">
       <div class="m-modal-title license-title">Sửa tài sản</div>
-      <div class="m-modal-close">
+      <div class="m-modal-close icon-box-24 tooltip" tooltip="Hủy bỏ">
         <div class="close"></div>
       </div>
       <div class="m-modal-centent" style="padding-bottom: 0px">
@@ -37,23 +37,30 @@
                 :optionList="sourceInformation"
                 filterby="budget"
                 v-model="budget.name"
+                ref="combobox"
               ></MISACombobox>
             </div>
             <div class="modal-field">
               <label>Giá trị</label>
               <MISAInput
                 :required="true"
+                :isNumber="true"
                 classParent="text-align-right"
                 style="padding-right: 0"
                 v-model="budget.cost"
+                ref="input"
               ></MISAInput>
             </div>
             <div class="icon-box-container">
               <div class="icon-box-36" @click="btnPlus">
-                <div class="plus"></div>
+                <div class="plus tooltip" tooltip="Thêm nguồn chi phí"></div>
               </div>
-              <div class="icon-box-36" @click="btnMinus(budget)">
-                <div class="minus"></div>
+              <div
+                v-if="this.budgetList.length > 1"
+                class="icon-box-36"
+                @click="btnMinus(budget)"
+              >
+                <div class="minus tooltip" tooltip="Bỏ nguồn chi phí"></div>
               </div>
             </div>
           </div>
@@ -88,6 +95,7 @@
 import axios from 'axios';
 export default {
   props: ['licenseDetailSelected'],
+
   beforeMount() {
     // Gán vào giá trị:
     this.licenseDetail = this.licenseDetailSelected;
@@ -99,6 +107,13 @@ export default {
   },
 
   computed: {
+    /**
+     * Mô tả : Tính tổng nguyên giá:
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 00:39 19/06/2022
+     */
     totalCost: function () {
       const totalCost = this.budgetList.reduce((currentValue, item) => {
         return currentValue + Number(item.cost);
@@ -154,18 +169,40 @@ export default {
      * Created date: 15:45 18/06/2022
      */
     async onSubmit() {
-      this.licenseDetail.DetailJson = JSON.stringify(this.budgetList);
-      console.log(this.licenseDetail);
-      try {
-        const res = await axios.put(
-          `LicenseDetail/UpdateJsonDetail/${this.licenseDetail.LicenseDetailId}`,
-          this.licenseDetail
-        );
-        if (res.status == 200) {
-          console.log(res.data);
+      // check trống combobox
+      this.$refs.combobox.forEach((element) => {
+        element.validateRequired();
+      });
+      // Check trống input
+      this.$refs.input.forEach((element) => {
+        element.validateRequired();
+      });
+
+      // Trả về true nếu input rỗng:
+      this.budgetList.forEach((element) => {
+        if (element.name == '' || element.cost == '') {
+          this.isEmpty = true;
+        } else {
+          this.isEmpty = false;
         }
-      } catch (error) {
-        console.log(error.response.data);
+      });
+
+      // Nếu input không rỗng thì thực hiện update:
+      if (this.isEmpty == false) {
+        // Gán lại giá trị cho detailJson:
+        this.licenseDetail.DetailJson = JSON.stringify(this.budgetList);
+        // Gửi dữ liệu nên API:
+        try {
+          const res = await axios.put(
+            `LicenseDetail/UpdateJsonDetail/${this.licenseDetail.LicenseDetailId}`,
+            this.licenseDetail
+          );
+          if (res.status == 200) {
+            console.log(res.data);
+          }
+        } catch (error) {
+          console.log(error.response.data);
+        }
       }
     },
 
@@ -185,7 +222,6 @@ export default {
   data() {
     return {
       totalText: 'Tổng',
-
       sourceInformation: [
         {
           id: 1,
@@ -201,10 +237,11 @@ export default {
         },
       ],
       licenseDetail: {},
+      isEmpty: false,
       budgetList: [
         {
           name: '',
-          cost: 0,
+          cost: '',
         },
       ],
     };

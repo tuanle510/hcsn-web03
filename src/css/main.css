@@ -22,6 +22,7 @@
 @import url(./base/loading.css);
 @import url(./base/search.css);
 @import url(./base/dropdown.css);
+@import url(./base/tooltip.css);
 
 * {
   padding: 0;

@@ -4,7 +4,11 @@
       <div class="m-modal-title license-title">
         {{ isEditing ? 'Sửa chứng từ ghi tăng' : 'Thêm chứng từ ghi tăng' }}
       </div>
-      <div class="m-modal-close" @click="onCancel">
+      <div
+        class="m-modal-close icon-box-24 tooltip"
+        tooltip="Hủy bỏ"
+        @click="onCancel"
+      >
         <div class="close"></div>
       </div>
 
@@ -105,13 +109,17 @@
                   <td class="text-align-left">
                     {{ asset.FixedAssetCode }}
                   </td>
-                  <td class="text-align-left">
+                  <td
+                    class="text-align-left text-limit"
+                    style="max-width: 170px"
+                    :title="asset.FixedAssetName"
+                  >
                     {{ asset.FixedAssetName }}
                   </td>
-                  <td class="text-align-left">
+                  <td class="text-align-left text-limit">
                     {{ asset.DepartmentName }}
                   </td>
-                  <td class="text-align-right">
+                  <td class="text-align-right text-limit">
                     {{ currencyFormat(asset.Cost) }}
                   </td>
                   <td class="text-align-right">
@@ -122,16 +130,18 @@
 
                     <div
                       class="m-function-box last-td-icon"
-                      style="display: none"
+                      style="display: none; gap: 10px"
                     >
                       <div
-                        class="icon-box-36 icon-hover"
+                        class="icon-box-36 icon-hover tooltip"
+                        tooltip="Sửa tài sản"
                         @click="showEditAssetDetail(asset)"
                       >
                         <div class="edit"></div>
                       </div>
                       <div
-                        class="icon-box-36 icon-hover"
+                        class="icon-box-36 icon-hover tooltip"
+                        tooltip="Xóa tài sản"
                         @click="btnRemoveAsset(asset)"
                       >
                         <div class="remove-red"></div>

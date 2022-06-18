@@ -28,6 +28,7 @@
         <div v-else class="down"></div>
       </div>
     </div>
+    <div v-if="this.errorMsg" class="m-input-msg">{{ errorMsg }}</div>
     <Teleport to="body">
       <ul
         class="m-option-list"
@@ -223,13 +224,28 @@ export default {
      */
     validateRequired() {
       var value = this.$refs.input.value;
-      if (
-        this.required &&
-        (value === undefined || value.toString().trim() === '')
-      ) {
+      if (this.required && (value == undefined || value.toString() == '')) {
         this.$refs.input.classList.add('m-input-error');
+        this.createErrorMsg();
       } else {
         this.$refs.input.classList.remove('m-input-error');
+        this.errorMsg = '';
+      }
+    },
+
+    /**
+     * Mô tả : Tạo error msg
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:43 18/06/2022
+     */
+    createErrorMsg() {
+      var inputName = this.$refs.input.name;
+      if (inputName == undefined || inputName == '') {
+        this.errorMsg = 'Ô này không được để trống!';
+      } else {
+        this.errorMsg = `${inputName} không được để trống!`;
       }
     },
 
@@ -365,6 +381,7 @@ export default {
       isToggle: false,
       optionPos: {},
       comboboxPos: {},
+      errorMsg: null,
     };
   },
 };
