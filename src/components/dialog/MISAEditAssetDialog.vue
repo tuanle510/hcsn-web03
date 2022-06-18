@@ -1,7 +1,9 @@
 <template>
-  <div class="m-dialog license-dialog">
+  <div :class="[{ 'bgc-none': isLoading }, 'm-dialog', 'license-dialog']">
     <div class="m-modal license-modal">
-      <div class="m-modal-title license-title">Sửa tài sản</div>
+      <div class="m-modal-title license-title">
+        Sửa tài sản {{ this.licenseDetail.FixedAssetName }}
+      </div>
       <div class="m-modal-close icon-box-24 tooltip" tooltip="Hủy bỏ">
         <div class="close"></div>
       </div>
@@ -89,6 +91,11 @@
         <MISAButton buttonTitle="Lưu" @click="onSubmit"></MISAButton>
       </div>
     </div>
+
+    <!-- Loading  -->
+    <div v-if="isLoading" class="m-dialog">
+      <MISALoading></MISALoading>
+    </div>
   </div>
 </template>
 <script>
@@ -99,6 +106,7 @@ export default {
   beforeMount() {
     // Gán vào giá trị:
     this.licenseDetail = this.licenseDetailSelected;
+    console.log(this.licenseDetail);
 
     // Nếu detailjson rỗng thì lấy giá trị budgetlist là rỗng, nếu không thì gán budgetList bằng detailjson
     if (this.licenseDetail.DetailJson != null) {
@@ -169,6 +177,7 @@ export default {
      * Created date: 15:45 18/06/2022
      */
     async onSubmit() {
+      this.isLoading = true;
       // check trống combobox
       this.$refs.combobox.forEach((element) => {
         element.validateRequired();
@@ -221,6 +230,7 @@ export default {
 
   data() {
     return {
+      isLoading: false,
       totalText: 'Tổng',
       sourceInformation: [
         {

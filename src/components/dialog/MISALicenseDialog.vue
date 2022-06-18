@@ -1,5 +1,11 @@
 <template>
-  <div :class="[{ 'bgc-none': isEditAssetShow }, 'm-dialog', 'license-dialog']">
+  <div
+    :class="[
+      { 'bgc-none': isEditAssetShow || isLoading },
+      'm-dialog',
+      'license-dialog',
+    ]"
+  >
     <div class="m-modal license-modal w-950">
       <div class="m-modal-title license-title">
         {{ isEditing ? 'Sửa chứng từ ghi tăng' : 'Thêm chứng từ ghi tăng' }}
@@ -228,7 +234,12 @@
     ></MISAEditAssetDialog>
 
     <!-- Alert -->
-    <MISAAlert v-if="alert.isShow" :alertTitle="alert.title"></MISAAlert>
+    <!-- <MISAAlert v-if="alert.isShow" :alertTitle="alert.title"></MISAAlert> -->
+
+    <!-- Loading  -->
+    <div v-if="isLoading" class="m-dialog">
+      <MISALoading></MISALoading>
+    </div>
   </div>
 </template>
 <script>
@@ -274,6 +285,13 @@ export default {
   },
 
   watch: {
+    /**
+     * Mô tả : Theo dõi danh sách tài sản => nếu có thay đổi thì phân trang lại, về lại trang đầu
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 02:28 19/06/2022
+     */
     assetList(newValue) {
       this.searchAssetList = newValue;
       this.pageIndex = 1;
@@ -501,11 +519,13 @@ export default {
       // Gửi lên API
       try {
         const res = await axios.post('Licenses/InsertLicense', InsertLicense);
-        if (res.status == 200) {
+        if (res.status == 201) {
+          this.isLoading = false;
           this.$emit('licenseDialogShow', false);
           this.$emit('filterLicense');
         }
       } catch (error) {
+        this.isLoading = false;
         console.log(error.response.data);
       }
     },
@@ -534,10 +554,12 @@ export default {
           UpdateLicense
         );
         if (res.status == 200) {
+          this.isLoading = false;
           this.$emit('licenseDialogShow', false);
           this.$emit('filterLicense');
         }
       } catch (error) {
+        this.isLoading = false;
         console.log(error.response.data);
       }
     },
@@ -561,6 +583,7 @@ export default {
      * Created date: 22:31 13/06/2022
      */
     async onSubmit() {
+      this.isLoading = true;
       this.license.Total = this.quantityCost;
       // this.validateForm();
       if (this.errorList.length == 0) {
@@ -574,6 +597,13 @@ export default {
       }
     },
 
+    /**
+     * Mô tả : Tắt, mở cảnh báo
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 02:28 19/06/2022
+     */
     alertShow(alert, title, type) {
       this.alert.isShow = alert;
       this.alert.title = title;
@@ -582,6 +612,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       alert: {
         title: '',
         isShow: false,
