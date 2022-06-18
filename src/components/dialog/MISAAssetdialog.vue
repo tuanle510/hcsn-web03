@@ -39,11 +39,11 @@
             <label for="input">Mã bộ phận sử dụng <span>*</span></label>
 
             <MISACombobox
-              :required="true"
+              ref="DepartmentCode"
               :maxlength="50"
               :name="'Mã bộ phận sử dụng'"
-              ref="DepartmentCode"
               placeholder="Chọm mã bộ phận sử dụng"
+              :required="true"
               :optionList="departmentData"
               filterby="DepartmentCode"
               v-model="asset.DepartmentCode"

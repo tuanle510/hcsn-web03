@@ -63,9 +63,9 @@
 .max-w-150 {
   min-width: 100px;
   max-width: 150px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* table */
@@ -114,6 +114,7 @@ table.m-table {
 }
 
 .m-table tbody tr .m-function-box {
+  height: 100%;
   display: flex;
   align-items: center;
 }
@@ -176,13 +177,13 @@ table.m-table {
 }
 .m-paging-list .prev-class {
   cursor: pointer;
-  background: url("/src/assets/icon/qlts-icon.png") no-repeat -29px -246px;
+  background: url('/src/assets/icon/qlts-icon.png') no-repeat -29px -246px;
   width: 7px;
   height: 12px;
 }
 .m-paging-list .page-item:last-child {
   cursor: pointer;
-  background: url("/src/assets/icon/qlts-icon.png") no-repeat -73px -246px;
+  background: url('/src/assets/icon/qlts-icon.png') no-repeat -73px -246px;
   width: 7px;
   height: 12px;
 }

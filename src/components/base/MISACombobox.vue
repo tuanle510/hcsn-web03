@@ -116,15 +116,6 @@ export default {
      */
     // Theo dõi giá trị mới của input để hiển thị optionList
     modelValue: function (newValue) {
-      // Hiển thị option list:
-      this.comboboxPos = this.$refs.combobox.getBoundingClientRect();
-      // Lấy vị trí combobox
-      this.setPosCombobox();
-      this.isOptionShow = true;
-
-      // Gán index về 0:
-      this.selecedIndex = 0;
-
       // Lọc
       if (newValue == undefined || newValue == '') {
         this.matches = this.optionList;

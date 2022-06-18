@@ -36,7 +36,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 0 16px 16px;
+  padding: 16px 10px 16px 16px;
 }
 
 .m-license .m-license-main .main-header .l-search {
@@ -115,10 +115,23 @@
   .main-table-container
   .m-detail-container
   .detail-header {
+  display: flex;
   height: 40px;
-  font-size: 1.5rem;
-  line-height: 40px;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 10px;
   padding-left: 16px;
+}
+
+.m-license
+  .m-license-main
+  .main-table-container
+  .m-detail-container
+  .detail-header
+  span {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 40px;
 }
 
 .m-detail-table {

@@ -18,37 +18,37 @@
       @input="onChangeHandler"
       :value="this.modelValue"
     />
-    <div v-if="this.errorMsg != null" class="m-input-msg">{{ errorMsg }}</div>
+    <div v-if="this.errorMsg" class="m-input-msg">{{ errorMsg }}</div>
   </div>
 </template>
 <script>
 export default {
-  name: "the-input",
+  name: 'the-input',
 
   props: [
-    "number", //style number chuyền từ component cha
-    "placeholder",
-    "disabled",
-    "classParent",
-    "type",
-    "modelValue",
-    "maxlength",
-    "required",
-    "name",
-    "isNumber",
+    'number', //style number chuyền từ component cha
+    'placeholder',
+    'disabled',
+    'classParent',
+    'type',
+    'modelValue',
+    'maxlength',
+    'required',
+    'name',
+    'isNumber',
   ],
 
   emits: [
-    "setIsValid",
-    "update:modelValue",
-    "keypress",
-    "keydown.down",
-    "keydown.up",
-    "blur",
+    'setIsValid',
+    'update:modelValue',
+    'keypress',
+    'keydown.down',
+    'keydown.up',
+    'blur',
   ],
 
   updated() {
-    if (this.$refs.input.value != "") {
+    if (this.$refs.input.value != '') {
       this.validateRequired();
     }
   },
@@ -57,7 +57,7 @@ export default {
     // Nhận thay đổi của component cha
     onChangeHandler(e) {
       e.preventDefault();
-      this.$emit("update:modelValue", e.target.value);
+      this.$emit('update:modelValue', e.target.value);
     },
 
     /**
@@ -96,11 +96,11 @@ export default {
      */
     blurInput($event) {
       this.validateRequired();
-      this.$emit("blur", $event);
+      this.$emit('blur', $event);
     },
 
     focusInput() {
-      this.errorMsg = "";
+      this.errorMsg = '';
     },
 
     /**
@@ -114,13 +114,13 @@ export default {
       var value = this.$refs.input.value;
       if (
         this.required &&
-        (value === undefined || value.toString().trim() === "")
+        (value === undefined || value.toString().trim() === '')
       ) {
-        this.$refs.input.classList.add("m-input-error");
+        this.$refs.input.classList.add('m-input-error');
         this.createErrorMsg();
       } else {
-        this.$refs.input.classList.remove("m-input-error");
-        this.errorMsg = "";
+        this.$refs.input.classList.remove('m-input-error');
+        this.errorMsg = '';
       }
     },
 
@@ -133,8 +133,8 @@ export default {
      */
     createErrorMsg() {
       var inputName = this.$refs.input.name;
-      if (inputName == undefined || inputName == "") {
-        this.errorMsg = "Ô này không được để trống!";
+      if (inputName == undefined || inputName == '') {
+        this.errorMsg = 'Ô này không được để trống!';
       } else {
         this.errorMsg = `${inputName} không được để trống!`;
       }
@@ -143,7 +143,7 @@ export default {
 
   data() {
     return {
-      errorMsg: "",
+      errorMsg: '',
     };
   },
 };

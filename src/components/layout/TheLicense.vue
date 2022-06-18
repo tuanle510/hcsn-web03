@@ -142,20 +142,25 @@
         <!-- border  -->
         <div class="mouse-draw"></div>
 
-        <!-- table detail -->
+        <!-- table Chi tiết -->
         <div class="m-detail-container">
-          <div class="detail-header">Thông tin chi tiết</div>
+          <div class="detail-header">
+            <span> Thông tin chi tiết</span>
+            <div class="icon-box-36">
+              <div class="room-out" title="Phóng to"></div>
+            </div>
+          </div>
           <div class="m-detail-table">
             <table class="m-table">
               <thead>
                 <tr>
                   <th class="text-align-center w-50">STT</th>
-                  <th class="text-align-left">Mã tài sản</th>
-                  <th class="text-align-left">Tên tài sản</th>
-                  <th class="text-align-left">Bộ phận sử dụng</th>
-                  <th class="text-align-right">Nguyên giá</th>
-                  <th class="text-align-right">Hao mòn năm</th>
-                  <th class="text-align-right">Giá trị còn lại</th>
+                  <th class="text-align-left w-130">Mã tài sản</th>
+                  <th class="text-align-left w-150">Tên tài sản</th>
+                  <th class="text-align-left w-150">Bộ phận sử dụng</th>
+                  <th class="text-align-right w-150">Nguyên giá</th>
+                  <th class="text-align-right w-150">Hao mòn năm</th>
+                  <th class="text-align-right w-130">Giá trị còn lại</th>
                 </tr>
               </thead>
               <tbody>
@@ -169,9 +174,11 @@
                     {{ currencyFormat(asset.Cost) }}
                   </td>
                   <td class="text-align-right">
-                    {{ currencyFormat(asset.DepreciationValue) }}
+                    {{ currencyFormat(asset.Accumulated) }}
                   </td>
-                  <td class="text-align-right">Giá trị còn lại</td>
+                  <td class="text-align-right">
+                    {{ currencyFormat(asset.Cost - asset.Accumulated) }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -191,8 +198,8 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import moment from "moment";
+import axios from 'axios';
+import moment from 'moment';
 export default {
   computed: {
     /**
@@ -249,7 +256,7 @@ export default {
      */
     async getAllLicense() {
       try {
-        const res = await axios.get("Licenses");
+        const res = await axios.get('Licenses');
         this.totalLicenseLength = res.data.length;
       } catch (error) {
         console.log(error);
@@ -266,7 +273,7 @@ export default {
     async filterLicense() {
       this.isLicnesLoading = true;
       try {
-        const res = await axios.get("Licenses/FilterLicense", {
+        const res = await axios.get('Licenses/FilterLicense', {
           params: {
             searchLicense: this.searchValue,
             pageIndex: this.pageIndex,
@@ -319,11 +326,11 @@ export default {
      */
     async onRowClick(license, $event) {
       // Nếu ấn edit:
-      if ($event.target.classList.contains("edit-btn")) {
+      if ($event.target.classList.contains('edit-btn')) {
         this.showEditLicense(license);
       }
       // Nếu ấn xóa (icon xóa):
-      else if ($event.target.classList.contains("remove-btn")) {
+      else if ($event.target.classList.contains('remove-btn')) {
         this.removeLicense(license);
       }
       // Nếu ấn vào cả dòng:
@@ -343,7 +350,7 @@ export default {
       try {
         const res = await axios.delete(`Licenses/${license.LicenseId}`);
         if (res.status == 200) {
-          console.log("Hiển thị toast");
+          console.log('Hiển thị toast');
           // Gọi lại API lấy dữ liệu
           this.filterLicense();
         }
@@ -394,7 +401,7 @@ export default {
      */
     async getNewCode() {
       try {
-        var res = await axios.get("Licenses/GetNewCode");
+        var res = await axios.get('Licenses/GetNewCode');
         this.newLicenseCode = res.data;
       } catch (error) {
         console.log(error);
@@ -482,7 +489,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -494,7 +501,7 @@ export default {
      * Created date: 15:35 13/06/2022
      */
     dateTimeFormat(value) {
-      return moment(value).format("DD/MM/YYYY");
+      return moment(value).format('DD/MM/YYYY');
     },
   },
 
@@ -504,7 +511,7 @@ export default {
       isLicenseShow: false,
       licenseData: [], // danh sách chứng từ gọi từ API
       assetList: [],
-      newLicenseCode: "",
+      newLicenseCode: '',
       licenseSelected: [],
       time: null,
       // Loading
@@ -514,7 +521,7 @@ export default {
       filterLicenseLength: null, // Tổng số bản ghi theo tìm kiếm
       totalLicenseLength: null, // Tổng số bản ghi chưa phân trang
       // Phân trang
-      searchValue: "", // Ô tìm kiếm
+      searchValue: '', // Ô tìm kiếm
       pageIndex: 1,
       pageSize: 20,
     };

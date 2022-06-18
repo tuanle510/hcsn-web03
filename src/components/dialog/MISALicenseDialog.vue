@@ -2,7 +2,7 @@
   <div :class="[{ 'bgc-none': isEditAssetShow }, 'm-dialog', 'license-dialog']">
     <div class="m-modal license-modal w-950">
       <div class="m-modal-title license-title">
-        {{ isEditing ? "Sửa chứng từ ghi tăng" : "Thêm chứng từ ghi tăng" }}
+        {{ isEditing ? 'Sửa chứng từ ghi tăng' : 'Thêm chứng từ ghi tăng' }}
       </div>
       <div class="m-modal-close" @click="onCancel">
         <div class="close"></div>
@@ -95,7 +95,7 @@
               <tbody>
                 <tr
                   v-for="(asset, index) in showList"
-                  @dblclick="onDbClick(asset)"
+                  @dblclick="showEditAssetDetail(asset)"
                   :key="index"
                   class="m-tr"
                 >
@@ -124,10 +124,16 @@
                       class="m-function-box last-td-icon"
                       style="display: none"
                     >
-                      <div class="icon-box-36" @click="btnEditAsset">
+                      <div
+                        class="icon-box-36 icon-hover"
+                        @click="showEditAssetDetail(asset)"
+                      >
                         <div class="edit"></div>
                       </div>
-                      <div class="icon-box-36" @click="btnRemoveAsset(asset)">
+                      <div
+                        class="icon-box-36 icon-hover"
+                        @click="btnRemoveAsset(asset)"
+                      >
                         <div class="remove-red"></div>
                       </div>
                     </div>
@@ -208,6 +214,7 @@
     <MISAEditAssetDialog
       v-if="isEditAssetShow"
       @editAssetDialogShow="editAssetDialogShow"
+      :licenseDetailSelected="licenseDetailSelected"
     ></MISAEditAssetDialog>
 
     <!-- Alert -->
@@ -215,9 +222,9 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios';
 export default {
-  props: ["licenseSelected", "isEditing"],
+  props: ['licenseSelected', 'isEditing'],
 
   beforeMount() {
     // Gán giá trị license
@@ -356,7 +363,7 @@ export default {
     getChoseAsset(list) {
       this.choseAssetDialogShow(false);
       // Gán lại giá trị cho ô tìm kiếm:
-      this.$refs.searchInput.value = "";
+      this.$refs.searchInput.value = '';
       // Thêm vào danh sách tài sản đã có sẵn:
       this.assetList = this.assetList.concat(list);
     },
@@ -409,7 +416,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -420,8 +427,15 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 16:10 10/06/2022
      */
-    onDbClick(asset) {
-      console.log(asset);
+    async showEditAssetDetail(asset) {
+      try {
+        const res = await axios.get(
+          `LicenseDetail/GetLicenseDetail/${asset.LicenseDetailId}`
+        );
+        this.licenseDetailSelected = res.data;
+      } catch (error) {
+        console.log(error);
+      }
       this.editAssetDialogShow(true);
     },
 
@@ -442,18 +456,18 @@ export default {
       // Vòng lặp trong form để lấy các input
       Array.from(form.elements).forEach((element) => {
         // Kiểm tra giá trị của input
-        if (element.required && element.value.trim() == "") {
+        if (element.required && element.value.trim() == '') {
           if (first) {
             first = false;
             this.firstEmptyElement = element;
           }
-          element.classList.add("m-input-error");
+          element.classList.add('m-input-error');
           this.errorList.push(`${element.name} không được để trống`);
         }
       });
 
       if (this.assetList.length == 0) {
-        this.errorList.push("Chọn ít nhất 1 tài sản.");
+        this.errorList.push('Chọn ít nhất 1 tài sản.');
       }
     },
 
@@ -476,10 +490,10 @@ export default {
       };
       // Gửi lên API
       try {
-        const res = await axios.post("Licenses/InsertLicense", InsertLicense);
+        const res = await axios.post('Licenses/InsertLicense', InsertLicense);
         if (res.status == 200) {
-          this.$emit("licenseDialogShow", false);
-          this.$emit("filterLicense");
+          this.$emit('licenseDialogShow', false);
+          this.$emit('filterLicense');
         }
       } catch (error) {
         console.log(error.response.data);
@@ -510,8 +524,8 @@ export default {
           UpdateLicense
         );
         if (res.status == 200) {
-          this.$emit("licenseDialogShow", false);
-          this.$emit("filterLicense");
+          this.$emit('licenseDialogShow', false);
+          this.$emit('filterLicense');
         }
       } catch (error) {
         console.log(error.response.data);
@@ -526,7 +540,7 @@ export default {
      * Created date: 11:33 10/06/2022
      */
     onCancel() {
-      this.$emit("licenseDialogShow", false);
+      this.$emit('licenseDialogShow', false);
     },
 
     /**
@@ -538,7 +552,7 @@ export default {
      */
     async onSubmit() {
       this.license.Total = this.quantityCost;
-      this.validateForm();
+      // this.validateForm();
       if (this.errorList.length == 0) {
         if (this.isEditing == true) {
           await this.updateLicense();
@@ -559,9 +573,9 @@ export default {
   data() {
     return {
       alert: {
-        title: "",
+        title: '',
         isShow: false,
-        type: "",
+        type: '',
       },
       isChoseAssetShow: false,
       isEditAssetShow: false,
@@ -575,8 +589,20 @@ export default {
       totalPageIndex: 0,
       pageIndex: 1,
       pageSize: 20,
+
+      //Chứng từ chi tiết được chọn:
+      licenseDetailSelected: {},
     };
   },
 };
 </script>
-<style></style>
+<style>
+.icon-hover {
+  border-radius: 1000px;
+  background-color: #d1edf4;
+}
+
+.icon-hover:hover {
+  background-color: #fff;
+}
+</style>

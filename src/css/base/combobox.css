@@ -66,7 +66,7 @@
   border-radius: 2.5px;
   background-color: #fff;
   box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
-  z-index: 5;
+  z-index: 999999999;
   max-height: 152px;
   overflow: auto;
 }
