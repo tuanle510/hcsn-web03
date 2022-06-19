@@ -230,6 +230,7 @@
     <MISAEditAssetDialog
       v-if="isEditAssetShow"
       @editAssetDialogShow="editAssetDialogShow"
+      @updateDetailJson="updateDetailJson"
       :licenseDetailSelected="licenseDetailSelected"
     ></MISAEditAssetDialog>
 
@@ -254,6 +255,8 @@ export default {
     this.assetList = this.licenseSelected.FixedAssetList;
     // Phân trang
     // this.paginationAsset();
+
+    console.log(this.assetList);
   },
 
   mounted() {
@@ -449,6 +452,21 @@ export default {
     },
 
     /**
+     * Mô tả : Cập nhật giá trị DetailJson để gửi lên API
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 10:19 19/06/2022
+     */
+    updateDetailJson(value, id) {
+      this.assetList.forEach((item) => {
+        if (item.id == id) {
+          item.DetailJson = value;
+        }
+      });
+    },
+
+    /**
      * Mô tả : Ấn 2 lần vào dòng
      * @param
      * @return
@@ -456,13 +474,17 @@ export default {
      * Created date: 16:10 10/06/2022
      */
     async showEditAssetDetail(asset) {
-      try {
-        const res = await axios.get(
-          `LicenseDetail/GetLicenseDetail/${asset.LicenseDetailId}`
-        );
-        this.licenseDetailSelected = res.data;
-      } catch (error) {
-        console.log(error);
+      if (asset.LicenseDetailId) {
+        try {
+          const res = await axios.get(
+            `LicenseDetail/GetLicenseDetail/${asset.LicenseDetailId}`
+          );
+          this.licenseDetailSelected = res.data;
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        this.licenseDetailSelected = asset;
       }
       this.editAssetDialogShow(true);
     },
@@ -506,19 +528,10 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 15:09 16/06/2022
      */
-    async addLicense() {
-      // Tạo obj dữ liệu gửi lên API: (Thông tin chứng từ, danh sách tài sản trong chứng từ):
-      var InsertLicense = {
-        license: this.license,
-        licenseDetails: this.assetList.map((asset) => {
-          return {
-            fixedAssetId: asset.FixedAssetId,
-          };
-        }),
-      };
+    async addLicense(licenseDetails) {
       // Gửi lên API
       try {
-        const res = await axios.post('Licenses/InsertLicense', InsertLicense);
+        const res = await axios.post('Licenses/InsertLicense', licenseDetails);
         if (res.status == 201) {
           this.isLoading = false;
           this.$emit('licenseDialogShow', false);
@@ -537,21 +550,12 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 21:34 16/06/2022
      */
-    async updateLicense() {
-      // tại đối tượng truyền lên API
-      var UpdateLicense = {
-        license: this.license,
-        licenseDetails: this.assetList.map((asset) => {
-          return {
-            fixedAssetId: asset.FixedAssetId,
-          };
-        }),
-      };
+    async updateLicense(licenseDetails) {
       // Gửi lên API
       try {
         const res = await axios.put(
           `Licenses/UpdateLicense/${this.license.LicenseId}`,
-          UpdateLicense
+          licenseDetails
         );
         if (res.status == 200) {
           this.isLoading = false;
@@ -587,10 +591,28 @@ export default {
       this.license.Total = this.quantityCost;
       // this.validateForm();
       if (this.errorList.length == 0) {
+        // Tạo đối tượng gửi lên API:
+        var licenseDetails = this.assetList.map((asset) => {
+          if (!asset.DetailJson) {
+            asset.DetailJson = null;
+          }
+          return {
+            FixedAssetId: asset.FixedAssetId,
+            DetailJson: asset.DetailJson,
+          };
+        });
+        //
+        var InsertLicense = {
+          license: this.license,
+          licenseDetails: licenseDetails,
+        };
+
+        console.log(InsertLicense);
+        // Thực hiện thêm hoặc sửa:
         if (this.isEditing == true) {
-          await this.updateLicense();
+          await this.updateLicense(InsertLicense);
         } else {
-          await this.addLicense();
+          await this.addLicense(InsertLicense);
         }
       } else {
         this.alertShow(true, this.errorList[0]);

@@ -45,6 +45,7 @@
             <div class="modal-field">
               <label>Giá trị</label>
               <MISAInput
+                :currencyFormat="true"
                 :required="true"
                 :isNumber="true"
                 classParent="text-align-right"
@@ -77,6 +78,7 @@
               classParent="text-align-right"
               style="padding-right: 0"
               disabled
+              :currencyFormat="true"
               v-model="totalCost"
             ></MISAInput>
           </div>
@@ -124,9 +126,9 @@ export default {
      */
     totalCost: function () {
       const totalCost = this.budgetList.reduce((currentValue, item) => {
-        return currentValue + Number(item.cost);
+        return currentValue + Number(item.cost.replaceAll('.', ''));
       }, 0);
-      return totalCost;
+      return this.currencyFormat(totalCost);
     },
   },
 
@@ -170,14 +172,13 @@ export default {
     },
 
     /**
-     * Mô tả : Ấn lưu
+     * Mô tả : Check rỗng
      * @param
      * @return
      * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 15:45 18/06/2022
+     * Created date: 10:59 19/06/2022
      */
-    async onSubmit() {
-      this.isLoading = true;
+    validateInput() {
       // check trống combobox
       this.$refs.combobox.forEach((element) => {
         element.validateRequired();
@@ -196,22 +197,45 @@ export default {
         }
       });
 
+      console.log(this.isEmpty);
+    },
+
+    /**
+     * Mô tả : Ấn lưu
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 15:45 18/06/2022
+     */
+    async onSubmit() {
+      this.validateInput();
       // Nếu input không rỗng thì thực hiện update:
       if (this.isEmpty == false) {
+        this.isLoading = true;
         // Gán lại giá trị cho detailJson:
         this.licenseDetail.DetailJson = JSON.stringify(this.budgetList);
         // Gửi dữ liệu nên API:
-        try {
-          const res = await axios.put(
-            `LicenseDetail/UpdateJsonDetail/${this.licenseDetail.LicenseDetailId}`,
-            this.licenseDetail
-          );
-          if (res.status == 200) {
-            console.log(res.data);
+        if (this.licenseDetail.LicenseDetailId != null) {
+          try {
+            const res = await axios.put(
+              `LicenseDetail/${this.licenseDetail.LicenseDetailId}`,
+              this.licenseDetail
+            );
+            if (res.status == 200) {
+              console.log(res.data);
+            }
+          } catch (error) {
+            console.log(error.response.data);
           }
-        } catch (error) {
-          console.log(error.response.data);
+        } else {
+          this.$emit(
+            'updateDetailJson',
+            this.licenseDetail.DetailJson,
+            this.licenseDetail.FixedAssetId
+          );
         }
+        this.isLoading = false;
+        this.$emit('editAssetDialogShow', false);
       }
     },
 
@@ -223,7 +247,7 @@ export default {
      * Created date: 21:30 18/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
   },

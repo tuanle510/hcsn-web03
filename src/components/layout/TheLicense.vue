@@ -117,7 +117,9 @@
                 :key="index"
                 :class="[{ 'm-tr-seleced': license.checked }, 'm-tr']"
                 @dblclick="showEditLicense(license)"
-                @click="onRowClick(license, $event)"
+                @click.exact="onRowClick(license, $event)"
+                @click.ctrl="onCtrlClick(license)"
+                @click.shift="onShiftClick(license, index)"
               >
                 <td style="padding-left: 16px">
                   <MISACheckbox :checked="license.checked"></MISACheckbox>
@@ -155,7 +157,7 @@
                     </div>
                     <div class="icon-box-36 remove-btn">
                       <div
-                        class="remove-red tooltip"
+                        class="remove-red tooltip remove-btn"
                         tooltip="Xóa nguồn chi phí"
                       ></div>
                     </div>
@@ -193,15 +195,13 @@
         </div>
       </div>
 
-      <!-- border  -->
-      <div
-        v-if="this.mainTableHeight != 0 || this.mainTableHeight != 100"
-        class="mouse-draw"
-      ></div>
-
       <!-- table Chi tiết -->
       <div
-        class="m-detail-container"
+        v-if="this.mainTableHeight != 100"
+        :class="[
+          { 'border-resize': this.mainTableHeight != 0 },
+          'm-detail-container',
+        ]"
         :style="{ height: 'calc(100% - ' + this.mainTableHeight + '%)' }"
       >
         <div class="detail-header">
@@ -236,7 +236,7 @@
             </thead>
             <tbody>
               <MISALoading v-if="isAssetLoading"></MISALoading>
-              <tr v-else v-for="(asset, index) in assetList" :key="index">
+              <tr v-else v-for="(asset, index) in assetData" :key="index">
                 <td class="text-align-center">{{ index + 1 }}</td>
                 <td class="text-align-left">{{ asset.FixedAssetCode }}</td>
                 <td class="text-align-left">{{ asset.FixedAssetName }}</td>
@@ -265,6 +265,22 @@
       @filterLicense="filterLicense"
       :licenseSelected="licenseSelected"
     ></MISALicenseDialog>
+
+    <MISAAlert2
+      v-if="alert.isShow"
+      :alertType="alert.type"
+      @closeAlert="this.alertShow(false)"
+      @removeBtn="removeLicense"
+    >
+      <!-- <span v-if="alert.type == 'remove'"
+        >Bạn có muốn xóa chứng từ có mã <strong>{{ alert.title }}</strong
+        >?</span
+      > -->
+      <span
+        ><strong>{{ alert.title }}</strong> chứng từ đã được chọn. Bạn có muốn
+        xóa các chứng từ này khỏi danh sách?</span
+      >
+    </MISAAlert2>
   </div>
 </template>
 <script>
@@ -299,9 +315,9 @@ export default {
   },
 
   async beforeMount() {
-    //
+    //Lấy danh sách chứng từ đã được phân trang:
     await this.filterLicense();
-    //
+    //Lấy tổng số bản ghi (Không phân trang)
     await this.getAllLicense();
   },
 
@@ -314,14 +330,7 @@ export default {
      * Created date: 01:12 19/06/2022
      */
     zoom() {
-      // if (this.mainTableHeight == 55) {
-      //   this.mainTableHeight = 0;
-      // } else {
-      //   this.mainTableHeight = 55;
-      // }
-
       this.mainTableHeight = this.mainTableHeight != 0 ? 0 : 55;
-      console.log(this.mainTableHeight);
     },
     /**
      * Mô tả : Tìm kiếm
@@ -334,6 +343,7 @@ export default {
       this.pageIndex = 1;
       await this.filterLicense();
     },
+
     /**
      * Mô tả : Lấy tất cả dữ liệu => tổng số bảng ghi
      * @param
@@ -418,12 +428,36 @@ export default {
       }
       // Nếu ấn xóa (icon xóa):
       else if ($event.target.classList.contains('remove-btn')) {
-        this.removeLicense(license);
+        this.alertShow(true, license.LicenseCode, 'remove');
+        // this.alertShow(true, '03', 'remove');
       }
       // Nếu ấn vào cả dòng:
       else {
         await this.getAsssetList(license);
       }
+    },
+
+    /**
+     * Mô tả : Xử lí sự kiện ctrl click
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 00:36 20/06/2022
+     */
+    onCtrlClick(license) {
+      license.checked = !license.checked;
+    },
+
+    /**
+     * Mô tả : Xử lí sự kiện shift click
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 00:41 20/06/2022
+     */
+    onShiftClick(license, index) {
+      license.checked = !license.checked;
+      console.log(index);
     },
 
     /**
@@ -474,7 +508,7 @@ export default {
           // Hiển thị danh sách sản phẩm có trong chứng từ:
           this.getLicenseDetail(license.LicenseId);
         } else {
-          this.assetList = [];
+          this.assetData = [];
         }
       }, 300);
     },
@@ -530,7 +564,7 @@ export default {
           // gán licenseSelected để truyền xuống dialog khi dbClick
           this.licenseSelected = res.data;
           // Gán vào danh sách tài sản để hiên thị lên UI
-          this.assetList = this.licenseSelected.FixedAssetList;
+          this.assetData = this.licenseSelected.FixedAssetList;
           this.isAssetLoading = false;
         }
       } catch (error) {
@@ -547,8 +581,6 @@ export default {
      */
     async showEditLicense(license) {
       this.isEditing = true;
-      // Focus vào dòng vừa chọn
-      license.checked = true;
       // Xóa debout
       clearTimeout(this.time);
       // Gọi API gửi dữ liệu về
@@ -590,6 +622,26 @@ export default {
     dateTimeFormat(value) {
       return moment(value).format('DD/MM/YYYY');
     },
+
+    closeAlert() {
+      this.alertShow(false);
+    },
+
+    /**
+     * Mô tả : Đóng mở/ Hủy bỏ/ kiểu alert
+     * @param {Boolean} isShow Ẩn hiện alert (true - hiện, false - ẩn )
+     * @param {String} title Nội dung của cảnh báo
+     * @param {String} type kiểu của button alert (không tuyền gì hiển thị 1 btn đóng, "remove" - thông báo khi xóa, "cancel"- hủy nhưng không có thay đổi, "cancelchange" - hủy nhưng có thay đổi)
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 16:08 20/06/2022
+     */
+    alertShow(isShow, title, type) {
+      console.log(isShow);
+      this.alert.isShow = isShow;
+      this.alert.title = title;
+      this.alert.type = type;
+    },
   },
 
   data() {
@@ -597,7 +649,7 @@ export default {
       isEditing: false,
       isLicenseShow: false,
       licenseData: [], // danh sách chứng từ gọi từ API
-      assetList: [],
+      assetData: [],
       newLicenseCode: '',
       licenseSelected: [],
       time: null,
@@ -611,10 +663,19 @@ export default {
       searchValue: '', // Ô tìm kiếm
       pageIndex: 1,
       pageSize: 20,
-
       //resize
       mainTableHeight: 55,
       isOptionShow: false,
+      //
+      toast: {
+        title: '',
+        isShow: false,
+      },
+      alert: {
+        isShow: false,
+        title: '',
+        type: '',
+      },
     };
   },
 };

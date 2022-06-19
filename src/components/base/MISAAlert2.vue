@@ -6,28 +6,62 @@
           <div class="alert"></div>
         </div>
         <div class="content-right">
-          {{ alert }}
+          <slot></slot>
         </div>
       </div>
-
-      <!-- Thông báo khi hủy và có sự thay đổi  -->
-      <div class="alert-button">
+      <!-- Thông báo khi xóa -->
+      <div v-if="alertType == 'remove'" class="alert-button">
         <MISAButton
-          v-if="alertType == '2btn' || alertType == '3btn'"
+          @click="this.$emit('closeAlert')"
           type="outline-button"
-          @click="this.$emit('rightBtnClick')"
-          :buttonTitle="leftBtnTitle"
-        ></MISAButton>
-        <MISAButton
-          v-if="alertType == '3btn'"
-          type="sub-button"
-          @click="this.$emit('centerBtnClick')"
-          :buttonTitle="centerBtnTitle"
+          buttonTitle="Không"
         ></MISAButton>
         <MISAButton
           ref="focusBtn"
-          @click="this.$emit('rightBtnClick')"
-          :buttonTitle="rightBtnTitle"
+          @click="this.$emit('removeBtn')"
+          buttonTitle="Xóa"
+        ></MISAButton>
+      </div>
+
+      <!-- Thông báo khi hủy và không có sự thay đổi -->
+      <div v-else-if="alertType == 'cancel'" class="alert-button">
+        <MISAButton
+          @click="this.$emit('closeAlert')"
+          type="outline-button"
+          buttonTitle="Không"
+        ></MISAButton>
+        <MISAButton
+          ref="focusBtn"
+          @click="this.$emit('closeDialog')"
+          buttonTitle="Hủy bỏ"
+        ></MISAButton>
+      </div>
+
+      <!-- Thông báo khi hủy và có sự thay đổi  -->
+      <div v-else-if="alertType == 'cancelChange'" class="alert-button">
+        <MISAButton
+          @click="this.$emit('closeDialog')"
+          type="outline-button"
+          buttonTitle="Hủy bỏ"
+        ></MISAButton>
+        <MISAButton
+          @click="this.$emit('closeAlert')"
+          type="sub-button"
+          buttonTitle="Không lưu"
+        ></MISAButton>
+        <MISAButton
+          ref="focusBtn"
+          @click="this.$emit('onSubmit')"
+          buttonTitle="Lưu"
+        ></MISAButton>
+      </div>
+
+      <!-- Thông báo lỗi, chỉ có thể đóng -->
+      <div v-else class="alert-button">
+        <MISAButton
+          ref="focusBtn"
+          @click="this.$emit('closeAlert')"
+          buttonTitle="Đóng"
         ></MISAButton>
       </div>
     </div>
@@ -35,18 +69,14 @@
 </template>
 <script>
 export default {
-  name: "the-alert",
-  props: [
-    "rightBtnTitle",
-    "leftBtnTitle",
-    "centerBtnTitle",
-    "alertType",
-    "alert",
-  ],
+  name: 'the-alert',
+  props: ['alertType'],
   mounted() {
     // focus
     this.$refs.focusBtn.setFocus();
   },
+
+  methods: {},
 };
 </script>
 <style></style>

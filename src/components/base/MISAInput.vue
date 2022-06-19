@@ -36,6 +36,7 @@ export default {
     'required',
     'name',
     'isNumber',
+    'currencyFormat',
   ],
 
   emits: [
@@ -47,6 +48,15 @@ export default {
     'blur',
   ],
 
+  mounted() {
+    if (this.currencyFormat) {
+      var value = this.$refs.input.value.replaceAll('.', '');
+      this.$refs.input.value = `${value
+        ?.toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+    }
+  },
+
   updated() {
     if (this.$refs.input.value != '') {
       this.validateRequired();
@@ -57,6 +67,12 @@ export default {
     // Nhận thay đổi của component cha
     onChangeHandler(e) {
       e.preventDefault();
+      if (this.currencyFormat) {
+        var value = e.target.value.replaceAll('.', '');
+        e.target.value = `${value
+          ?.toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      }
       this.$emit('update:modelValue', e.target.value);
     },
 

@@ -264,7 +264,7 @@ export default {
      */
     DepreciationValue: {
       get() {
-        return this.formatSalary(this.asset.DepreciationValue.toString());
+        return this.currencyFormat(this.asset.DepreciationValue.toString());
       },
       set(newValue) {
         newValue = newValue.replaceAll('.', '');
@@ -281,7 +281,7 @@ export default {
      */
     Cost: {
       get() {
-        return this.formatSalary(this.asset.Cost.toString());
+        return this.currencyFormat(this.asset.Cost.toString());
       },
       set(newValue) {
         newValue = newValue.replaceAll('.', '');
@@ -360,7 +360,7 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 00:35 03/05/2022
      */
-    formatSalary(value) {
+    currencyFormat(value) {
       var format = `${value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },

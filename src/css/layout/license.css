@@ -48,16 +48,6 @@
   border-radius: 3px;
 }
 
-.m-license table thead {
-  border-bottom: 1px solid rgba(175, 175, 175, 0.6);
-}
-
-.m-license .edit-asset-form {
-  background-color: #fff;
-  border-radius: 3px;
-  padding: 16px;
-}
-
 .m-license .m-license-main .main-table-container .m-license-table {
   position: relative;
   height: calc(100% - 146px);
@@ -89,7 +79,7 @@
   font-weight: bold;
 }
 
-.license-paging {
+.m-license .license-paging {
   height: 40px;
   display: flex;
   align-items: center;
@@ -97,17 +87,12 @@
   border-top: 1px solid rgba(175, 175, 175, 0.6);
 }
 
-.m-license .m-license-main .mouse-draw {
-  height: 5px;
-  width: 100%;
-  background-color: #f4f7ff;
-  cursor: row-resize;
+.m-license .m-license-main .m-detail-container {
+  border-radius: 3px;
 }
 
-.m-license .m-license-main .m-detail-container {
-  height: calc(45% - 5px);
-  /* Trừ height của mouse-draw */
-  border-radius: 3px;
+.m-license .m-license-main .m-detail-container.border-resize {
+  border-top: 5px solid #f4f7ff;
 }
 
 .m-license .m-license-main .m-detail-container .detail-header {
@@ -125,17 +110,18 @@
   line-height: 40px;
 }
 
-.m-detail-table {
+.m-license .m-license-main .m-detail-container .m-detail-table {
   position: relative;
   height: calc(100% - 40px); /* 100% trừ height header */
   overflow-y: auto;
+  border-radius: 0 0 3px 3px;
 }
 
-.m-license-toolbar .header-dropdown {
+.m-license-toolbar .l-toolbar-right .header-dropdown {
   position: relative;
 }
 
-.m-license-toolbar .l-toolbar-right .option-list {
+.m-license-toolbar .l-toolbar-right .header-dropdown .option-list {
   position: absolute;
   z-index: 3;
   bottom: -75px;
@@ -163,4 +149,11 @@
 
 .m-license-toolbar .l-toolbar-right .option-list li:last-child {
   border-radius: 0 0 3px 3px;
+}
+
+/* Dialog license */
+.m-license .edit-asset-form {
+  background-color: #fff;
+  border-radius: 3px;
+  padding: 16px;
 }

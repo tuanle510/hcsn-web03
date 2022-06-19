@@ -18,7 +18,7 @@
   border-radius: 3px;
   background-color: #fff;
   padding: 30px 20px 20px 20px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 3px 10px 9px rgba(0, 0, 0, 0.16);
 }
 
 .m-alert .m-alert-container .alert-content {
