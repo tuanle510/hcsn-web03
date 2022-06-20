@@ -235,7 +235,22 @@
     ></MISAEditAssetDialog>
 
     <!-- Alert -->
-    <!-- <MISAAlert v-if="alert.isShow" :alertTitle="alert.title"></MISAAlert> -->
+    <MISAAlert2
+      v-if="alert.isShow"
+      :alertType="alert.type"
+      @closeAlert="this.alertShow(false)"
+      @closeDialog="this.closeLicenseDialog"
+      @onSubmit="this.onSubmit"
+    >
+      <span v-if="alert.type == 'cancel'"
+        >Bạn có muốn hủy bỏ khai báo chứng từ này?</span
+      >
+      <span v-else-if="alert.type == 'cancelChange'"
+        >Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có
+        muốn lưu các thay đổi này?</span
+      >
+      <span v-else>Chọn ít nhất 1 tài sản</span>
+    </MISAAlert2>
 
     <!-- Loading  -->
     <div v-if="isLoading" class="m-dialog">
@@ -246,17 +261,16 @@
 <script>
 import axios from 'axios';
 export default {
-  props: ['licenseSelected', 'isEditing'],
+  props: ['licenseSelected', 'assetData', 'isEditing'],
 
   beforeMount() {
     // Gán giá trị license
-    this.license = this.licenseSelected.License;
-    // Gán giá trị danh sách asset
-    this.assetList = this.licenseSelected.FixedAssetList;
-    // Phân trang
-    // this.paginationAsset();
+    this.license = this.licenseSelected;
+    this.licenseCopy = Object.assign({}, this.license);
 
-    console.log(this.assetList);
+    // Gán giá trị danh sách asset
+    this.assetList = this.assetData;
+    this.assetListCopy = [...this.assetList];
   },
 
   mounted() {
@@ -396,7 +410,7 @@ export default {
       // Gán lại giá trị cho ô tìm kiếm:
       this.$refs.searchInput.value = '';
       // Thêm vào danh sách tài sản đã có sẵn:
-      this.assetList = this.assetList.concat(list);
+      this.assetList = list.concat(this.assetList);
     },
 
     /**
@@ -490,38 +504,6 @@ export default {
     },
 
     /**
-     * Mô tả : Validate form
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 23:20 13/06/2022
-     */
-    validateForm() {
-      // Gắn lại giá trị cho erorr list về rỗng
-      this.errorList = [];
-      var first = true;
-
-      // 1. Validate input rỗng:
-      var form = this.$refs.form;
-      // Vòng lặp trong form để lấy các input
-      Array.from(form.elements).forEach((element) => {
-        // Kiểm tra giá trị của input
-        if (element.required && element.value.trim() == '') {
-          if (first) {
-            first = false;
-            this.firstEmptyElement = element;
-          }
-          element.classList.add('m-input-error');
-          this.errorList.push(`${element.name} không được để trống`);
-        }
-      });
-
-      if (this.assetList.length == 0) {
-        this.errorList.push('Chọn ít nhất 1 tài sản.');
-      }
-    },
-
-    /**
      * Mô tả : Xử lí Thêm mới chứng từ
      * @param
      * @return
@@ -534,6 +516,7 @@ export default {
         const res = await axios.post('Licenses/InsertLicense', licenseDetails);
         if (res.status == 201) {
           this.isLoading = false;
+          this.$emit('toastShow', 'Thêm dữ liệu thành công');
           this.$emit('licenseDialogShow', false);
           this.$emit('filterLicense');
         }
@@ -559,6 +542,7 @@ export default {
         );
         if (res.status == 200) {
           this.isLoading = false;
+          this.$emit('toastShow', 'Sửa dữ liệu thành công');
           this.$emit('licenseDialogShow', false);
           this.$emit('filterLicense');
         }
@@ -576,7 +560,55 @@ export default {
      * Created date: 11:33 10/06/2022
      */
     onCancel() {
+      var isLicenseNotChange =
+        JSON.stringify(this.license) == JSON.stringify(this.licenseCopy);
+
+      var isAssetlistNotChange =
+        JSON.stringify(this.assetList) === JSON.stringify(this.assetListCopy);
+      console.log(isLicenseNotChange, isAssetlistNotChange);
+      var type = '';
+      if (isLicenseNotChange == false || isAssetlistNotChange == false) {
+        type = 'cancelChange';
+      } else {
+        type = 'cancel';
+      }
+      this.alertShow(true, type);
+    },
+
+    /**
+     * Mô tả : Đóng cả alert cả dialog
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 16:06 20/06/2022
+     */
+    closeLicenseDialog() {
+      this.alertShow(false);
       this.$emit('licenseDialogShow', false);
+    },
+
+    /**
+     * Mô tả : Validate dữ liệu
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 22:29 20/06/2022
+     */
+    validate() {
+      var licenseCode = this.license.LicenseCode;
+      // Validate trống:
+      if (licenseCode == undefined || licenseCode == '') {
+        this.$refs.licenseInput.validateRequired();
+        return false;
+      }
+
+      // Validate list asset rỗng:
+      if (this.assetList.length == 0) {
+        this.alertShow(true);
+        return false;
+      }
+
+      return true;
     },
 
     /**
@@ -587,10 +619,13 @@ export default {
      * Created date: 22:31 13/06/2022
      */
     async onSubmit() {
-      this.isLoading = true;
-      this.license.Total = this.quantityCost;
-      // this.validateForm();
-      if (this.errorList.length == 0) {
+      // Validate:
+      var isValid = this.validate();
+      //  Nếu không có lỗi gì thì thực hiện:
+      if (isValid) {
+        this.isLoading = true;
+        // Gán lại tổng nguyên giá:
+        this.license.Total = this.quantityCost;
         // Tạo đối tượng gửi lên API:
         var licenseDetails = this.assetList.map((asset) => {
           if (!asset.DetailJson) {
@@ -601,21 +636,17 @@ export default {
             DetailJson: asset.DetailJson,
           };
         });
-        //
         var InsertLicense = {
           license: this.license,
           licenseDetails: licenseDetails,
         };
 
-        console.log(InsertLicense);
         // Thực hiện thêm hoặc sửa:
         if (this.isEditing == true) {
           await this.updateLicense(InsertLicense);
         } else {
           await this.addLicense(InsertLicense);
         }
-      } else {
-        this.alertShow(true, this.errorList[0]);
       }
     },
 
@@ -626,9 +657,8 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 02:28 19/06/2022
      */
-    alertShow(alert, title, type) {
+    alertShow(alert, type) {
       this.alert.isShow = alert;
-      this.alert.title = title;
       this.alert.type = type;
     },
   },
@@ -636,17 +666,19 @@ export default {
     return {
       isLoading: false,
       alert: {
-        title: '',
         isShow: false,
         type: '',
       },
+
       isChoseAssetShow: false,
       isEditAssetShow: false,
       assetList: [], // Danh dách tất cả tài sản => Tổng số tài sản
+      assetListCopy: [],
       searchAssetList: [], // Danh sách lọc khi search
       showList: [], // Danh sách hiển thị lên UI
       license: {}, // Chi tiết chứng từ
-      errorList: [],
+      licenseCopy: {},
+
       isAlertShow: false,
       // Phân trang:
       totalPageIndex: 0,

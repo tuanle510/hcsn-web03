@@ -261,43 +261,6 @@ export default {
     },
 
     /**
-     * Mô tả : Lấy về danh sách tài sản đã phân trang
-     * @param
-     * @return
-     * Created by: Lê Thiện Tuấn - MF1118
-     * Created date: 21:12 09/06/2022
-     */
-    // async filterAsset() {
-    //   this.isLoading = true;
-    //   // Lấy ra danh sách Id để lọc trên API
-    //   var idList = this.assetList.map((asset) => asset.FixedAssetId);
-    //   try {
-    //     {
-    //       var res = await axios.get("FixedAssets/GetRestAsetList", {
-    //         params: {
-    //           fixedAssetList: idList,
-    //         },
-    //         paramsSerializer: (params) => {
-    //           return qs.stringify(params);
-    //         },
-    //       });
-    //     }
-
-    //     // Thêm trường checkd vào obj
-    //     res.data.List.map((element) => {
-    //       element.checked = false;
-    //     });
-    //     // Gán vào data
-    //     this.assetData = [...res.data.List];
-    //     // Lấy tổng số bản ghi
-    //     this.assetLength = res.data.Count;
-    //     this.isLoading = false;
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // },
-
-    /**
      * Mô tả : Ấn đồng ý, lấy ra list đã chọn
      * @param
      * @return

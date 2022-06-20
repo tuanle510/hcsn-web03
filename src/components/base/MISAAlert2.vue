@@ -40,12 +40,12 @@
       <!-- Thông báo khi hủy và có sự thay đổi  -->
       <div v-else-if="alertType == 'cancelChange'" class="alert-button">
         <MISAButton
-          @click="this.$emit('closeDialog')"
+          @click="this.$emit('closeAlert')"
           type="outline-button"
           buttonTitle="Hủy bỏ"
         ></MISAButton>
         <MISAButton
-          @click="this.$emit('closeAlert')"
+          @click="this.$emit('closeDialog')"
           type="sub-button"
           buttonTitle="Không lưu"
         ></MISAButton>

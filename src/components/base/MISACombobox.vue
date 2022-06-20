@@ -249,6 +249,11 @@ export default {
       }
     },
 
+    setErrorMsg(value) {
+      this.errorMsg = value;
+      this.$refs.input.classList.add('m-input-error');
+    },
+
     /**
      * Mô tả : xử lí sự kiện onClick vào optionList
      * @param

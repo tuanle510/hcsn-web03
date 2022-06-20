@@ -24,7 +24,7 @@
         <form
           autocomplete="off"
           ref="form"
-          style="height: 300px; overflow-y: overlay"
+          style="height: 300px; overflow-y: overlay; padding-bottom: 20px"
         >
           <div
             v-for="(budget, index) in budgetList"
@@ -187,17 +187,38 @@ export default {
       this.$refs.input.forEach((element) => {
         element.validateRequired();
       });
-
+      var isEmpty = false;
       // Trả về true nếu input rỗng:
       this.budgetList.forEach((element) => {
         if (element.name == '' || element.cost == '') {
-          this.isEmpty = true;
+          isEmpty = true;
         } else {
-          this.isEmpty = false;
+          isEmpty = false;
         }
       });
 
-      console.log(this.isEmpty);
+      // check trùng nguồn tài sản:
+      var arrayToCheck = this.budgetList.map((item) => item.name); // => lấy name
+
+      // Check trùng:
+      var dupList = [];
+      for (let i = 0; i < arrayToCheck.length; i++) {
+        var dup = arrayToCheck.indexOf(arrayToCheck[i]) != i;
+        if (dup) dupList.push(i);
+      }
+
+      var isDuplicate = false;
+      if (dupList.length != 0) {
+        isDuplicate = true;
+        dupList.forEach((item) => {
+          this.$refs.combobox[item].setErrorMsg('Nguồn chi phí đã tồn tại!');
+        });
+      } else {
+        isDuplicate = false;
+      }
+
+      this.isError = isEmpty == true || isDuplicate == true;
+      console.log(this.isError);
     },
 
     /**
@@ -210,7 +231,7 @@ export default {
     async onSubmit() {
       this.validateInput();
       // Nếu input không rỗng thì thực hiện update:
-      if (this.isEmpty == false) {
+      if (this.isError == false) {
         this.isLoading = true;
         // Gán lại giá trị cho detailJson:
         this.licenseDetail.DetailJson = JSON.stringify(this.budgetList);
@@ -222,6 +243,7 @@ export default {
               this.licenseDetail
             );
             if (res.status == 200) {
+              // Hiển thị toast
               console.log(res.data);
             }
           } catch (error) {
@@ -271,7 +293,8 @@ export default {
         },
       ],
       licenseDetail: {},
-      isEmpty: false,
+      isError: false,
+      // spanMsg: '',
       budgetList: [
         {
           name: '',

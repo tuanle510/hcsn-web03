@@ -1,13 +1,13 @@
 .m-toast {
   position: fixed;
-  right: calc((100% - 300px) / 2);
-  top: 30px;
+  right: 50px;
+  bottom: 50px;
   background-color: #fff;
   height: 50px;
   width: 300px;
-  border: 1px solid #1ac871;
+  /* border: 1px solid #1ac871; */
   border-radius: 3px;
-  box-shadow: 0 3px 10px rgb(0 0 0 / 35%);
+  box-shadow: 0 3px 10px 3px rgb(0 0 0 / 35%);
   display: flex;
   z-index: 999;
   animation: slideInLeft ease 0.3s, fadeOut linear 1s 2s forwards;
@@ -29,11 +29,11 @@
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateY(calc(-100% - 45px));
+    transform: translateX(calc(100% - 45px));
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 

@@ -79,7 +79,10 @@
   font-weight: bold;
 }
 
-.m-license .license-paging {
+.license-paging {
+  position: sticky;
+  bottom: 0;
+  background-color: #fff;
   height: 40px;
   display: flex;
   align-items: center;
@@ -110,10 +113,10 @@
   line-height: 40px;
 }
 
-.m-license .m-license-main .m-detail-container .m-detail-table {
+.m-license .m-detail-table {
   position: relative;
   height: calc(100% - 40px); /* 100% trừ height header */
-  overflow-y: auto;
+  overflow: auto;
   border-radius: 0 0 3px 3px;
 }
 
