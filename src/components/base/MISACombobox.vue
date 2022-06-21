@@ -87,11 +87,11 @@ export default {
      */
     isFocus: function (newValue) {
       if (newValue == false) {
-        this.$refs.input.classList.remove('input-focus');
+        this.$refs.input?.classList.remove('input-focus');
 
         this.validateRequired();
       } else {
-        this.$refs.input.classList.add('input-focus');
+        this.$refs.input?.classList.add('input-focus');
       }
     },
 
@@ -194,7 +194,7 @@ export default {
     setFocus() {
       this.isFocus = true;
       // Nếu chưa nhập gì thì matches list hiển thị tất cả
-      if (this.$refs.input.value == null || this.$refs.input.value == '') {
+      if (this.$refs.input?.value == null || this.$refs.input?.value == '') {
         this.matches = this.optionList;
       }
 
@@ -212,7 +212,7 @@ export default {
       this.scrollToItem();
 
       // Bôi đen tất cả text
-      this.$refs.input.select();
+      this.$refs.input?.select();
     },
 
     /**
@@ -223,12 +223,12 @@ export default {
      * Created date: 16:54 06/05/2022
      */
     validateRequired() {
-      var value = this.$refs.input.value;
+      var value = this.$refs.input?.value;
       if (this.required && (value == undefined || value.toString() == '')) {
-        this.$refs.input.classList.add('m-input-error');
+        this.$refs.input?.classList.add('m-input-error');
         this.createErrorMsg();
       } else {
-        this.$refs.input.classList.remove('m-input-error');
+        this.$refs.input?.classList.remove('m-input-error');
         this.errorMsg = '';
       }
     },
@@ -241,7 +241,7 @@ export default {
      * Created date: 22:43 18/06/2022
      */
     createErrorMsg() {
-      var inputName = this.$refs.input.name;
+      var inputName = this.$refs.input?.name;
       if (inputName == undefined || inputName == '') {
         this.errorMsg = 'Ô này không được để trống!';
       } else {
@@ -251,7 +251,7 @@ export default {
 
     setErrorMsg(value) {
       this.errorMsg = value;
-      this.$refs.input.classList.add('m-input-error');
+      this.$refs.input?.classList.add('m-input-error');
     },
 
     /**
@@ -297,7 +297,7 @@ export default {
       // Validate lại dữ liệu:
       this.isOptionShow = false;
       // Bôi đen chữ
-      this.$refs.input.blur();
+      this.$refs.input?.blur();
       this.isFocus = false;
     },
 
@@ -357,7 +357,7 @@ export default {
 
       this.setPosCombobox();
       // this.isOptionShow = false;
-      this.$refs.input.focus();
+      this.$refs.input?.focus();
     },
 
     /**

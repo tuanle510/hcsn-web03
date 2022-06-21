@@ -96,7 +96,13 @@
           </div>
         </div>
 
-        <div class="m-license-table">
+        <div
+          class="m-license-table"
+          ref="MainTable"
+          @scroll="
+            this.$refs.FooterTable.scrollLeft = this.$refs.MainTable.scrollLeft
+          "
+        >
           <table class="m-table">
             <thead>
               <tr>
@@ -177,8 +183,15 @@
           </table>
         </div>
 
-        <div class="m-license-total">
+        <div
+          class="m-license-total"
+          ref="FooterTable"
+          @scroll="
+            this.$refs.MainTable.scrollLeft = this.$refs.FooterTable.scrollLeft
+          "
+        >
           <div class="total-text">{{ currencyFormat(quantityCost) }}</div>
+          <div class="text-width" style="height: 20px; margin-left: 25px"></div>
         </div>
 
         <div class="license-paging">
@@ -235,28 +248,42 @@
             <thead>
               <tr>
                 <th class="text-align-center w-50">STT</th>
-                <th class="text-align-left w-130">Mã tài sản</th>
-                <th class="text-align-left w-150">Tên tài sản</th>
-                <th class="text-align-left w-150">Bộ phận sử dụng</th>
-                <th class="text-align-right w-150">Nguyên giá</th>
-                <th class="text-align-right w-150">Hao mòn năm</th>
-                <th class="text-align-right w-130">Giá trị còn lại</th>
+                <th class="text-align-left w-150">Mã tài sản</th>
+                <th class="text-align-left w-300">Tên tài sản</th>
+                <th
+                  class="text-align-left"
+                  style="min-width: 250px; max-width: 400px"
+                >
+                  Bộ phận sử dụng
+                </th>
+                <th class="text-align-right w-200">Nguyên giá</th>
+                <th class="text-align-right w-200">Hao mòn năm</th>
+                <th class="text-align-right w-150">Giá trị còn lại</th>
               </tr>
             </thead>
             <tbody>
               <MISALoading v-if="isAssetLoading"></MISALoading>
               <tr v-else v-for="(asset, index) in assetData" :key="index">
-                <td class="text-align-center">{{ index + 1 }}</td>
-                <td class="text-align-left">{{ asset.FixedAssetCode }}</td>
-                <td class="text-align-left">{{ asset.FixedAssetName }}</td>
-                <td class="text-align-left">{{ asset.DepartmentName }}</td>
-                <td class="text-align-right">
+                <td class="text-align-center w-50">{{ index + 1 }}</td>
+                <td class="text-align-left w-150">
+                  {{ asset.FixedAssetCode }}
+                </td>
+                <td class="text-limit text-align-left w-300">
+                  {{ asset.FixedAssetName }}
+                </td>
+                <td
+                  class="text-limit text-align-left"
+                  style="min-width: 250px; max-width: 400px"
+                >
+                  {{ asset.DepartmentName }}
+                </td>
+                <td class="text-align-right w-200">
                   {{ currencyFormat(asset.Cost) }}
                 </td>
-                <td class="text-align-right">
+                <td class="text-align-right w-200">
                   {{ currencyFormat(asset.Accumulated) }}
                 </td>
-                <td class="text-align-right">
+                <td class="text-align-right w-150">
                   {{ currencyFormat(asset.Cost - asset.Accumulated) }}
                 </td>
               </tr>
@@ -283,7 +310,7 @@
       @closeAlert="this.alertShow(false)"
       @removeBtn="this.removeLicense"
     >
-      <span v-if="isMultiSelected"
+      <span v-if="this.idToRemove.length > 1"
         ><strong>{{ alert.title }}</strong> chứng từ đã được chọn. Bạn có muốn
         xóa các chứng từ này khỏi danh sách?</span
       >
@@ -508,6 +535,7 @@ export default {
      * Created date: 15:16 20/06/2022
      */
     onClickMultiRemove() {
+      this.is;
       // Lọc ra các phần từ đã tích:
       var array = this.licenseData.filter((item) => item.checked == true);
       // Lấy danh sách id:
@@ -568,6 +596,8 @@ export default {
       }
       //Lấy danh sách chứng từ đã được phân trang:
       await this.filterLicense();
+      // Gán lại cho asset data về rỗng
+      this.assetData = [];
     },
 
     /**

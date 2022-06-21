@@ -344,9 +344,6 @@ export default {
       }
     },
 
-    'this.asset.PurchaseDate'(newValue) {
-      console.log(newValue);
-    },
     /**
      * Mô tả : Theo dõi sự thay đổi của mã loại tài sản để gán dữ liệu cho các trường input
      * @param

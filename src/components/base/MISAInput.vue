@@ -50,7 +50,7 @@ export default {
 
   mounted() {
     if (this.currencyFormat) {
-      var value = this.$refs.input.value.replaceAll('.', '');
+      var value = this.$refs.input?.value.replaceAll('.', '');
       this.$refs.input.value = `${value
         ?.toString()
         .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
@@ -58,7 +58,7 @@ export default {
   },
 
   updated() {
-    if (this.$refs.input.value != '') {
+    if (this.$refs.input?.value != '') {
       this.validateRequired();
     }
   },
@@ -100,7 +100,7 @@ export default {
      * Created date: 19:46 05/05/2022
      */
     setFocus() {
-      this.$refs.input.focus();
+      this.$refs.input?.focus();
     },
 
     /**
@@ -117,7 +117,7 @@ export default {
 
     focusInput() {
       this.errorMsg = '';
-      this.$refs.input.selected();
+      this.$refs.input?.select();
     },
 
     /**
@@ -128,12 +128,12 @@ export default {
      * Created date: 10:54 11/06/2022
      */
     validateRequired() {
-      var value = this.$refs.input.value;
+      var value = this.$refs.input?.value;
       if (this.required && (value === undefined || value.toString() == '')) {
-        this.$refs.input.classList.add('m-input-error');
+        this.$refs.input?.classList.add('m-input-error');
         this.createErrorMsg();
       } else {
-        this.$refs.input.classList.remove('m-input-error');
+        this.$refs.input?.classList.remove('m-input-error');
         this.errorMsg = '';
       }
     },
@@ -146,9 +146,9 @@ export default {
      * Created date: 10:54 11/06/2022
      */
     createErrorMsg() {
-      var inputName = this.$refs.input.name;
+      var inputName = this.$refs.input?.name;
       if (inputName == undefined || inputName == '') {
-        this.errorMsg = 'Ô này không được để trống!';
+        this.errorMsg = 'Không được để trống ô này!';
       } else {
         this.errorMsg = `${inputName} không được để trống!`;
       }

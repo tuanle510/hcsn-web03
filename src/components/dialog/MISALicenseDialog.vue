@@ -178,13 +178,13 @@
                   <th class="text-align-left" style="width: 170px"></th>
                   <th class="text-align-left" style="width: 180px"></th>
                   <th class="text-align-right" style="width: 130px">
-                    {{ currencyFormat(quantityCost) }}
+                    {{ currencyFormat(totalCost) }}
                   </th>
                   <th class="text-align-right" style="width: 130px">
-                    {{ currencyFormat(quantityAccumulated) }}
+                    {{ currencyFormat(totalAccumulated) }}
                   </th>
                   <th class="text-align-right">
-                    {{ currencyFormat(quantityCost - quantityAccumulated) }}
+                    {{ currencyFormat(totalCost - totalAccumulated) }}
                   </th>
                 </tr>
               </thead>
@@ -209,6 +209,7 @@
               :container-class="'m-paging-list'"
               :prev-class="'prev-class'"
               :click-handler="getPageIndex"
+              v-model="pageIndex"
             ></MISAPaginate>
           </div>
         </div>
@@ -223,6 +224,7 @@
         <MISAButton buttonTitle="Lưu" @click="onSubmit"></MISAButton>
       </div>
     </div>
+
     <!-- Chọn tài sản thêm vào dialog -->
     <MISAChoseAssetDialog
       v-if="isChoseAssetShow"
@@ -291,18 +293,25 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 13:49 17/06/2022
      */
-    quantityCost: function () {
-      const quantityCost = this.showList.reduce((currentValue, item) => {
+    totalCost: function () {
+      const totalCost = this.showList.reduce((currentValue, item) => {
         return currentValue + Number(item.Cost);
       }, 0);
-      return quantityCost;
+      return totalCost;
     },
 
-    quantityAccumulated: function () {
-      const quantityAccumulated = this.showList.reduce((currentValue, item) => {
+    /**
+     * Mô tả : Tính tổng hao mòn năm
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 21:03 21/06/2022
+     */
+    totalAccumulated: function () {
+      const totalAccumulated = this.showList.reduce((currentValue, item) => {
         return currentValue + Number(item.Accumulated);
       }, 0);
-      return quantityAccumulated;
+      return totalAccumulated;
     },
   },
 
@@ -366,11 +375,11 @@ export default {
      */
     paginationAsset() {
       var paginationList = [];
-      if (this.searchAssetList.length == 0) {
-        paginationList = this.assetList;
-      } else {
-        paginationList = this.searchAssetList;
-      }
+      // if (this.searchAssetList.length == 0) {
+      //   paginationList = this.assetList;
+      // } else {
+      paginationList = this.searchAssetList;
+      // }
       this.totalPageIndex = Math.ceil(paginationList.length / this.pageSize);
 
       this.showList = paginationList.slice(
@@ -647,7 +656,9 @@ export default {
       if (isValid) {
         this.isLoading = true;
         // Gán lại tổng nguyên giá:
-        this.license.Total = this.quantityCost;
+        this.license.Total = this.assetList.reduce((currentValue, item) => {
+          return currentValue + Number(item.Cost);
+        }, 0);
         // Tạo đối tượng gửi lên API:
         var licenseDetails = this.assetList.map((asset) => {
           if (!asset.DetailJson) {

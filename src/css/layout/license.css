@@ -53,6 +53,7 @@
   height: calc(100% - 146px);
   /* Trừ height bảng total và phân trang */
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .m-license-total {
@@ -60,7 +61,9 @@
   display: flex;
   align-items: center;
   background-color: #f5f5f5;
-  padding-left: 16px;
+  /* padding-left: 16px; */
+  overflow-x: overlay;
+  width: 100%;
 }
 
 .text-width {
@@ -74,7 +77,9 @@
 }
 
 .total-text {
-  width: 640px;
+  width: 656px;
+  min-width: 656px;
+  max-width: 656px;
   text-align: right;
   font-weight: bold;
 }
