@@ -217,30 +217,38 @@
       @alertShow="alertShow"
     ></MISAAssetDialog>
 
-    <MISAAlert
+    <MISAAlert2
       v-if="alert.isShow"
-      :isCloseOnly="isCloseOnly"
-      :alertTitle="alert.title"
       :alertType="alert.type"
-      @onSubmit="onSubmit"
-      @removeAsset="removeAsset"
-      @dialogShow="dialogShow"
-      @alertShow="alertShow"
-      @setFocusEmpty="setFocusEmpty"
-      @setCloseOnly="setCloseOnly"
+      @closeAlert="this.alertShow(false)"
+      @removeBtn="this.removeAsset"
     >
-    </MISAAlert>
-    
+      <span v-if="isRemoveMulti && alert.type == 'remove'"
+        ><strong>{{ alert.title }}</strong> tài sản đã được chọn. Bạn có muốn
+        xóa các tài sản này khỏi danh sách?</span
+      >
+      <span v-else-if="alert.type == 'remove'"
+        >Bạn có muốn xóa tài sản <strong>{{ alert.title }}</strong
+        >?</span
+      >
+
+      <span v-else
+        >Tài sản có mã chứng từ
+        <strong> {{ alert.title.FixedAssetCode }} </strong> đã phát sinh ghi
+        tăng có mã <strong>{{ alert.title.LicenseCode }}</strong>
+      </span>
+    </MISAAlert2>
+
     <MISAToast v-if="toast.isShow" :title="toast.title"> </MISAToast>
   </div>
 </template>
 <script>
 /* eslint-disable */
-import axios from "axios";
-import { remove_msg, toast_msg } from "../../assets/resource/ResourceMsg";
+import axios from 'axios';
+import { remove_msg, toast_msg } from '../../assets/resource/ResourceMsg';
 
 export default {
-  name: "the-content",
+  name: 'the-content',
 
   watch: {
     /**
@@ -251,13 +259,13 @@ export default {
      * Created date: 10:34 06/06/2022
      */
     searchDepartment(newValue) {
-      if (newValue == "" || newValue == null) {
+      if (newValue == '' || newValue == null) {
         this.filterAsset();
       }
     },
 
     searchCategory(newValue) {
-      if (newValue == "" || newValue == null) {
+      if (newValue == '' || newValue == null) {
         this.filterAsset();
       }
     },
@@ -333,7 +341,7 @@ export default {
      * Created date: 22:01 27/04/2022
      */
     try {
-      const res = await axios.get("Departments");
+      const res = await axios.get('Departments');
       this.departmentData = res.data;
     } catch (error) {
       console.log(error);
@@ -347,7 +355,7 @@ export default {
      * Created date: 13:33 29/04/2022
      */
     try {
-      const res = await axios.get("FixedAssetCategories");
+      const res = await axios.get('FixedAssetCategories');
       this.categoryData = res.data;
     } catch (error) {
       console.log(error);
@@ -428,7 +436,7 @@ export default {
     async filterAsset() {
       this.isLoading = true;
       try {
-        const res = await axios.get("FixedAssets/Filter", {
+        const res = await axios.get('FixedAssets/Filter', {
           params: {
             FixedAssetFilter: this.searchBox,
             FixedAssetCategoryName: this.searchCategory,
@@ -461,7 +469,7 @@ export default {
      */
     async getAssetData() {
       try {
-        const res = await axios.get("FixedAssets");
+        const res = await axios.get('FixedAssets');
         this.totalAssetListLength = res.data.length;
       } catch (error) {
         console.log(error);
@@ -476,7 +484,7 @@ export default {
      * Created date: 09:55 01/05/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
       return format;
     },
 
@@ -489,7 +497,7 @@ export default {
      */
     async getNewAssetCode() {
       try {
-        var res = await axios.get("FixedAssets/GetNewCode");
+        var res = await axios.get('FixedAssets/GetNewCode');
         // Gán dữ liệu trả về vào asset Code mới
         this.newAssetCode = res.data;
       } catch (error) {
@@ -572,11 +580,11 @@ export default {
      */
     onRowClick(asset, $event) {
       //Nếu ấn vào edit
-      if ($event.target.classList.contains("edit")) {
+      if ($event.target.classList.contains('edit')) {
         this.showEditDialog(asset);
       }
       // Nếu ấn vào copy
-      else if ($event.target.classList.contains("copy")) {
+      else if ($event.target.classList.contains('copy')) {
         this.showCloneDialog(asset.FixedAssetId);
       }
       // Nếu ấn vào cả dòng
@@ -658,19 +666,21 @@ export default {
       // 2.1 Nếu chưa chọn tài sản nào:
       if (this.checkedaAssetList.length == 0) {
         this.alertShow(true, remove_msg.ASSET_REMOVE_EMPTY);
+      } else if (this.checkedaAssetList.length == 1) {
+        this.isRemoveMulti = false;
+
+        this.alertShow(
+          true,
+          this.checkedaAssetList[0].FixedAssetCode,
+          'remove'
+        );
       } else {
+        this.isRemoveMulti = true;
         // 2.2 Nếu đã chọn:
         var length = this.checkedaAssetList.length;
-        var title = "";
         // hiển thị title cảnh báo
-        if (length == 1) {
-          title = `${remove_msg.ASSET_REMOVE} ${this.checkedaAssetList[0].FixedAssetCode} - ${this.checkedaAssetList[0].FixedAssetName}?`;
-        } else if (length > 1 && length < 10) {
-          title = `0${length} ${remove_msg.ASSETS_REMOVE}`;
-        } else {
-          title = `${length} ${remove_msg.ASSETS_REMOVE}`;
-        }
-        this.alertShow(true, title, "remove");
+        var title = length < 10 ? `0${length}` : length;
+        this.alertShow(true, title, 'remove');
       }
     },
 
@@ -693,22 +703,29 @@ export default {
         const res = await axios.delete(`FixedAssets/DeleteMulti`, {
           data: JSON.stringify(idList),
           headers: {
-            "content-type": "application/json",
+            'content-type': 'application/json',
           },
         });
-        // Load lại bảng
-        this.filterAsset();
+        console.log(res.data);
+        // Nếu trả về 1 object => có lỗi tài sản đã có chứng từ không xóa được
+        if (typeof res.data == 'object') {
+          this.alertShow(true, res.data);
+        }
+        // Không có lỗi thì load lại bảng
+        else {
+          // Load lại bảng
+          this.filterAsset();
 
-        // Cập nhật lại tổng bản ghi
-        this.getAssetData();
+          // Cập nhật lại tổng bản ghi
+          this.getAssetData();
 
-        //  Hiển thị toast xóa thành công
-        this.toastShow(toast_msg.REMOVE_SUCESS);
-
-        // gán lại giá trị cho list tạm thời về rỗng
-        this.checkedaAssetList = [];
-        // Tắt alert
-        this.alertShow(false);
+          //  Hiển thị toast xóa thành công
+          this.toastShow(toast_msg.REMOVE_SUCESS);
+          // gán lại giá trị cho list tạm thời về rỗng
+          this.checkedaAssetList = [];
+          // Tắt alert
+          this.alertShow(false);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -775,13 +792,13 @@ export default {
       isEditing: null,
       isCloseOnly: false,
       toast: {
-        title: "",
+        title: '',
         isShow: false,
       },
       alert: {
-        title: "",
+        title: '',
         isShow: false,
-        type: "",
+        type: '',
       },
       assetSelected: {}, //sản phẩm lưu tạm khi bdlClick vào khi lấy về từ API
       checkedaAssetList: [], // lưu tạm khi click
@@ -790,7 +807,7 @@ export default {
       assetData: [], //dữ liệu lấy về từ api
       departmentData: [], //Dữ liệu bộ phận sử dụng
       categoryData: [], // Dữ liệu loại tài sản
-      newAssetCode: "",
+      newAssetCode: '',
       searchTimeout: null,
       clickTimeout: null,
       assetLength: null,
@@ -804,6 +821,7 @@ export default {
       pageSize: 20,
       scrollBar: null,
       checkedAll: false,
+      isRemoveMulti: false,
     };
   },
 };

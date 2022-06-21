@@ -218,6 +218,24 @@
         <MISAButton buttonTitle="Lưu" @click.prevent="onSubmit"></MISAButton>
       </div>
     </div>
+
+    <!-- Alert -->
+    <MISAAlert2
+      v-if="alert.isShow"
+      :alertType="alert.type"
+      @closeAlert="this.alertShow(false)"
+      @closeDialog="this.onCloseDialog"
+      @onSubmit="this.onSubmit"
+    >
+      <span v-if="alert.type == 'cancel'"
+        >Bạn có muốn hủy bỏ khai báo tài sản này?</span
+      >
+      <span v-else-if="alert.type == 'cancelChange'"
+        >Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có
+        muốn lưu các thay đổi này?</span
+      >
+      <span v-else>{{ alert.msg }}</span>
+    </MISAAlert2>
   </div>
 </template>
 <script>
@@ -313,6 +331,19 @@ export default {
   },
 
   watch: {
+    /**
+     * Mô tả : focus vào ô input đầu tiên bị lỗi
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 17:31 21/06/2022
+     */
+    'alert.isShow'(newValue) {
+      if (!newValue && this.firstEmptyElement) {
+        this.firstEmptyElement.focus();
+      }
+    },
+
     'this.asset.PurchaseDate'(newValue) {
       console.log(newValue);
     },
@@ -412,9 +443,12 @@ export default {
       // Gửi dữ liệu lên api
       try {
         const res = await axios.post('FixedAssets', this.asset);
-        this.$emit('alertShow', false);
+        this.alertShow(false);
         this.$emit('dialogShow', false);
-        if (res.statusText == 'Created') {
+        if (res.data.userMsg) {
+          this.alertShow(true, '', res.data.data.data[0]);
+        } else {
+          this.$emit('dialogShow', false);
           // Cập nhật lại bảng
           this.$emit('filterAsset');
           // Cập nhật lại tổng bản ghi
@@ -423,7 +457,7 @@ export default {
           this.$emit('toastShow', toast_msg.CREATE_SUCCESS);
         }
       } catch (error) {
-        this.$emit('alertShow', true, error.response.data.data.data[0]);
+        console.log(error.response);
       }
     },
 
@@ -443,9 +477,10 @@ export default {
           `FixedAssets/${this.asset.FixedAssetId}`,
           this.asset
         );
-        this.$emit('alertShow', false);
-        this.$emit('dialogShow', false);
-        if (res.statusText == 'OK') {
+        if (res.data.userMsg) {
+          this.alertShow(true, '', res.data.data.data[0]);
+        } else {
+          this.$emit('dialogShow', false);
           // Cập nhật lại bảng:
           this.$emit('filterAsset');
           // Cập nhật lại tổng bản ghi
@@ -455,7 +490,6 @@ export default {
         }
       } catch (error) {
         console.log(error.response);
-        this.$emit('alertShow', true, error.response.data.data.data[0]);
       }
     },
 
@@ -470,10 +504,10 @@ export default {
       // Kiểm tra sự thay đổi trong các ô input:
       // Nếu không có hiển thị thông báo đóng:
       if (JSON.stringify(this.assetCopy) === JSON.stringify(this.asset)) {
-        this.$emit('alertShow', true, cancel_msg.CANCEL, 'cancel');
+        this.alertShow(true, 'cancel', cancel_msg.CANCEL);
       } else {
         // Nếu có sự thay đổi hiển thị cảnh báo báo:
-        this.$emit('alertShow', true, cancel_msg.CANCEL_CHANGE, 'cancelChange');
+        this.alertShow(true, 'cancelChange', cancel_msg.CANCEL_CHANGE);
       }
     },
 
@@ -525,7 +559,7 @@ export default {
 
       // 3. Nếu không có lỗi gì thì thực hiện thêm hoặc sửa
       if (this.errorList.length != 0) {
-        this.$emit('alertShow', true, this.errorList[0]);
+        this.alertShow(true, '', this.errorList[0]);
       } else {
         this.isEditing ? this.onUpdateAsset() : this.onCreateAsset();
       }
@@ -541,10 +575,40 @@ export default {
     setFocusEmpty() {
       this.firstEmptyElement.focus();
     },
+
+    /**
+     * Mô tả :Đóng cả alert cả dialog
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 17:03 21/06/2022
+     */
+    onCloseDialog() {
+      this.alertShow(false);
+      this.$emit('dialogShow', false);
+    },
+
+    /**
+     * Mô tả : Tắt, mở cảnh báo
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 02:28 19/06/2022
+     */
+    alertShow(alert, type, msg) {
+      this.alert.isShow = alert;
+      this.alert.type = type;
+      this.alert.msg = msg;
+    },
   },
 
   data() {
     return {
+      alert: {
+        isShow: false,
+        type: '',
+        msg: '',
+      },
       assetCopy: {},
       asset: {},
       errorList: [],

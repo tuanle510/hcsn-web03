@@ -117,6 +117,7 @@ export default {
 
     focusInput() {
       this.errorMsg = '';
+      this.$refs.input.selected();
     },
 
     /**

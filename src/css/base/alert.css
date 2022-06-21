@@ -17,15 +17,15 @@
   transform: translate(-50%, -50%);
   border-radius: 3px;
   background-color: #fff;
-  padding: 30px 20px 20px 20px;
   box-shadow: 0 3px 10px 9px rgba(0, 0, 0, 0.16);
 }
 
 .m-alert .m-alert-container .alert-content {
-  height: 100px;
+  height: fit-content;
   width: 100%;
   display: flex;
   align-items: center;
+  padding: 25px 20px;
 }
 
 .m-alert .m-alert-container .alert-content .content-left {
@@ -37,6 +37,7 @@
 }
 .m-alert .m-alert-container .alert-content .content-right {
   word-break: break-word;
+  line-height: 17px;
 }
 
 .m-alert .m-alert-container .alert-button {
@@ -44,4 +45,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
+  background-color: #f4f4f4;
+  padding: 10px 20px;
+  border-radius: 3px;
 }

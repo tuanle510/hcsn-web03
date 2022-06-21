@@ -487,10 +487,17 @@ export default {
      * Created date: 00:41 20/06/2022
      */
     onShiftClick(index) {
-      var array = this.licenseData.slice(this.prevIndex, index + 1);
-      array.forEach((element) => {
-        element.checked = true;
-      });
+      if (index > this.prevIndex) {
+        var array = this.licenseData.slice(this.prevIndex, index + 1);
+        array.forEach((element) => {
+          element.checked = true;
+        });
+      } else {
+        var arrayMulti = this.licenseData.slice(index, this.prevIndex);
+        arrayMulti.forEach((element) => {
+          element.checked = true;
+        });
+      }
     },
 
     /**
@@ -539,7 +546,7 @@ export default {
             this.filterLicense();
           }
         } catch (error) {
-          console.log(error);
+          console.log(error.response);
         }
       }
       // Nếu không có id truyền vào => Xóa nhiều chứng từ:

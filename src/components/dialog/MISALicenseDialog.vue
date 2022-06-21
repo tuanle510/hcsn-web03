@@ -26,7 +26,8 @@
             <div class="modal-field">
               <label>Mã chứng từ <span>*</span></label>
               <MISAInput
-                ref="licenseInput"
+                ref="licenseCode"
+                maxlength="20"
                 :required="true"
                 name="Mã chứng từ"
                 v-model="license.LicenseCode"
@@ -37,6 +38,8 @@
               <MISADatepicker
                 :required="true"
                 v-model="license.UseDate"
+                name="Ngày bắt đầu sử dụng"
+                ref="useDate"
               ></MISADatepicker>
             </div>
             <div class="modal-field">
@@ -44,6 +47,8 @@
               <MISADatepicker
                 :required="true"
                 v-model="license.WriteUpDate"
+                name="Ngày ghi tăng"
+                ref="writeupDate"
               ></MISADatepicker>
             </div>
           </div>
@@ -249,7 +254,7 @@
         >Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có
         muốn lưu các thay đổi này?</span
       >
-      <span v-else>Chọn ít nhất 1 tài sản</span>
+      <span v-else>{{ alert.msg }}</span>
     </MISAAlert2>
 
     <!-- Loading  -->
@@ -275,7 +280,7 @@ export default {
 
   mounted() {
     // focus vào ô đầu tiên
-    this.$refs.licenseInput.setFocus();
+    this.$refs.licenseCode.setFocus();
   },
 
   computed: {
@@ -435,7 +440,7 @@ export default {
       this.isChoseAssetShow = value;
       // Đóng dialog chọn tài sản thì focus vào input Mã chứng từ:
       if (value == false) {
-        this.$refs.licenseInput.setFocus();
+        this.$refs.licenseCode.setFocus();
       }
     },
 
@@ -449,7 +454,7 @@ export default {
     editAssetDialogShow(value) {
       this.isEditAssetShow = value;
       if (value == false) {
-        this.$refs.licenseInput.setFocus();
+        this.$refs.licenseCode.setFocus();
       }
     },
 
@@ -514,7 +519,10 @@ export default {
       // Gửi lên API
       try {
         const res = await axios.post('Licenses/InsertLicense', licenseDetails);
-        if (res.status == 201) {
+        if (res.data.userMsg) {
+          this.isLoading = false;
+          this.alertShow(true, '', res.data.data.data[0]);
+        } else {
           this.isLoading = false;
           this.$emit('toastShow', 'Thêm dữ liệu thành công');
           this.$emit('licenseDialogShow', false);
@@ -522,7 +530,7 @@ export default {
         }
       } catch (error) {
         this.isLoading = false;
-        console.log(error.response.data);
+        this.alertShow(true, '', error.response.data.data.data[0]);
       }
     },
 
@@ -540,15 +548,17 @@ export default {
           `Licenses/UpdateLicense/${this.license.LicenseId}`,
           licenseDetails
         );
-        if (res.status == 200) {
+        if (res.data.userMsg) {
+          this.isLoading = false;
+          this.alertShow(true, '', res.data.data.data[0]);
+        } else {
           this.isLoading = false;
           this.$emit('toastShow', 'Sửa dữ liệu thành công');
           this.$emit('licenseDialogShow', false);
           this.$emit('filterLicense');
         }
       } catch (error) {
-        this.isLoading = false;
-        console.log(error.response.data);
+        console.log(error.response);
       }
     },
 
@@ -594,20 +604,32 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 22:29 20/06/2022
      */
-    validate() {
-      var licenseCode = this.license.LicenseCode;
-      // Validate trống:
-      if (licenseCode == undefined || licenseCode == '') {
-        this.$refs.licenseInput.validateRequired();
+    validateForm() {
+      var isEmoty = false;
+      if (!this.license.LicenseCode) {
+        this.$refs.licenseCode.validateRequired();
+        isEmoty = true;
+      }
+
+      if (!this.license.UseDate) {
+        this.$refs.useDate.validateRequired();
+        isEmoty = true;
+      }
+
+      if (!this.license.WriteUpDate) {
+        this.$refs.writeupDate.validateRequired();
+        isEmoty = true;
+      }
+
+      if (isEmoty) {
         return false;
       }
 
       // Validate list asset rỗng:
       if (this.assetList.length == 0) {
-        this.alertShow(true);
+        this.alertShow(true, '', 'Chọn ít nhất 1 tài sản');
         return false;
       }
-
       return true;
     },
 
@@ -619,8 +641,8 @@ export default {
      * Created date: 22:31 13/06/2022
      */
     async onSubmit() {
-      // Validate:
-      var isValid = this.validate();
+      // ValidateForm:
+      var isValid = this.validateForm();
       //  Nếu không có lỗi gì thì thực hiện:
       if (isValid) {
         this.isLoading = true;
@@ -657,9 +679,10 @@ export default {
      * Created by: Lê Thiện Tuấn - MF1118
      * Created date: 02:28 19/06/2022
      */
-    alertShow(alert, type) {
+    alertShow(alert, type, msg) {
       this.alert.isShow = alert;
       this.alert.type = type;
+      this.alert.msg = msg;
     },
   },
   data() {
@@ -668,6 +691,7 @@ export default {
       alert: {
         isShow: false,
         type: '',
+        msg: '',
       },
 
       isChoseAssetShow: false,

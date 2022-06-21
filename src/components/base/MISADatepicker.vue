@@ -16,9 +16,9 @@
       :inputClassName="inputClassName"
       :name="name"
       :required="required"
-      utc
     >
     </Datepicker>
+    <div v-if="this.errorMsg" class="m-input-msg">{{ errorMsg }}</div>
     <div class="datepicker-icon"></div>
   </div>
 </template>
@@ -55,6 +55,7 @@ export default {
      */
     setFocus() {
       this.inputClassName = 'm-input-focus';
+      this.errorMsg = null;
     },
 
     /**
@@ -79,14 +80,36 @@ export default {
     validateRequired() {
       if (this.required == true && (this.date == null || this.date == '')) {
         this.inputClassName = 'm-input-error';
+        this.createErrorMsg();
       } else {
         this.inputClassName = '';
+        this.errorMsg = '';
+      }
+    },
+
+    /**
+     * Mô tả : Tạo error msg
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 15:08 21/06/2022
+     */
+    createErrorMsg() {
+      var inputName = this.name;
+      if (inputName == undefined || inputName == '') {
+        this.errorMsg = 'Ô này không được để trống!';
+      } else {
+        this.errorMsg = `${inputName} không được để trống!`;
       }
     },
   },
 
   data() {
-    return { date: this.modelValue, inputClassName: null };
+    return {
+      date: this.modelValue,
+      inputClassName: null,
+      errorMsg: '',
+    };
   },
 };
 </script>
