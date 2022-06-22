@@ -101,9 +101,9 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  props: ['licenseDetailSelected'],
+  props: ["licenseDetailSelected"],
 
   beforeMount() {
     // Gán vào giá trị:
@@ -126,7 +126,7 @@ export default {
      */
     totalCost: function () {
       const totalCost = this.budgetList.reduce((currentValue, item) => {
-        return currentValue + Number(item.cost.replaceAll('.', ''));
+        return currentValue + Number(item.cost.replaceAll(".", ""));
       }, 0);
       return this.currencyFormat(totalCost);
     },
@@ -141,7 +141,7 @@ export default {
      * Created date: 15:00 10/06/2022
      */
     onCancel() {
-      this.$emit('editAssetDialogShow', false);
+      this.$emit("editAssetDialogShow", false);
     },
 
     /**
@@ -153,8 +153,8 @@ export default {
      */
     btnPlus() {
       this.budgetList.push({
-        name: '',
-        cost: '',
+        name: "",
+        cost: "",
       });
     },
 
@@ -190,7 +190,7 @@ export default {
       var isEmpty = false;
       // Trả về true nếu input rỗng:
       this.budgetList.forEach((element) => {
-        if (element.name == '' || element.cost == '') {
+        if (element.name == "" || element.cost == "") {
           isEmpty = true;
         } else {
           isEmpty = false;
@@ -211,7 +211,7 @@ export default {
       if (dupList.length != 0) {
         isDuplicate = true;
         dupList.forEach((item) => {
-          this.$refs.combobox[item].setErrorMsg('Nguồn chi phí đã tồn tại!');
+          this.$refs.combobox[item].setErrorMsg("Nguồn chi phí đã tồn tại!");
         });
       } else {
         isDuplicate = false;
@@ -251,13 +251,13 @@ export default {
           }
         } else {
           this.$emit(
-            'updateDetailJson',
+            "updateDetailJson",
             this.licenseDetail.DetailJson,
             this.licenseDetail.FixedAssetId
           );
         }
         this.isLoading = false;
-        this.$emit('editAssetDialogShow', false);
+        this.$emit("editAssetDialogShow", false);
       }
     },
 
@@ -269,7 +269,7 @@ export default {
      * Created date: 21:30 18/06/2022
      */
     currencyFormat(value) {
-      var format = `${value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
   },
@@ -277,19 +277,19 @@ export default {
   data() {
     return {
       isLoading: false,
-      totalText: 'Tổng',
+      totalText: "Tổng",
       sourceInformation: [
         {
           id: 1,
-          budget: 'Ngân sách Tỉnh',
+          budget: "Ngân sách Tỉnh",
         },
         {
           id: 2,
-          budget: 'Ngân sách Huyện',
+          budget: "Ngân sách Huyện",
         },
         {
           id: 3,
-          budget: 'Ngân sách Trung ương',
+          budget: "Ngân sách Trung ương",
         },
       ],
       licenseDetail: {},
@@ -297,8 +297,8 @@ export default {
       // spanMsg: '',
       budgetList: [
         {
-          name: '',
-          cost: '',
+          name: "",
+          cost: "",
         },
       ],
     };

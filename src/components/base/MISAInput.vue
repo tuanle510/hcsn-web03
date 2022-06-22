@@ -3,7 +3,6 @@
     <input
       ref="input"
       class="m-input"
-      title=""
       :type="type"
       :name="name"
       :class="classParent"
@@ -23,42 +22,42 @@
 </template>
 <script>
 export default {
-  name: 'the-input',
+  name: "the-input",
 
   props: [
-    'number', //style number chuyền từ component cha
-    'placeholder',
-    'disabled',
-    'classParent',
-    'type',
-    'modelValue',
-    'maxlength',
-    'required',
-    'name',
-    'isNumber',
-    'currencyFormat',
+    "number", //style number chuyền từ component cha
+    "placeholder",
+    "disabled",
+    "classParent",
+    "type",
+    "modelValue",
+    "maxlength",
+    "required",
+    "name",
+    "isNumber",
+    "currencyFormat",
   ],
 
   emits: [
-    'setIsValid',
-    'update:modelValue',
-    'keypress',
-    'keydown.down',
-    'keydown.up',
-    'blur',
+    "setIsValid",
+    "update:modelValue",
+    "keypress",
+    "keydown.down",
+    "keydown.up",
+    "blur",
   ],
 
   mounted() {
     if (this.currencyFormat) {
-      var value = this.$refs.input?.value.replaceAll('.', '');
+      var value = this.$refs.input?.value.replaceAll(".", "");
       this.$refs.input.value = `${value
         ?.toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
     }
   },
 
   updated() {
-    if (this.$refs.input?.value != '') {
+    if (this.$refs.input?.value != "") {
       this.validateRequired();
     }
   },
@@ -68,12 +67,12 @@ export default {
     onChangeHandler(e) {
       e.preventDefault();
       if (this.currencyFormat) {
-        var value = e.target.value.replaceAll('.', '');
+        var value = e.target.value.replaceAll(".", "");
         e.target.value = `${value
           ?.toString()
-          .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       }
-      this.$emit('update:modelValue', e.target.value);
+      this.$emit("update:modelValue", e.target.value);
     },
 
     /**
@@ -112,11 +111,18 @@ export default {
      */
     blurInput($event) {
       this.validateRequired();
-      this.$emit('blur', $event);
+      this.$emit("blur", $event);
     },
 
+    /**
+     * Mô tả : Xử lí khi focus
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 09:20 22/06/2022
+     */
     focusInput() {
-      this.errorMsg = '';
+      this.errorMsg = "";
       this.$refs.input?.select();
     },
 
@@ -129,12 +135,12 @@ export default {
      */
     validateRequired() {
       var value = this.$refs.input?.value;
-      if (this.required && (value === undefined || value.toString() == '')) {
-        this.$refs.input?.classList.add('m-input-error');
+      if (this.required && (value === undefined || value.toString() == "")) {
+        this.$refs.input?.classList.add("m-input-error");
         this.createErrorMsg();
       } else {
-        this.$refs.input?.classList.remove('m-input-error');
-        this.errorMsg = '';
+        this.$refs.input?.classList.remove("m-input-error");
+        this.errorMsg = "";
       }
     },
 
@@ -147,8 +153,8 @@ export default {
      */
     createErrorMsg() {
       var inputName = this.$refs.input?.name;
-      if (inputName == undefined || inputName == '') {
-        this.errorMsg = 'Không được để trống ô này!';
+      if (inputName == undefined || inputName == "") {
+        this.errorMsg = "Không được để trống ô này!";
       } else {
         this.errorMsg = `${inputName} không được để trống!`;
       }
@@ -157,7 +163,7 @@ export default {
 
   data() {
     return {
-      errorMsg: '',
+      errorMsg: "",
     };
   },
 };

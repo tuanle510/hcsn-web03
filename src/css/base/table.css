@@ -20,6 +20,11 @@
   overflow-x: auto;
 }
 
+.w-40 {
+  min-width: 40px;
+  width: 40px;
+  max-width: 40px;
+}
 .w-50 {
   min-width: 50px;
   width: 50px;
@@ -39,6 +44,12 @@
   min-width: 100px;
   width: 100px;
   max-width: 100px;
+}
+
+.w-110 {
+  min-width: 110px;
+  width: 110px;
+  max-width: 110px;
 }
 .w-130 {
   min-width: 130px;
@@ -195,13 +206,13 @@ table.m-table {
 }
 .m-paging-list .prev-class {
   cursor: pointer;
-  background: url('/src/assets/icon/qlts-icon.png') no-repeat -29px -246px;
+  background: url("/src/assets/icon/qlts-icon.png") no-repeat -29px -246px;
   width: 7px;
   height: 12px;
 }
 .m-paging-list .page-item:last-child {
   cursor: pointer;
-  background: url('/src/assets/icon/qlts-icon.png') no-repeat -73px -246px;
+  background: url("/src/assets/icon/qlts-icon.png") no-repeat -73px -246px;
   width: 7px;
   height: 12px;
 }

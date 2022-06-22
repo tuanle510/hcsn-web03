@@ -5,10 +5,12 @@
       'm-dialog',
       'license-dialog',
     ]"
+    v-shortkey="['ctrl', 's']"
+    @shortkey="onSubmit()"
   >
     <div class="m-modal license-modal w-950">
       <div class="m-modal-title license-title">
-        {{ isEditing ? 'Sửa chứng từ ghi tăng' : 'Thêm chứng từ ghi tăng' }}
+        {{ isEditing ? "Sửa chứng từ ghi tăng" : "Thêm chứng từ ghi tăng" }}
       </div>
       <div
         class="m-modal-close icon-box-24 tooltip"
@@ -55,7 +57,10 @@
           <div class="modal-row" style="margin-bottom: 0">
             <div class="modal-field modal-field-full">
               <label>Ghi chú</label>
-              <MISAInput v-model="license.Description"></MISAInput>
+              <MISAInput
+                maxlength="500"
+                v-model="license.Description"
+              ></MISAInput>
             </div>
           </div>
         </form>
@@ -266,9 +271,9 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  props: ['licenseSelected', 'assetData', 'isEditing'],
+  props: ["licenseSelected", "assetData", "isEditing"],
 
   beforeMount() {
     // Gán giá trị license
@@ -316,6 +321,18 @@ export default {
   },
 
   watch: {
+    /**
+     * Mô tả : focus vào ô input đầu tiên bị lỗi
+     * @param
+     * @return
+     * Created by: Lê Thiện Tuấn - MF1118
+     * Created date: 17:31 21/06/2022
+     */
+    "alert.isShow"(newValue) {
+      if (!newValue) {
+        this.$refs.licenseCode.setFocus();
+      }
+    },
     /**
      * Mô tả : Theo dõi danh sách tài sản => nếu có thay đổi thì phân trang lại, về lại trang đầu
      * @param
@@ -422,7 +439,7 @@ export default {
     getChoseAsset(list) {
       this.choseAssetDialogShow(false);
       // Gán lại giá trị cho ô tìm kiếm:
-      this.$refs.searchInput.value = '';
+      this.$refs.searchInput.value = "";
       // Thêm vào danh sách tài sản đã có sẵn:
       this.assetList = list.concat(this.assetList);
     },
@@ -475,7 +492,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
 
@@ -527,19 +544,19 @@ export default {
     async addLicense(licenseDetails) {
       // Gửi lên API
       try {
-        const res = await axios.post('Licenses/InsertLicense', licenseDetails);
+        const res = await axios.post("Licenses/InsertLicense", licenseDetails);
         if (res.data.userMsg) {
           this.isLoading = false;
-          this.alertShow(true, '', res.data.data.data[0]);
+          this.alertShow(true, "", res.data.data.data[0]);
         } else {
           this.isLoading = false;
-          this.$emit('toastShow', 'Thêm dữ liệu thành công');
-          this.$emit('licenseDialogShow', false);
-          this.$emit('filterLicense');
+          this.$emit("toastShow", "Thêm dữ liệu thành công");
+          this.$emit("licenseDialogShow", false);
+          this.$emit("filterLicense");
         }
       } catch (error) {
         this.isLoading = false;
-        this.alertShow(true, '', error.response.data.data.data[0]);
+        this.alertShow(true, "", error.response.data.data.data[0]);
       }
     },
 
@@ -559,12 +576,12 @@ export default {
         );
         if (res.data.userMsg) {
           this.isLoading = false;
-          this.alertShow(true, '', res.data.data.data[0]);
+          this.alertShow(true, "", res.data.data.data[0]);
         } else {
           this.isLoading = false;
-          this.$emit('toastShow', 'Sửa dữ liệu thành công');
-          this.$emit('licenseDialogShow', false);
-          this.$emit('filterLicense');
+          this.$emit("toastShow", "Sửa dữ liệu thành công");
+          this.$emit("licenseDialogShow", false);
+          this.$emit("filterLicense");
         }
       } catch (error) {
         console.log(error.response);
@@ -585,11 +602,11 @@ export default {
       var isAssetlistNotChange =
         JSON.stringify(this.assetList) === JSON.stringify(this.assetListCopy);
       console.log(isLicenseNotChange, isAssetlistNotChange);
-      var type = '';
+      var type = "";
       if (isLicenseNotChange == false || isAssetlistNotChange == false) {
-        type = 'cancelChange';
+        type = "cancelChange";
       } else {
-        type = 'cancel';
+        type = "cancel";
       }
       this.alertShow(true, type);
     },
@@ -603,7 +620,7 @@ export default {
      */
     closeLicenseDialog() {
       this.alertShow(false);
-      this.$emit('licenseDialogShow', false);
+      this.$emit("licenseDialogShow", false);
     },
 
     /**
@@ -636,7 +653,7 @@ export default {
 
       // Validate list asset rỗng:
       if (this.assetList.length == 0) {
-        this.alertShow(true, '', 'Chọn ít nhất 1 tài sản');
+        this.alertShow(true, "", "Chọn ít nhất 1 tài sản");
         return false;
       }
       return true;
@@ -701,8 +718,8 @@ export default {
       isLoading: false,
       alert: {
         isShow: false,
-        type: '',
-        msg: '',
+        type: "",
+        msg: "",
       },
 
       isChoseAssetShow: false,

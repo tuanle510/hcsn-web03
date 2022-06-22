@@ -34,19 +34,29 @@
         <table class="m-table">
           <thead>
             <tr>
-              <th style="padding-left: 16px">
+              <th class="w-40" style="padding-left: 16px">
                 <MISACheckbox
                   @click="onCheckedAll"
                   :checked="this.checkedAll"
                 ></MISACheckbox>
               </th>
-              <th class="text-align-center">STT</th>
-              <th class="text-align-left">Mã tài sản</th>
-              <th class="text-align-left">Tên tài sản</th>
-              <th class="text-align-left">Bộ phận sử dụng</th>
-              <th class="text-align-right">Nguyên giá</th>
-              <th class="text-align-right">Hao mòn năm</th>
-              <th class="text-align-right">Giá trị còn lại</th>
+              <th class="text-align-center w-50">STT</th>
+              <th class="text-align-left w-110">Mã tài sản</th>
+              <th
+                class="text-align-left"
+                style="width: 170px; max-width: 170px"
+              >
+                Tên tài sản
+              </th>
+              <th
+                class="text-align-left"
+                style="width: 170px; max-width: 170px"
+              >
+                Bộ phận sử dụng
+              </th>
+              <th class="text-align-right w-100">Nguyên giá</th>
+              <th class="text-align-right w-100">Hao mòn năm</th>
+              <th class="text-align-right w-100">Giá trị còn lại</th>
             </tr>
           </thead>
           <MISALoading v-if="isLoading"></MISALoading>
@@ -58,29 +68,35 @@
               :class="[{ 'm-tr-seleced': asset.checked }, 'm-tr']"
             >
               <!-- class="m-tr" -->
-              <td style="width: 40px; padding-left: 16px">
+              <td class="w-40" style="padding-left: 16px">
                 <MISACheckbox :checked="asset.checked"></MISACheckbox>
               </td>
-              <td class="text-align-center" style="width: 50px">
+              <td class="text-align-center w-50">
                 {{ index + 1 }}
               </td>
-              <td class="text-align-left" style="width: 110px">
+              <td class="text-align-left w-110">
                 {{ asset.FixedAssetCode }}
               </td>
-              <td class="text-align-left" style="width: 170px">
+              <td
+                class="text-align-left text-limit"
+                style="width: 170px; max-width: 170px"
+              >
                 {{ asset.FixedAssetName }}
               </td>
-              <td class="text-align-left" style="width: 170px">
+              <td
+                class="text-align-left text-limit"
+                style="width: 170px; max-width: 170px"
+              >
                 {{ asset.DepartmentName }}
               </td>
-              <td class="text-align-right" style="width: 105px">
+              <td class="text-align-right w-100">
                 {{ currencyFormat(asset.Cost) }}
               </td>
-              <td class="text-align-right" style="width: 100px">
-                {{ currencyFormat(asset.DepreciationValue) }}
+              <td class="text-align-right w-100">
+                {{ currencyFormat(asset.Accumulated) }}
               </td>
-              <td class="text-align-right" style="width: 100px">
-                Giá trị còn lại
+              <td class="text-align-right w-100">
+                {{ currencyFormat(asset.Cost - asset.Accumulated) }}
               </td>
             </tr>
           </tbody>
@@ -120,10 +136,10 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
-import qs from 'qs';
+import axios from "axios";
+import qs from "qs";
 export default {
-  props: ['assetList'],
+  props: ["assetList"],
 
   computed: {
     totalPageIndex: function () {
@@ -165,7 +181,7 @@ export default {
       // Lấy ra danh sách Id để lọc trên API
       var idList = this.assetList.map((asset) => asset.FixedAssetId);
       try {
-        const res = await axios.get('FixedAssets/GetRestAsetList', {
+        const res = await axios.get("FixedAssets/GetRestAsetList", {
           params: {
             fixedAssetList: idList,
             searchAsset: this.searchValue,
@@ -272,7 +288,7 @@ export default {
       this.checkedaAssetList = this.assetData.filter(
         (asset) => asset.checked == true
       );
-      this.$emit('getChoseAsset', this.checkedaAssetList);
+      this.$emit("getChoseAsset", this.checkedaAssetList);
     },
 
     /**
@@ -283,7 +299,7 @@ export default {
      * Created date: 11:29 10/06/2022
      */
     onCancel() {
-      this.$emit('choseAssetDialogShow', false);
+      this.$emit("choseAssetDialogShow", false);
     },
 
     /**
@@ -294,7 +310,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
   },
@@ -305,11 +321,11 @@ export default {
       assetLength: 0,
       assetData: [],
       checkedaAssetList: [],
-      searchBox: '',
+      searchBox: "",
       checkedAll: false,
 
       // Phân trang
-      searchValue: '', // Ô tìm kiếm
+      searchValue: "", // Ô tìm kiếm
       pageIndex: 1,
       pageSize: 20,
     };

@@ -117,12 +117,10 @@
                 <th class="text-align-center w-130">Ngày chứng từ</th>
                 <th class="text-align-center w-130">Ngày ghi tăng</th>
                 <th class="text-align-right w-150">Tổng nguyên giá</th>
-                <th
-                  class="text-align-left text-width"
-                  style="padding-left: 15px"
-                >
+                <th class="text-align-left" style="padding-left: 15px">
                   Nội dung
                 </th>
+                <td class="last-td w-90"></td>
               </tr>
             </thead>
             <MISALoading v-if="isLicnesLoading"></MISALoading>
@@ -152,10 +150,13 @@
                 <td class="text-align-right w-150">
                   {{ currencyFormat(license.Total) }}
                 </td>
-                <td class="text-align-left last-td" style="padding-left: 15px">
-                  <div class="text-width">
-                    {{ license.Description }}
-                  </div>
+                <td
+                  class="text-align-left text-limit"
+                  style="padding-left: 15px; min-width: 200px; max-width: 400px"
+                >
+                  {{ license.Description }}
+                </td>
+                <td class="last-td w-90">
                   <div
                     :class="[
                       { 'm-function-box-show': license.checked },
@@ -191,7 +192,8 @@
           "
         >
           <div class="total-text">{{ currencyFormat(quantityCost) }}</div>
-          <div class="text-width" style="height: 20px; margin-left: 25px"></div>
+          <div style="min-width: 200px; max-width: 400px; height: 20px"></div>
+          <div class="w-90" style="height: 20px"></div>
         </div>
 
         <div class="license-paging">
@@ -249,7 +251,7 @@
               <tr>
                 <th class="text-align-center w-50">STT</th>
                 <th class="text-align-left w-150">Mã tài sản</th>
-                <th class="text-align-left w-300">Tên tài sản</th>
+                <th class="text-align-left w-200">Tên tài sản</th>
                 <th
                   class="text-align-left"
                   style="min-width: 250px; max-width: 400px"
@@ -258,7 +260,7 @@
                 </th>
                 <th class="text-align-right w-200">Nguyên giá</th>
                 <th class="text-align-right w-200">Hao mòn năm</th>
-                <th class="text-align-right w-150">Giá trị còn lại</th>
+                <th class="text-align-right w-200">Giá trị còn lại</th>
               </tr>
             </thead>
             <tbody>
@@ -268,12 +270,12 @@
                 <td class="text-align-left w-150">
                   {{ asset.FixedAssetCode }}
                 </td>
-                <td class="text-limit text-align-left w-300">
+                <td class="text-limit text-align-left w-200">
                   {{ asset.FixedAssetName }}
                 </td>
                 <td
                   class="text-limit text-align-left"
-                  style="min-width: 250px; max-width: 400px"
+                  style="min-width: 200px; max-width: 300px"
                 >
                   {{ asset.DepartmentName }}
                 </td>
@@ -283,7 +285,7 @@
                 <td class="text-align-right w-200">
                   {{ currencyFormat(asset.Accumulated) }}
                 </td>
-                <td class="text-align-right w-150">
+                <td class="text-align-right w-200">
                   {{ currencyFormat(asset.Cost - asset.Accumulated) }}
                 </td>
               </tr>
@@ -329,12 +331,12 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
-import moment from 'moment';
+import axios from "axios";
+import moment from "moment";
 export default {
   computed: {
     isMultiSelected: function () {
-      var count = '';
+      var count = "";
       this.licenseData.forEach((item) => {
         if (item.checked) count++;
       });
@@ -404,7 +406,7 @@ export default {
      */
     async getAllLicense() {
       try {
-        const res = await axios.get('Licenses');
+        const res = await axios.get("Licenses");
         this.totalLicenseLength = res.data.length;
       } catch (error) {
         console.log(error);
@@ -421,7 +423,7 @@ export default {
     async filterLicense() {
       this.isLicnesLoading = true;
       try {
-        const res = await axios.get('Licenses/FilterLicense', {
+        const res = await axios.get("Licenses/FilterLicense", {
           params: {
             searchLicense: this.searchValue,
             pageIndex: this.pageIndex,
@@ -477,15 +479,15 @@ export default {
      */
     async onRowClick(license, $event, index) {
       // Nếu ấn edit:
-      if ($event.target.classList.contains('edit-btn')) {
+      if ($event.target.classList.contains("edit-btn")) {
         this.showEditLicense(license);
       }
       // Nếu ấn xóa (icon xóa):
-      else if ($event.target.classList.contains('remove-btn')) {
+      else if ($event.target.classList.contains("remove-btn")) {
         // Thêm vào mảng để xóa
         this.idToRemove = [license.LicenseId];
         // Hiển thị cảnh báo
-        this.alertShow(true, license.LicenseCode, 'remove');
+        this.alertShow(true, license.LicenseCode, "remove");
       }
       // Nếu ấn vào cả dòng:
       else {
@@ -542,13 +544,13 @@ export default {
       this.idToRemove = array.map((item) => item.LicenseId);
       console.log(this.idToRemove);
       // Hiển thị alert:
-      var length = '';
+      var length = "";
       if (this.idToRemove.length < 10) {
         length = `0${this.idToRemove.length}`;
       } else {
         length = this.idToRemove.length;
       }
-      this.alertShow(true, length, 'remove');
+      this.alertShow(true, length, "remove");
     },
 
     /**
@@ -568,7 +570,7 @@ export default {
           if (res.status == 200) {
             // Tắt alert
             // Hiển thi toast
-            this.toastShow('Xóa dữ liệu thành công');
+            this.toastShow("Xóa dữ liệu thành công");
             this.isLoading = false;
             // Gọi lại API lấy dữ liệu
             this.filterLicense();
@@ -583,11 +585,11 @@ export default {
           const res = await axios.delete(`Licenses/DeleteMulti`, {
             data: JSON.stringify(this.idToRemove),
             headers: {
-              'content-type': 'application/json',
+              "content-type": "application/json",
             },
           });
           this.alertShow(false);
-          this.toastShow('Xóa chứng từ thành công');
+          this.toastShow("Xóa chứng từ thành công");
           this.isLoading = false;
           console.log(res.data);
         } catch (error) {
@@ -643,7 +645,7 @@ export default {
      */
     async getNewCode() {
       try {
-        var res = await axios.get('Licenses/GetNewCode');
+        var res = await axios.get("Licenses/GetNewCode");
         this.newLicenseCode = res.data;
       } catch (error) {
         console.log(error);
@@ -730,7 +732,7 @@ export default {
      * Created date: 21:30 09/06/2022
      */
     currencyFormat(value) {
-      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+      var format = `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
       return format;
     },
 
@@ -742,7 +744,7 @@ export default {
      * Created date: 15:35 13/06/2022
      */
     dateTimeFormat(value) {
-      return moment(value).format('DD/MM/YYYY');
+      return moment(value).format("DD/MM/YYYY");
     },
 
     /**
@@ -801,7 +803,7 @@ export default {
       isLicenseShow: false,
       licenseData: [], // danh sách chứng từ gọi từ API
       assetData: [],
-      newLicenseCode: '',
+      newLicenseCode: "",
       licenseSelected: [],
       time: null,
       // Loading
@@ -811,7 +813,7 @@ export default {
       filterLicenseLength: null, // Tổng số bản ghi theo tìm kiếm
       totalLicenseLength: null, // Tổng số bản ghi chưa phân trang
       // Phân trang
-      searchValue: '', // Ô tìm kiếm
+      searchValue: "", // Ô tìm kiếm
       pageIndex: 1,
       pageSize: 20,
       //resize
@@ -819,13 +821,13 @@ export default {
       isOptionShow: false,
       //
       toast: {
-        title: '',
+        title: "",
         isShow: false,
       },
       alert: {
         isShow: false,
-        title: '',
-        type: '',
+        title: "",
+        type: "",
       },
       idToRemove: [],
     };
